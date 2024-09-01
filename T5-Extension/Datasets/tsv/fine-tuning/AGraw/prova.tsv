@@ -1,0 +1,1 @@
+"testLength () { org.openscience.cdk.qsar.result.DoubleResult result = new org.openscience.cdk.qsar.result.DoubleResult (5); """"<AssertPlaceHolder>"""";} length () {return 1 ;}"	org.junit.Assert.assertEquals (1, result.length ())
