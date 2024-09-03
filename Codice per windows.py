@@ -92,6 +92,7 @@ inputs = [item for item in df[0]]
 inputs[0], references[0]
 
 # Set CUDA device
+print(torch.cuda.is_available())
 CUDA = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 model = T5ForConditionalGeneration.from_pretrained(
