@@ -1,5 +1,5 @@
 # Install necessary libraries
-#pip install transformers==3.0.2
+#pip install transformers==4.44.2
 #pip install nlp==0.4.0
 #pip install pyarrow==0.16.0
 #pip install sentencepiece==0.1.96
@@ -14,15 +14,16 @@ from transformers import T5Tokenizer, T5Config, T5ForConditionalGeneration
 import pandas as pd
 import os
 
-import time
-
 
 # Define file paths
 spm_path = 'T5-Extension/Tokenizer/dl4se.model'
 config_file = 'T5-Extension/Trained-Models/with-pretraining-new/MT-Task-Balanced/Pytorch-Model/config.json'
+#Modifica il path del file tsv che contiene i metodi da predire
 test_file = 'T5-Extension/Datasets/tsv/fine-tuning/AGraw/results_2020_methods_None_JUnit 5.tsv'
 finetuned_model_path = 'T5-Extension/Trained-Models/with-pretraining-new/MT-Task-Balanced/Pytorch-Model/pytorch_model.bin'
+#Modifica il nome del file di output
 prediction_output_path = 'T5-Extension/Results/Predictions/AG-Task/with-pretraining-new/Raw/prediction_2020_JUnit5_@{}.txt'
+#Modifica il nome del file di output
 perfect_prediction_output_path = 'T5-Extension/Results/Predictions/AG-Task/with-pretraining-new/Raw/perfect2022_@{}.txt'
 
 # Load tokenizer and config
