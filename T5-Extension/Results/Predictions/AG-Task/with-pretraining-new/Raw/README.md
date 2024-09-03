@@ -30,6 +30,6 @@ Nelle seguenti tabelle sono riportati i risultati ottenuti dal modello T5.
 | ANNO | NUMERO METODI TOTALI | VERSIONE JUNIT | BEAM SIZE | BATCH SIZE | % PERFECT PREDICTION | NUMERO DI PLACEHOLDER CORRETTI PREDETTI |
 |------|----------------------|----------------|-----------|------------|----------------------|-----------------------------------------|
 | 2023 | 14452                | 4              | 5         | 12         | 10,587               | 1530                                    |
-| 2023 | 14452                | 4              | 10        | 12         | 11.569332964295599   | 1672                                    |
+| 2023 | 14452                | 4              | 10        | 12         | 11,569               | 1672                                    |
 | 2023 | 11526                | 5              | 5         | 12         | 7.435                | 857                                     |
 | 2023 | 11526                | 5              | 10        | 12         |                      |                                         |
