@@ -8,8 +8,12 @@ import nlp
 
 #Here we have to specify the path where the dataset is
 #Since i'm using colab, i simply put the colab "path"
+
+#SE NON USI COLAB:
 #DEVI MODIFICARE ANCHE QUI PER FAR SI CHE VENGA CARICATO CORRETTAMENTE IL DATASET!!!!!!!!
-_TEST_FILE_NAME = "C:/Users/dadec/IdeaProjects/MastroPaoloT5/T5-Extension/Datasets/tsv/fine-tuning/AGraw/results_2020_methods_None_JUnit 5.tsv"  # Percorso assoluto su Windows
+# Affinchè funzioni, il percorso della directory deve essere completo!
+
+_TEST_FILE_NAME = "/home/azureuser/PycharmProjects/MastroPaoloT5Code/T5-Extension/Datasets/tsv/fine-tuning/AGraw/results_2023_methods_None_JUnit 5.tsv"  # Percorso assoluto su Windows
 
 
 class AssertionConfig(nlp.BuilderConfig):
