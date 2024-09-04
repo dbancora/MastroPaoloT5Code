@@ -33,3 +33,11 @@ Nelle seguenti tabelle sono riportati i risultati ottenuti dal modello T5 nel co
 | 2023 | 14452                | 4              | 10        | 12         | 11,569               | 1672                                    |
 | 2023 | 11526                | 5              | 5         | 12         | 7,435                | 857                                     |
 | 2023 | 11526                | 5              | 10        | 12         | 8,598                | 991                                     |
+
+## Repository create nell'anno 2024
+| ANNO | NUMERO METODI TOTALI | VERSIONE JUNIT | BEAM SIZE | BATCH SIZE | % PERFECT PREDICTION | NUMERO DI PLACEHOLDER CORRETTI PREDETTI |
+|------|----------------------|----------------|-----------|------------|----------------------|-----------------------------------------|
+| 2024 | 363                  | 4              | 5         | 12         | 5,510                | 20                                      |
+| 2024 | 363                  | 4              | 10        | 12         | 6,887                | 25                                      |
+| 2024 | 1201                 | 5              | 5         | 12         | 9,159                | 110                                     |
+| 2024 | 1201                 | 5              | 10        | 12         | 11,407               | 137                                     |
