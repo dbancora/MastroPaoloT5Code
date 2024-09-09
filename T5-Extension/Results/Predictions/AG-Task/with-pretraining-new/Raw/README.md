@@ -2,12 +2,14 @@
 Nelle seguenti tabelle sono riportati i risultati ottenuti dal modello T5 nel compito di Assert generation (AG) con l'utilizzo di codice "grezzo". 
 
 ## Repository create nell'anno 2020
-| ANNO | NUMERO METODI TOTALI | VERSIONE JUNIT | BEAM SIZE | BATCH SIZE | % PERFECT PREDICTION | NUMERO DI PLACEHOLDER CORRETTI PREDETTI |
-|------|----------------------|----------------|-----------|------------|----------------------|-----------------------------------------|
-| 2020 | 19793                | 4              | 5         | 12         | 5,502                | 1089                                    |
-| 2020 | 19793                | 4              | 10        | 12         | 6,447                | 1276                                    |
-| 2020 | 22960                | 5              | 5         | 12         | 4,713                | 1082                                    |
-| 2020 | 22960                | 5              | 10        | 12         | 5,357                | 1230                                    |
+| ANNO | NUMERO METODI TOTALI | VERSIONE JUNIT | BEAM SIZE | BATCH SIZE | % PERFECT PREDICTION | NUMERO DI PLACEHOLDER CORRETTI PREDETTI   |
+|------|----------------------|----------------|-----------|------------|----------------------|-------------------------------------------|
+| 2020 | 19793                | 4              | 1         | 12         | 2.889910574445511    | 572                                       |
+| 2020 | 19793                | 4              | 5         | 12         | 5,502                | 1089                                      |
+| 2020 | 19793                | 4              | 10        | 12         | 6,447                | 1276                                      |
+| 2020 | 22960                | 5              | 1         | 12         | 2.656794425087108    | 610                                       |
+| 2020 | 22960                | 5              | 5         | 12         | 4,713                | 1082                                      |
+| 2020 | 22960                | 5              | 10        | 12         | 5,357                | 1230                                      |
 
 ## Repository create nell'anno 2021
 | ANNO | NUMERO METODI TOTALI | VERSIONE JUNIT | BEAM SIZE | BATCH SIZE | % PERFECT PREDICTION | NUMERO DI PLACEHOLDER CORRETTI PREDETTI |
