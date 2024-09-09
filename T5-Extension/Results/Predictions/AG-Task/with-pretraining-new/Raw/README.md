@@ -24,8 +24,10 @@ Nelle seguenti tabelle sono riportati i risultati ottenuti dal modello T5 nel co
 ## Repository create nell'anno 2022
 | ANNO | NUMERO METODI TOTALI | VERSIONE JUNIT | BEAM SIZE | BATCH SIZE | % PERFECT PREDICTION | NUMERO DI PLACEHOLDER CORRETTI PREDETTI |
 |------|----------------------|----------------|-----------|------------|----------------------|-----------------------------------------|
+| 2022 | 17011                | 4              | 1         | 12         | 2.1633060960554937   | 368                                     |
 | 2022 | 17011                | 4              | 5         | 12         | 4,103                | 698                                     |
 | 2022 | 17011                | 4              | 10        | 12         | 4,679                | 796                                     |
+| 2022 | 14377                | 5              | 1         | 12         | 3.769910273353273    | 542                                     |
 | 2022 | 14377                | 5              | 5         | 12         | 6,691                | 962                                     |
 | 2022 | 14377                | 5              | 10        | 12         | 7,679                | 1104                                    |
 
