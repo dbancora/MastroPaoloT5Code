@@ -104,7 +104,7 @@ model = T5ForConditionalGeneration.from_pretrained(
 model.eval()
 
 predictions = []
-BEAM_SIZE = 10
+BEAM_SIZE = 1
 
 torch.cuda.empty_cache()
 

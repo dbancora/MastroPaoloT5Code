@@ -43,9 +43,11 @@ Nelle seguenti tabelle sono riportati i risultati ottenuti dal modello T5 nel co
 | 2023 | 11526                | 5              | 10        | 12         | 8,598                | 991                                     |
 
 ## Repository create nell'anno 2024
-| ANNO | NUMERO METODI TOTALI | VERSIONE JUNIT | BEAM SIZE | BATCH SIZE | % PERFECT PREDICTION | NUMERO DI PLACEHOLDER CORRETTI PREDETTI |
-|------|----------------------|----------------|-----------|------------|----------------------|-----------------------------------------|
-| 2024 | 363                  | 4              | 5         | 12         | 5,510                | 20                                      |
-| 2024 | 363                  | 4              | 10        | 12         | 6,887                | 25                                      |
-| 2024 | 1201                 | 5              | 5         | 12         | 9,159                | 110                                     |
-| 2024 | 1201                 | 5              | 10        | 12         | 11,407               | 137                                     |
+| ANNO | NUMERO METODI TOTALI | VERSIONE JUNIT | BEAM SIZE | BATCH SIZE | % PERFECT PREDICTION  | NUMERO DI PLACEHOLDER CORRETTI PREDETTI |
+|------|----------------------|----------------|-----------|------------|-----------------------|-----------------------------------------|
+| 2024 | 363                  | 4              | 1         | 12         | 3.8567493112947657    | 14                                      |
+| 2024 | 363                  | 4              | 5         | 12         | 5,510                 | 20                                      |
+| 2024 | 363                  | 4              | 10        | 12         | 6,887                 | 25                                      |
+| 2024 | 1201                 | 5              | 1         | 12         | 4.163197335553705     | 50                                      |
+| 2024 | 1201                 | 5              | 5         | 12         | 9,159                 | 110                                     |
+| 2024 | 1201                 | 5              | 10        | 12         | 11,407                | 137                                     |
