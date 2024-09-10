@@ -43,14 +43,24 @@ Nelle seguenti tabelle sono riportati i risultati ottenuti dal modello T5 nel co
 | 2023 | 11526                | 5              | 10        | 12         | 8,598                | 991                                     |
 
 ## Repository create nell'anno 2024
-| ANNO | NUMERO METODI TOTALI | VERSIONE JUNIT | BEAM SIZE | BATCH SIZE | % PERFECT PREDICTION  | NUMERO DI PLACEHOLDER CORRETTI PREDETTI |
-|------|----------------------|----------------|-----------|------------|-----------------------|-----------------------------------------|
-| 2024 | 363                  | 4              | 1         | 12         | 3,857                 | 14                                      |
-| 2024 | 363                  | 4              | 5         | 12         | 5,510                 | 20                                      |
-| 2024 | 363                  | 4              | 10        | 12         | 6,887                 | 25                                      |
-| 2024 | 1201                 | 5              | 1         | 12         | 4,163                 | 50                                      |
-| 2024 | 1201                 | 5              | 5         | 12         | 9,159                 | 110                                     |
-| 2024 | 1201                 | 5              | 10        | 12         | 11,407                | 137                                     |
+| ANNO | NUMERO METODI TOTALI | VERSIONE JUNIT | BEAM SIZE | BATCH SIZE | % PERFECT PREDICTION | NUMERO DI PLACEHOLDER CORRETTI PREDETTI |
+|------|----------------------|----------------|-----------|------------|----------------------|-----------------------------------------|
+| 2024 | 363                  | 4              | 1         | 12         | 3,857                | 14                                      |
+| 2024 | 363                  | 4              | 5         | 12         | 5,510                | 20                                      |
+| 2024 | 363                  | 4              | 10        | 12         | 6,887                | 25                                      |
+| 2024 | 1201                 | 5              | 1         | 12         | 4,163                | 50                                      |
+| 2024 | 1201                 | 5              | 5         | 12         | 9,159                | 110                                     |
+| 2024 | 1201                 | 5              | 10        | 12         | 11,407               | 137                                     |
+
+## Repository create nell'anno 2020 con una sola asserzione
+| ANNO | NUMERO METODI TOTALI | VERSIONE JUNIT | BEAM SIZE | BATCH SIZE | % PERFECT PREDICTION | NUMERO DI PLACEHOLDER CORRETTI PREDETTI |
+|------|----------------------|----------------|-----------|------------|----------------------|-----------------------------------------|
+| 2020 | 8332                 | 4              | 1         | 12         | 4.080652904464714    | 340                                     |
+| 2020 | 8332                 | 4              | 5         | 12         | 6.781084973595776    | 565                                     |
+| 2020 | 8332                 | 4              | 10        | 12         | 7.885261641862698    | 657                                     |
+| 2020 | 11731                | 5              | 1         | 12         | 3.7848435768476687   | 444                                     |
+| 2020 | 11731                | 5              | 5         | 12         | 6.001193419145853    | 704                                     |
+| 2020 | 11731                | 5              | 10        | 12         | 6.529707612309266    | 766                                     |
 
 ## Repository create nell'anno 2024 con una sola asserzione
 | ANNO | NUMERO METODI TOTALI | VERSIONE JUNIT | BEAM SIZE | BATCH SIZE | % PERFECT PREDICTION | NUMERO DI PLACEHOLDER CORRETTI PREDETTI |
@@ -61,3 +71,4 @@ Nelle seguenti tabelle sono riportati i risultati ottenuti dal modello T5 nel co
 | 2024 | 454                  | 5              | 1         | 12         | 7.929515418502203    | 36                                      |
 | 2024 | 454                  | 5              | 5         | 12         | 16.96035242290749    | 77                                      |
 | 2024 | 454                  | 5              | 10        | 12         | 20.26431718061674    | 92                                      |
+
