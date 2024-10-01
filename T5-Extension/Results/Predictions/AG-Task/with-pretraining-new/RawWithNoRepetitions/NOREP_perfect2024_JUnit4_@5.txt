@@ -1,0 +1,80 @@
+[+] input: test39() { List<SolarTime> solarTimes = new EightChar("己亥", "丙子", "癸酉", "庚申").getSolarTimes(1900, 2024); List<String> actual = new ArrayList<>(); for (SolarTime solarTime : solarTimes) { actual.add(solarTime.toString()); }  List<String> expected = new ArrayList<>(); expected.add("1959年12月17日 16:00:00"); Assert."<AssertPlaceHolder>"; }
+[*] target: assertEquals(expected, actual)
+[-] pred: org. junit. Assert. assertEquals ( expected, actual )
+************************************
+[+] input: Exception { Controlador controlador = new Controlador(); ArrayList<Character> elements = new ArrayList<>(); elements.add('1'); elements.add('2'); elements.add('+'); elements.add('4'); elements.add('*'); elements.add('3'); elements.add('+');  int result = controlador.solve(elements); "<AssertPlaceHolder>"; }
+[*] target: assertEquals(0, result)
+[-] pred: org. junit. Assert. assertEquals ( 0, result )
+************************************
+[+] input: test36() { List<SolarTime> solarTimes = new EightChar("癸卯", "甲寅", "甲寅", "甲子").getSolarTimes(1800, 2024); List<String> actual = new ArrayList<>(); for (SolarTime solarTime : solarTimes) { actual.add(solarTime.toString()); }  List<String> expected = new ArrayList<>(); expected.add("1843年2月9日 00:00:00"); expected.add("2023年2月25日 00:00:00"); Assert."<AssertPlaceHolder>"; }
+[*] target: assertEquals(expected, actual)
+[-] pred: org. junit. Assert. assertEquals ( expected, actual )
+************************************
+[+] input: testSubstraction() { Controlador controlador = new Controlador(); int result = controlador.substraction(5, 3); "<AssertPlaceHolder>"; }
+[*] target: assertEquals(2, result)
+[-] pred: org. junit. Assert. assertEquals ( 2, result )
+************************************
+[+] input: test2() { LegalHoliday d = LegalHoliday.fromYmd(2010, 1, 1); Assert."<AssertPlaceHolder>"; }
+[*] target: assertNotNull(d)
+[-] pred: org. junit. Assert. assertNotNull ( d )
+************************************
+[+] input: test37() { List<SolarTime> solarTimes = new EightChar("甲辰", "丙寅", "己亥", "戊辰").getSolarTimes(1800, 2024); List<String> actual = new ArrayList<>(); for (SolarTime solarTime : solarTimes) { actual.add(solarTime.toString()); }  List<String> expected = new ArrayList<>(); expected.add("1964年2月20日 08:00:00"); expected.add("2024年2月5日 08:00:00"); Assert."<AssertPlaceHolder>"; }
+[*] target: assertEquals(expected, actual)
+[-] pred: org. junit. Assert. assertEquals ( expected, actual )
+************************************
+[+] input: testMultiplication() { Controlador controlador = new Controlador(); int result = controlador.multiplication(2, 3); "<AssertPlaceHolder>"; }
+[*] target: assertEquals(6, result)
+[-] pred: org. junit. Assert. assertEquals ( 6, result )
+************************************
+[+] input: serviceDiscovery() { ServiceMetaInfo serviceMetaInfo = new ServiceMetaInfo(); serviceMetaInfo.setServiceName("myService"); serviceMetaInfo.setServiceVersion("1.0"); String serviceKey = serviceMetaInfo.getServiceKey(); List<ServiceMetaInfo> serviceMetaInfoList = registry.serviceDiscovery(serviceKey); Assert."<AssertPlaceHolder>"; }
+[*] target: assertNotNull(serviceMetaInfoList)
+[-] pred: org. junit. Assert. assertNotNull ( serviceMetaInfoList )
+************************************
+[+] input: test34() { List<SolarTime> solarTimes = new EightChar("庚子", "戊子", "己卯", "庚午").getSolarTimes(1900, 2024); List<String> actual = new ArrayList<>(); for (SolarTime solarTime : solarTimes) { actual.add(solarTime.toString()); }  List<String> expected = new ArrayList<>(); expected.add("1901年1月1日 12:00:00"); expected.add("1960年12月17日 12:00:00"); Assert."<AssertPlaceHolder>"; }
+[*] target: assertEquals(expected, actual)
+[-] pred: org. junit. Assert. assertEquals ( expected, actual )
+************************************
+[+] input: testInsertAndRemove() { // Crear un comparador de prioridades Comparator<Integer> comparator = new ComparadorNumeros<>();  // Crear un heap utilizando el árbol binario iterativo HeapUsingIterativeBinaryTree<Integer, String> heap = new HeapUsingIterativeBinaryTree<>(comparator);  // Prueba Insert y remove con elementos heap.Insert(10, "A"); heap.Insert(20, "B"); heap.Insert(15, "C");  assertEquals(3, heap.count());  assertEquals("A", heap.remove()); assertEquals(2, heap.count());  assertEquals("C", heap.remove()); assertEquals(1, heap.count());  assertEquals("B", heap.remove()); "<AssertPlaceHolder>"; }
+[*] target: assertEquals(0, heap.count())
+[-] pred: org. junit. Assert. assertEquals ( 0, heap. count() )
+************************************
+[+] input: test32() { List<SolarTime> solarTimes = new EightChar("壬寅", "庚戌", "己未", "乙亥").getSolarTimes(1900, 2024); List<String> actual = new ArrayList<>(); for (SolarTime solarTime : solarTimes) { actual.add(solarTime.toString()); }  List<String> expected = new ArrayList<>(); expected.add("2022年11月2日 22:00:00"); Assert."<AssertPlaceHolder>"; }
+[*] target: assertEquals(expected, actual)
+[-] pred: org. junit. Assert. assertEquals ( expected, actual )
+************************************
+[+] input: indexZero() { nonEmptyQueue.setIndex(0); assertEquals(0, nonEmptyQueue.getIndex());  doReturn(true).when(emptyQueue).isComplete(); emptyQueue.setIndex(0); assertEquals(0, emptyQueue.getIndex());  doReturn(false).when(emptyQueue).isComplete(); emptyQueue.setIndex(0); "<AssertPlaceHolder>"; }
+[*] target: assertEquals(0, emptyQueue.getIndex())
+[-] pred: org. junit. Assert. assertEquals ( 0, emptyQueue. getIndex() )
+************************************
+[+] input: test6() { SolarFestival f = SolarDay.fromYmd(1939, 5, 4).getFestival(); Assert."<AssertPlaceHolder>"; }
+[*] target: assertNull(f)
+[-] pred: org. junit. Assert. assertNull ( f )
+************************************
+[+] input: test33() { List<SolarTime> solarTimes = new EightChar("己卯", "辛未", "甲戌", "壬申").getSolarTimes(1900, 2024); List<String> actual = new ArrayList<>(); for (SolarTime solarTime : solarTimes) { actual.add(solarTime.toString()); }  List<String> expected = new ArrayList<>(); expected.add("1939年8月5日 16:00:00"); expected.add("1999年7月21日 16:00:00"); Assert."<AssertPlaceHolder>"; }
+[*] target: assertEquals(expected, actual)
+[-] pred: org. junit. Assert. assertEquals ( expected, actual )
+************************************
+[+] input: test38() { List<SolarTime> solarTimes = new EightChar("己亥", "丁丑", "壬寅", "戊申").getSolarTimes(1900, 2024); List<String> actual = new ArrayList<>(); for (SolarTime solarTime : solarTimes) { actual.add(solarTime.toString()); }  List<String> expected = new ArrayList<>(); expected.add("1900年1月29日 16:00:00"); expected.add("1960年1月15日 16:00:00"); Assert."<AssertPlaceHolder>"; }
+[*] target: assertEquals(expected, actual)
+[-] pred: org. junit. Assert. assertEquals ( expected, actual )
+************************************
+[+] input: test31() { List<SolarTime> solarTimes = new EightChar("丙辰", "丁酉", "丙子", "甲午").getSolarTimes(1900, 2024); List<String> actual = new ArrayList<>(); for (SolarTime solarTime : solarTimes) { actual.add(solarTime.toString()); }  List<String> expected = new ArrayList<>(); expected.add("1916年10月6日 12:00:00"); expected.add("1976年9月21日 12:00:00"); Assert."<AssertPlaceHolder>"; }
+[*] target: assertEquals(expected, actual)
+[-] pred: org. junit. Assert. assertEquals ( expected, actual )
+************************************
+[+] input: test41() { List<SolarTime> solarTimes = new EightChar("乙未", "己卯", "丁丑", "甲辰").getSolarTimes(1900, 2024); List<String> actual = new ArrayList<>(); for (SolarTime solarTime : solarTimes) { actual.add(solarTime.toString()); }  List<String> expected = new ArrayList<>(); expected.add("1955年3月17日 08:00:00"); Assert."<AssertPlaceHolder>"; }
+[*] target: assertEquals(expected, actual)
+[-] pred: org. junit. Assert. assertEquals ( expected, actual )
+************************************
+[+] input: test40() { List<SolarTime> solarTimes = new EightChar("丁丑", "癸卯", "癸丑", "辛酉").getSolarTimes(1900, 2024); List<String> actual = new ArrayList<>(); for (SolarTime solarTime : solarTimes) { actual.add(solarTime.toString()); }  List<String> expected = new ArrayList<>(); expected.add("1937年3月27日 18:00:00"); expected.add("1997年3月12日 18:00:00"); Assert."<AssertPlaceHolder>"; }
+[*] target: assertEquals(expected, actual)
+[-] pred: org. junit. Assert. assertEquals ( expected, actual )
+************************************
+[+] input: test35() { List<SolarTime> solarTimes = new EightChar("庚子", "癸未", "乙丑", "丁亥").getSolarTimes(1900, 2024); List<String> actual = new ArrayList<>(); for (SolarTime solarTime : solarTimes) { actual.add(solarTime.toString()); }  List<String> expected = new ArrayList<>(); expected.add("1960年8月5日 22:00:00"); expected.add("2020年7月21日 22:00:00"); Assert."<AssertPlaceHolder>"; }
+[*] target: assertEquals(expected, actual)
+[-] pred: org. junit. Assert. assertEquals ( expected, actual )
+************************************
+[+] input: test1() { LegalHoliday d = LegalHoliday.fromYmd(2010, 1, 1); Assert."<AssertPlaceHolder>"; }
+[*] target: assertNotNull(d)
+[-] pred: org. junit. Assert. assertNotNull ( d )
+************************************
