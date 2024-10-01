@@ -121,9 +121,9 @@ def calcola_proporzione(file_filtrato, file_confronto, file_output_filtrato):
 
 def main():
     # Specifica il percorso dei file direttamente
-    file_filtrato = 'T5-Extension/Results/Predictions/AG-Task/with-pretraining-new/Raw/perfect2022_JUnit5_@10.txt'
-    file_confronto = 'T5-Extension/Results/Predictions/AG-Task/with-pretraining-new/RawWithNoRepetitions/NOREP_prediction_2022_JUnit5_@10.txt'
-    file_output_filtrato = 'T5-Extension/Results/Predictions/AG-Task/with-pretraining-new/RawWithNoRepetitions/NOREP_perfect2022_JUnit5_@10.txt'  # File dove verrà salvato il filtrato
+    file_filtrato = 'T5-Extension/Results/Predictions/AG-Task/with-pretraining-new/Raw/perfect2023_JUnit4_@1.txt'
+    file_confronto = 'T5-Extension/Results/Predictions/AG-Task/with-pretraining-new/RawWithNoRepetitions/NOREP_prediction_2023_JUnit4_@1.txt'
+    file_output_filtrato = 'T5-Extension/Results/Predictions/AG-Task/with-pretraining-new/RawWithNoRepetitions/NOREP_perfect2023_JUnit4_@1.txt'  # File dove verrà salvato il filtrato
 
     # Esegui la funzione di calcolo della proporzione
     calcola_proporzione(file_filtrato, file_confronto, file_output_filtrato)
