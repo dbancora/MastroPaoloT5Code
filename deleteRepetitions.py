@@ -61,8 +61,8 @@ def elimina_ripetizioni(file_path, output_path):
 
 def main():
     # Specifica i percorsi del file di input e di output
-    input_file = 'T5-Extension/Results/Predictions/AG-Task/with-pretraining-new/Raw/prediction_2020_JUnit5_@10.txt'
-    output_file = 'T5-Extension/Results/Predictions/AG-Task/with-pretraining-new/RawWithNoRepetitions/NOREP_prediction_2020_JUnit5_@10.txt'
+    input_file = 'T5-Extension/Results/Predictions/AG-Task/with-pretraining-new/Raw/prediction_2021_JUnit5_@10.txt'
+    output_file = 'T5-Extension/Results/Predictions/AG-Task/with-pretraining-new/RawWithNoRepetitions/NOREP_prediction_2021_JUnit5_@10.txt'
 
     # Esegui la funzione di filtraggio
     elimina_ripetizioni(input_file, output_file)
