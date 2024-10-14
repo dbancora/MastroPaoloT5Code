@@ -160,7 +160,7 @@ Nelle seguenti tabelle sono riportati i risultati ottenuti dal modello T5 nel co
 | 2020 | 19126                | 4              | 10        | 12         | 6,624                | 1267                                    |
 | 2020 | 22403                | 5              | 1         | 12         | 2,701                | 605                                     |
 | 2020 | 22403                | 5              | 5         | 12         | 4,709                | 1055                                    |
-| 2020 | 22403                | 5              | 10        | 12         | 5,352                | 1206                                    |
+| 2020 | 22403                | 5              | 10        | 12         | 5,352                | 1199                                    |
 
 ## Repository create nell'anno 2021 senza ripetizioni
 | ANNO | NUMERO METODI TOTALI | VERSIONE JUNIT | BEAM SIZE | BATCH SIZE | % PERFECT PREDICTION | NUMERO DI PLACEHOLDER CORRETTI PREDETTI |
