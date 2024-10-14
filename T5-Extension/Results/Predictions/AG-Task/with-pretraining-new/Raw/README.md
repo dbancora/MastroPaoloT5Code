@@ -1,6 +1,6 @@
 # Risultati ottenuti
 Nelle seguenti tabelle sono riportati i risultati ottenuti dal modello T5 nel compito di Assert generation (AG) con l'utilizzo di codice "grezzo". 
-
+<!--
 ## Repository create nell'anno 2020
 | ANNO | NUMERO METODI TOTALI | VERSIONE JUNIT | BEAM SIZE | BATCH SIZE | % PERFECT PREDICTION | NUMERO DI PLACEHOLDER CORRETTI PREDETTI   |
 |------|----------------------|----------------|-----------|------------|----------------------|-------------------------------------------|
@@ -51,7 +51,7 @@ Nelle seguenti tabelle sono riportati i risultati ottenuti dal modello T5 nel co
 | 2024 | 1201                 | 5              | 1         | 12         | 4,163                | 50                                      |
 | 2024 | 1201                 | 5              | 5         | 12         | 9,159                | 110                                     |
 | 2024 | 1201                 | 5              | 10        | 12         | 11,407               | 137                                     |
-<!--
+-->
 ## Repository create nell'anno 2020 con una sola asserzione
 | ANNO | NUMERO METODI TOTALI | VERSIONE JUNIT | BEAM SIZE | BATCH SIZE | % PERFECT PREDICTION | NUMERO DI PLACEHOLDER CORRETTI PREDETTI |
 |------|----------------------|----------------|-----------|------------|----------------------|-----------------------------------------|
@@ -202,4 +202,3 @@ Nelle seguenti tabelle sono riportati i risultati ottenuti dal modello T5 nel co
 | 2024 | 1161                 | 5              | 1         | 12         | 4,048                | 47                                      |
 | 2024 | 1161                 | 5              | 5         | 12         | 8,872                | 103                                     |
 | 2024 | 1161                 | 5              | 10        | 12         | 11,025               | 128                                     |
--->
