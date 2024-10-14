@@ -51,7 +51,7 @@ Nelle seguenti tabelle sono riportati i risultati ottenuti dal modello T5 nel co
 | 2024 | 1201                 | 5              | 1         | 12         | 4,163                | 50                                      |
 | 2024 | 1201                 | 5              | 5         | 12         | 9,159                | 110                                     |
 | 2024 | 1201                 | 5              | 10        | 12         | 11,407               | 137                                     |
--->
+
 ## Repository create nell'anno 2020 con una sola asserzione
 | ANNO | NUMERO METODI TOTALI | VERSIONE JUNIT | BEAM SIZE | BATCH SIZE | % PERFECT PREDICTION | NUMERO DI PLACEHOLDER CORRETTI PREDETTI |
 |------|----------------------|----------------|-----------|------------|----------------------|-----------------------------------------|
@@ -101,7 +101,7 @@ Nelle seguenti tabelle sono riportati i risultati ottenuti dal modello T5 nel co
 | 2024 | 454                  | 5              | 1         | 12         | 7,930                | 36                                      |
 | 2024 | 454                  | 5              | 5         | 12         | 16,960               | 77                                      |
 | 2024 | 454                  | 5              | 10        | 12         | 20,264               | 92                                      |
-
+-->
 ## Repository create nell'anno 2020 con una sola asserzione senza ripetizioni
 | ANNO | NUMERO METODI TOTALI | VERSIONE JUNIT | BEAM SIZE | BATCH SIZE | % PERFECT PREDICTION | NUMERO DI PLACEHOLDER CORRETTI PREDETTI |
 |------|----------------------|----------------|-----------|------------|----------------------|-----------------------------------------|
