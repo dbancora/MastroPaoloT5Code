@@ -105,24 +105,25 @@ def calcola_proporzione(file_filtrato, file_confronto, file_output_filtrato):
     print(f"Totale coppie trovate nel file filtrato: {totale_filtrato}")
     print(f"Numero di coppie duplicate eliminate: {duplicate_filtrato}")
     print(f"Numero di coppie uniche nel file filtrato: {len(coppie_filtrate)}")
+    print(f"NUMERO DI PLACEHOLDER CORRETTI: {num_coppie_comuni}")
     print(f"Totale blocchi nel file di confronto: {totale_confronto}")
     print(f"Proporzione di blocchi del file di confronto presenti nel file filtrato: {proporzione:.3f}%")
 
     # Stampa le coppie duplicate
     if coppie_duplicate_set:
         print("\nCoppie duplicate trovate:")
-        for input_value, target_value, pred_value in coppie_duplicate_set:
-            print(f"[+] input: {input_value}")
-            print(f"[*] target: {target_value}")
-            print(f"[-] pred: {pred_value}")
-            print("************************************\n************************************")
+        #for input_value, target_value, pred_value in coppie_duplicate_set:
+            #print(f"[+] input: {input_value}")
+            #print(f"[*] target: {target_value}")
+            #print(f"[-] pred: {pred_value}")
+            #print("************************************\n************************************")
 
 
 def main():
     # Specifica il percorso dei file direttamente
-    file_filtrato = 'T5-Extension/Results/Predictions/AG-Task/with-pretraining-new/Raw/perfect2021_JUnit5_@10.txt'
-    file_confronto = 'T5-Extension/Results/Predictions/AG-Task/with-pretraining-new/RawWithNoRepetitions/NOREP_prediction_2021_JUnit5_@10.txt'
-    file_output_filtrato = 'T5-Extension/Results/Predictions/AG-Task/with-pretraining-new/RawWithNoRepetitions/NOREP_perfect2021_JUnit5_@10.txt'  # File dove verrà salvato il filtrato
+    file_filtrato = 'T5-Extension/Results/Predictions/AG-Task/with-pretraining-new/Raw/perfect2020_JUnit5_@5.txt'
+    file_confronto = 'T5-Extension/Results/Predictions/AG-Task/with-pretraining-new/RawWithNoRepetitions/NOREP_prediction_2020_JUnit5_@5.txt'
+    file_output_filtrato = 'T5-Extension/Results/Predictions/AG-Task/with-pretraining-new/RawWithNoRepetitions/NOREP_perfect2020_JUnit5_@5.txt'  # File dove verrà salvato il filtrato
 
     # Esegui la funzione di calcolo della proporzione
     calcola_proporzione(file_filtrato, file_confronto, file_output_filtrato)

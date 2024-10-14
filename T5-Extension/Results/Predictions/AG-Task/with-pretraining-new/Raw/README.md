@@ -153,14 +153,14 @@ Nelle seguenti tabelle sono riportati i risultati ottenuti dal modello T5 nel co
 | 2024 | 431                  | 5              | 10        | 12         | 19,258               | 83                                      |
 
 ## Repository create nell'anno 2020 senza ripetizioni
-| ANNO | NUMERO METODI TOTALI | VERSIONE JUNIT | BEAM SIZE | BATCH SIZE | % PERFECT PREDICTION | NUMERO DI PLACEHOLDER CORRETTI PREDETTI   |
-|------|----------------------|----------------|-----------|------------|----------------------|-------------------------------------------|
-| 2020 | 19126                | 4              | 1         | 12         | 2,975                | 570                                       |
-| 2020 | 19126                | 4              | 5         | 12         | 5,652                | 1082                                      |
-| 2020 | 19126                | 4              | 10        | 12         | 6,624                | 1268                                      |
-| 2020 | 22403                | 5              | 1         | 12         | 2,701                | 605                                       |
-| 2020 | 22403                | 5              | 5         | 12         | 4,709                | 1061                                      |
-| 2020 | 22403                | 5              | 10        | 12         | 5,352                | 1206                                      |
+| ANNO | NUMERO METODI TOTALI | VERSIONE JUNIT | BEAM SIZE | BATCH SIZE | % PERFECT PREDICTION | NUMERO DI PLACEHOLDER CORRETTI PREDETTI |
+|------|----------------------|----------------|-----------|------------|----------------------|-----------------------------------------|
+| 2020 | 19126                | 4              | 1         | 12         | 2,975                | 569                                     |
+| 2020 | 19126                | 4              | 5         | 12         | 5,652                | 1081                                    |
+| 2020 | 19126                | 4              | 10        | 12         | 6,624                | 1267                                    |
+| 2020 | 22403                | 5              | 1         | 12         | 2,701                | 605                                     |
+| 2020 | 22403                | 5              | 5         | 12         | 4,709                | 1055                                    |
+| 2020 | 22403                | 5              | 10        | 12         | 5,352                | 1206                                    |
 
 ## Repository create nell'anno 2021 senza ripetizioni
 | ANNO | NUMERO METODI TOTALI | VERSIONE JUNIT | BEAM SIZE | BATCH SIZE | % PERFECT PREDICTION | NUMERO DI PLACEHOLDER CORRETTI PREDETTI |
@@ -175,11 +175,11 @@ Nelle seguenti tabelle sono riportati i risultati ottenuti dal modello T5 nel co
 ## Repository create nell'anno 2022 senza ripetizioni
 | ANNO | NUMERO METODI TOTALI | VERSIONE JUNIT | BEAM SIZE | BATCH SIZE | % PERFECT PREDICTION | NUMERO DI PLACEHOLDER CORRETTI PREDETTI |
 |------|----------------------|----------------|-----------|------------|----------------------|-----------------------------------------|
-| 2022 | 16623                | 4              | 1         | 12         | 2,178                | 362                                     |
-| 2022 | 16623                | 4              | 5         | 12         | 4,103                | 682                                     |
-| 2022 | 16623                | 4              | 10        | 12         | 4,698                | 781                                     |
-| 2022 | 14095                | 5              | 1         | 12         | 3,760                | 530                                     |
-| 2022 | 14095                | 5              | 5         | 12         | 6,690                | 943                                     |
+| 2022 | 16623                | 4              | 1         | 12         | 2,172                | 365                                     |
+| 2022 | 16623                | 4              | 5         | 12         | 4,103                | 691                                     |
+| 2022 | 16623                | 4              | 10        | 12         | 4,680                | 789                                     |
+| 2022 | 14095                | 5              | 1         | 12         | 3,760                | 541                                     |
+| 2022 | 14095                | 5              | 5         | 12         | 6,690                | 957                                     |
 | 2022 | 14095                | 5              | 10        | 12         | 7,698                | 1085                                    |
 
 
