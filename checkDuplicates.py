@@ -43,7 +43,7 @@ def find_duplicates(entries):
 
 
 def main():
-    filename = 'T5-Extension/Results/Predictions/AG-Task/with-pretraining-new/RawWithNoRepetitions/NOREP_prediction_2020_JUnit4_@10.txt'  # Sostituisci con il percorso del tuo file
+    filename = 'T5-Extension/Results/Predictions/AG-Task/with-pretraining-new/Raw/prediction_2021_JUnit4_@10.txt'  # Sostituisci con il percorso del tuo file
 
     # Parsea le voci dal file
     entries = parse_entries(filename)
