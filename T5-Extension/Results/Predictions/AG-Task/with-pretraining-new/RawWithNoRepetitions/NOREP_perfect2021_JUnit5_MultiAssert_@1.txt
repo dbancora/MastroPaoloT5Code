@@ -1,0 +1,690 @@
+************************************
+************************************
+[+] input: shouldBuildElementVariable() { Message message = MessageFactory.elementVariable(random(), random()); "<AssertPlaceHolder>"; assertNotNull(message.getMessage()); }
+elementVariable(String attributeLocalName, String elementLocalName) { return INSTANCE.composeMessage( "element-variable", ContextBuilder.builder() .context(supportedAttributePrefix(attributeLocalName, elementLocalName)) .build()); }
+[*] target: assertNotNull(message)
+[-] pred: org. junit. Assert. assertNotNull ( message )
+************************************
+************************************
+[+] input: byDefault() {  final String[] args = { };  Options options = OptionsUtil.parse(Options.class, args);  "<AssertPlaceHolder>"; assertEquals(options.getWindowType(), WindowType.TUMBLING); assertEquals(options.getName(), "foo"); }
+parse(final Class<T> optionsClass, final String[] args) {  final T options = create(optionsClass);  JCommander jCommander = JCommander.newBuilder() .addObject(options) .build();  //easiest way to set configuration through docker. //similar to how Confluent does this in their Docker images. OptionsUtil.populateByEnvironment(options);  jCommander.parse(args);  if (options.isHelp()) { jCommander.usage(); return null; }  return options; }
+[*] target: assertNotNull(options)
+[-] pred: org. junit. Assert. assertNotNull ( options )
+************************************
+************************************
+[+] input: shouldBuildInputOutput() { Message message = MessageFactory.inputOutput(); "<AssertPlaceHolder>"; assertNotNull(message.getMessage()); }
+inputOutput() { return INSTANCE.emptyMessage(); }
+[*] target: assertNotNull(message)
+[-] pred: org. junit. Assert. assertNotNull ( message )
+************************************
+************************************
+[+] input: shouldBuildScriptFormatMissing() { Message message = MessageFactory.scriptFormatMissing(); "<AssertPlaceHolder>"; assertNotNull(message.getMessage()); }
+scriptFormatMissing() { return INSTANCE.staticMessage("script-format-missing"); }
+[*] target: assertNotNull(message)
+[-] pred: org. junit. Assert. assertNotNull ( message )
+************************************
+************************************
+[+] input: InvocationTargetException { MockMethods obj = new MockMethods(); Method method = ReflectionUtils.getMethod(obj.getClass(), "returnArg", String.class);  "<AssertPlaceHolder>";  String arg = "Hello World"; assertEquals(arg, method.invoke(obj, arg)); }
+getMethod(@Nonnull Class<?> c, @Nonnull String method, Class<?>... paramTypes) { Class<?>[] expectParamTypes = toPrimitiveTypeArray(paramTypes);  for (Method m : c.getMethods()) { Class<?>[] methodParameters = toPrimitiveTypeArray(m.getParameterTypes());  if ((m.getName().equals(method)) && (equalsTypeArray(methodParameters, expectParamTypes))) { return m; } }  return null; }
+[*] target: assertNotNull(method)
+[-] pred: org. junit. Assert. assertNotNull ( method )
+************************************
+************************************
+[+] input: testGenNotifyBodyForCustom() {  Locale locale = new Locale("en", "US");  ShareInfoData sid = new ShareInfoData(); sid.setGranteeDisplayName("Demo User Three"); sid.setGranteeId("46031e4c-deb4-4724-b5bb-8f854d0c518a"); sid.setGranteeName("Demo User Three"); sid.setGranteeType(ACL.GRANTEE_USER);  sid.setPath("/Calendar/Cal1"); sid.setFolderDefaultView(MailItem.Type.APPOINTMENT); sid.setItemUuid("9badf685-3420-458b-9ce5-826b0bec638f"); sid.setItemId(257);  sid.setOwnerAcctId("bbf152ca-e7cd-477e-9f72-70fef715c5f9"); sid.setOwnerAcctEmail("test@zimbra.com"); sid.setOwnerAcctDisplayName("Demo User Two");  try {  sid.setRights(ACL.stringToRights("rwdxap")); MimeMultipart mmp = ShareInfo.NotificationSender.genNotifBody(sid, locale, null, null); "<AssertPlaceHolder>"; String body = (String) mmp.getBodyPart(0).getDataHandler() .getContent(); assertTrue(body.indexOf("Role: Custom") != -1);  } catch (ServiceException | MessagingException | IOException e) { fail("Exception should not be thrown: " + e.getMessage()); } }
+genNotifBody( ShareInfoData sid, Locale locale, Action action, String externalGroupMember) throws MessagingException, ServiceException {  // Body MimeMultipart mmp = new ZMimeMultipart("alternative");  String extUserShareAcceptUrl = null; String extUserLoginUrl = null; String externalGranteeName = null; if (sid.getGranteeTypeCode() == ACL.GRANTEE_GUEST) { externalGranteeName = sid.getGranteeName(); } else if (sid.getGranteeTypeCode() == ACL.GRANTEE_GROUP && externalGroupMember != null) { externalGranteeName = externalGroupMember; } // this mail will go to external email address boolean goesToExternalAddr = (externalGranteeName != null); if (action == null && goesToExternalAddr) { Account owner = Provisioning.getInstance().getAccountById(sid.getOwnerAcctId()); extUserShareAcceptUrl = AccountUtil.getShareAcceptURL(owner, sid.getItemId(), externalGranteeName); extUserLoginUrl = AccountUtil.getExtUserLoginURL(owner); }  // TEXT part (add me first!) String mimePartText; if (action == Action.revoke) { mimePartText = genRevokePart(sid, locale, false); } else if (action == Action.expire) { mimePartText = genExpirePart(sid, locale, false); } else { mimePartText = genPart( sid, action == Action.edit, extUserShareAcceptUrl, extUserLoginUrl, locale, null, false); } MimeBodyPart textPart = new ZMimeBodyPart(); textPart.setText(mimePartText, MimeConstants.P_CHARSET_UTF8); mmp.addBodyPart(textPart);  // HTML part if (action == Action.revoke) { mimePartText = genRevokePart(sid, locale, true); } else if (action == Action.expire) { mimePartText = genExpirePart(sid, locale, true); } else { mimePartText = genPart( sid, action == Action.edit, extUserShareAcceptUrl, extUserLoginUrl, locale, null, true); } MimeBodyPart htmlPart = new ZMimeBodyPart(); htmlPart.setDataHandler(new DataHandler(new HtmlPartDataSource(mimePartText))); mmp.addBodyPart(htmlPart);  // XML part if (!goesToExternalAddr) { MimeBodyPart xmlPart = new ZMimeBodyPart(); xmlPart.setDataHandler( new DataHandler(new XmlPartDataSource(genXmlPart(sid, null, action)))); mmp.addBodyPart(xmlPart); }  return mmp; }
+[*] target: assertNotNull(mmp)
+[-] pred: org. junit. Assert. assertNotNull ( mmp )
+************************************
+************************************
+[+] input: testGenNotifyBody() {  Locale locale = new Locale("en", "US");  ShareInfoData sid = new ShareInfoData(); sid.setGranteeDisplayName("Demo User Three"); sid.setGranteeId("46031e4c-deb4-4724-b5bb-8f854d0c518a"); sid.setGranteeName("Demo User Three"); sid.setGranteeType(ACL.GRANTEE_USER);  sid.setPath("/Calendar/Cal1"); sid.setFolderDefaultView(MailItem.Type.APPOINTMENT); sid.setItemUuid("9badf685-3420-458b-9ce5-826b0bec638f"); sid.setItemId(257);  sid.setOwnerAcctId("bbf152ca-e7cd-477e-9f72-70fef715c5f9"); sid.setOwnerAcctEmail("test@zimbra.com"); sid.setOwnerAcctDisplayName("Demo User Two");  try {  sid.setRights(ACL.stringToRights("rwidxap")); MimeMultipart mmp = ShareInfo.NotificationSender.genNotifBody(sid, locale, null, null); "<AssertPlaceHolder>"; String body = (String) mmp.getBodyPart(0).getDataHandler() .getContent(); assertTrue(body.indexOf("Role: Admin") != -1);  } catch (ServiceException | MessagingException | IOException e) { fail("Exception should not be thrown: " + e.getMessage()); } }
+genNotifBody( ShareInfoData sid, Locale locale, Action action, String externalGroupMember) throws MessagingException, ServiceException {  // Body MimeMultipart mmp = new ZMimeMultipart("alternative");  String extUserShareAcceptUrl = null; String extUserLoginUrl = null; String externalGranteeName = null; if (sid.getGranteeTypeCode() == ACL.GRANTEE_GUEST) { externalGranteeName = sid.getGranteeName(); } else if (sid.getGranteeTypeCode() == ACL.GRANTEE_GROUP && externalGroupMember != null) { externalGranteeName = externalGroupMember; } // this mail will go to external email address boolean goesToExternalAddr = (externalGranteeName != null); if (action == null && goesToExternalAddr) { Account owner = Provisioning.getInstance().getAccountById(sid.getOwnerAcctId()); extUserShareAcceptUrl = AccountUtil.getShareAcceptURL(owner, sid.getItemId(), externalGranteeName); extUserLoginUrl = AccountUtil.getExtUserLoginURL(owner); }  // TEXT part (add me first!) String mimePartText; if (action == Action.revoke) { mimePartText = genRevokePart(sid, locale, false); } else if (action == Action.expire) { mimePartText = genExpirePart(sid, locale, false); } else { mimePartText = genPart( sid, action == Action.edit, extUserShareAcceptUrl, extUserLoginUrl, locale, null, false); } MimeBodyPart textPart = new ZMimeBodyPart(); textPart.setText(mimePartText, MimeConstants.P_CHARSET_UTF8); mmp.addBodyPart(textPart);  // HTML part if (action == Action.revoke) { mimePartText = genRevokePart(sid, locale, true); } else if (action == Action.expire) { mimePartText = genExpirePart(sid, locale, true); } else { mimePartText = genPart( sid, action == Action.edit, extUserShareAcceptUrl, extUserLoginUrl, locale, null, true); } MimeBodyPart htmlPart = new ZMimeBodyPart(); htmlPart.setDataHandler(new DataHandler(new HtmlPartDataSource(mimePartText))); mmp.addBodyPart(htmlPart);  // XML part if (!goesToExternalAddr) { MimeBodyPart xmlPart = new ZMimeBodyPart(); xmlPart.setDataHandler( new DataHandler(new XmlPartDataSource(genXmlPart(sid, null, action)))); mmp.addBodyPart(xmlPart); }  return mmp; }
+[*] target: assertNotNull(mmp)
+[-] pred: org. junit. Assert. assertNotNull ( mmp )
+************************************
+************************************
+[+] input: shouldBuildEscalationCode() { Message message = MessageFactory.escalationCode("old", "new"); "<AssertPlaceHolder>"; assertNotNull(message.getMessage()); assertNotNull(message.getSeverity()); assertThat(message.getMessage()) .isEqualTo("Escalation code is transformed from 'old' to 'new'. Please review."); }
+escalationCode(String oldCode, String newCode) { return INSTANCE.composeMessage( "escalation-code", ContextBuilder.builder().entry("oldCode", oldCode).entry("newCode", newCode).build()); }
+[*] target: assertNotNull(message)
+[-] pred: org. junit. Assert. assertNotNull ( message )
+************************************
+************************************
+[+] input: idleBeat() { ExecutorBiz executorBiz = new ExecutorBizClient(addressUrl, accessToken);  final int jobId = 0;  // Act final ReturnT<String> retval = executorBiz.idleBeat(new IdleBeatParam(jobId));  // Assert result Assertions."<AssertPlaceHolder>"; Assertions.assertNull(((ReturnT<String>) retval).getContent()); Assertions.assertEquals(500, retval.getCode()); Assertions.assertEquals("job thread is running or has trigger queue.", retval.getMsg()); }
+idleBeat(IdleBeatParam idleBeatParam);
+[*] target: assertNotNull(retval)
+[-] pred: org. junit. Assert. assertNotNull ( retval )
+************************************
+************************************
+[+] input: testConvertShouldSetRecognisedCurveNameAndParametersWhenCalledWithValidEcPrivateKey() { //given final EcPrivateKeyToJsonWebKeyImportRequestConverter underTest = new EcPrivateKeyToJsonWebKeyImportRequestConverter(); final KeyPair keyPair = KeyGenUtil.generateEc(KeyCurveName.P_256); final BCECPrivateKey privateKey = (BCECPrivateKey) keyPair.getPrivate();  //when final JsonWebKeyImportRequest actual = underTest.convert(privateKey);  //then Assertions."<AssertPlaceHolder>"; Assertions.assertEquals(KeyType.EC, actual.getKeyType()); Assertions.assertEquals(KeyCurveName.P_256, actual.getCurveName()); Assertions.assertNotNull(actual.getD()); Assertions.assertNotNull(actual.getX()); Assertions.assertNotNull(actual.getY()); }
+convert(final @NonNull BCECPrivateKey source) { final JsonWebKeyImportRequest importRequest = new JsonWebKeyImportRequest(); importRequest.setKeyType(KeyType.EC); final String sourceAlgorithm = ((ECNamedCurveParameterSpec) source.getParameters()).getName(); importRequest.setCurveName(KeyCurveName.forAlg(sourceAlgorithm)); importRequest.setD(source.getD().toByteArray()); final ECPoint point = source.getParameters().getG().multiply(source.getD()).normalize(); importRequest.setX(point.getAffineXCoord().getEncoded()); importRequest.setY(point.getAffineYCoord().getEncoded()); return importRequest; }
+[*] target: assertNotNull(actual)
+[-] pred: org. junit. Assert. assertNotNull ( actual )
+************************************
+************************************
+[+] input: testGetProcessName4() { List<String> names = NextflowScript .getProcesseNames("\n   process process1\n{some content }\n   process process2{some content }""); "<AssertPlaceHolder>"; assertEquals("process1", names.get(0)); assertEquals("process2", names.get(1)); }
+public static List<String> getProcesseNames(String content) {  List<String> names = new Vector<String>();  String patternProcessName = "(?i)^\\s*process\\s*(.+)(\\s*\\{|\\{)";  Pattern r = Pattern.compile(patternProcessName, Pattern.MULTILINE);  Matcher m = r.matcher(content); while (m.find()) { names.add(m.group(1).trim()); }  return names; }  public List<String> getFunctions() { return functions; }  public static List<String> getFunctionNames(String content) {  List<String> names = new Vector<String>();  String patternFunctionName = "(?i)^\\s*def\\s*(.+)(\\s*\\(|\\()";  Pattern r = Pattern.compile(patternFunctionName, Pattern.MULTILINE);  Matcher m = r.matcher(content); while (m.find()) { names.add(m.group(1).trim()); }  return names; }  public List<String> getWorkflows() { return workflows; }  public static List<String> getWorkflowNames(String content) {  List<String> names = new Vector<String>();  String patternProcessName = "(?i)^\\s*workflow\\s*(.+)(\\s*\\{|\\{)";  Pattern r = Pattern.compile(patternProcessName, Pattern.MULTILINE);  Matcher m = r.matcher(content); while (m.find()) { if (!m.group(1).trim().isEmpty()) { names.add(m.group(1).trim()); } }  return names; }  public Set<String> getDependencies() { return dependencies; }  @Override public MetaFileType getType() { return MetaFileType.SOURCE_FILE; }  public static Set<String> getDependencies(File file, String content) {  Set<String> dependencies = new HashSet<String>();  String regex = "(?i)include\\s*\\{\\s*([A-Z_1-9]+(?:\\s+as\\s+[A-Z_]+)?)\\s*\\}\\s*from\\s*['"](.+?)['"]";  Pattern pattern = Pattern.compile(regex,  Pattern.MULTILINE); Matcher matcher = pattern.matcher(content); while (matcher.find()) { String dependency = matcher.group(2).trim(); if (dependency.startsWith("/") || dependency.startsWith("plugin/")) { continue; }  Path path = resolve(file, dependency); if (path.toFile().isDirectory()) { path = resolve(file, dependency + "/main.nf"); }  if (!path.toFile().exists()){ path = resolve(file, dependency + ".nf"); }  if (!path.toFile().exists()){ log.warn("Module " + file.getAbsolutePath() + ": Dependency '" + path.toAbsolutePath() + "' not found." ); continue; } dependencies.add(path.normalize().toFile().getAbsolutePath()); }  return dependencies;  }  @Override public TargetType getTarget() { return TargetType.UNDEFINED; }  protected static Path resolve(File file, String dependency) { if (dependency.startsWith("./") || dependency.startsWith("../")) { return Paths.get(file.getParentFile().getAbsolutePath()).resolve(dependency); } else { return Paths.get(dependency); } }  public static boolean accepts(Path path) { return path.getFileName().toString().endsWith(".nf"); }  }
+[*] target: assertEquals(2, names.size())
+[-] pred: org. junit. Assert. assertEquals ( 2, names. size ( ) )
+************************************
+************************************
+[+] input: test_objectFileName_default_fileExtension() { final String namePattern = "events-%{yyyy-MM-dd'T'hh-mm-ss}";  when(s3SinkConfig.getObjectKeyOptions().getNamePattern()) .thenReturn(namePattern); when(event.formatString(namePattern, expressionEvaluator, REPLACEMENT_FOR_NON_EXISTENT_KEYS)).thenReturn(namePattern); String objectFileName = ObjectKey.objectFileName(s3SinkConfig, null, event, expressionEvaluator); Assertions."<AssertPlaceHolder>"; Assertions.assertTrue(objectFileName.contains(".json")); }
+objectFileName(final S3SinkConfig s3SinkConfig, final String codecExtension, final Event event, final ExpressionEvaluator expressionEvaluator) { String configNamePattern = s3SinkConfig.getObjectKeyOptions().getNamePattern(); String configNamePatternExpressionResult = event.formatString(configNamePattern, expressionEvaluator, REPLACEMENT_FOR_NON_EXISTENT_KEYS); int extensionIndex = configNamePatternExpressionResult.lastIndexOf('.'); if (extensionIndex > 0) { return S3ObjectIndexUtility.getObjectNameWithDateTimeId(configNamePatternExpressionResult.substring(0, extensionIndex)) + "." + (codecExtension!=null? codecExtension :configNamePatternExpressionResult.substring(extensionIndex + 1)); } else { return S3ObjectIndexUtility.getObjectNameWithDateTimeId(configNamePatternExpressionResult) + "." + (codecExtension!=null? codecExtension : DEFAULT_CODEC_FILE_EXTENSION); } }
+[*] target: assertNotNull(objectFileName)
+[-] pred: org. junit. Assert. assertNotNull ( objectFileName )
+************************************
+************************************
+[+] input: testCreateOAuth2Client_success() { // 准备参数 OAuth2ClientSaveReqVO reqVO = randomPojo(OAuth2ClientSaveReqVO.class, o -> o.setLogo(randomString())) .setId(null); // 防止 id 被赋值  // 调用 Long oauth2ClientId = oauth2ClientService.createOAuth2Client(reqVO); // 断言 "<AssertPlaceHolder>"; // 校验记录的属性是否正确 OAuth2ClientDO oAuth2Client = oauth2ClientMapper.selectById(oauth2ClientId); assertPojoEquals(reqVO, oAuth2Client, "id"); }
+createOAuth2Client(OAuth2ClientSaveReqVO createReqVO) { validateClientIdExists(null, createReqVO.getClientId()); // 插入 OAuth2ClientDO client = BeanUtils.toBean(createReqVO, OAuth2ClientDO.class); oauth2ClientMapper.insert(client); return client.getId(); }
+[*] target: assertNotNull(oauth2ClientId)
+[-] pred: org. junit. Assert. assertNotNull ( oauth2ClientId )
+************************************
+************************************
+[+] input: testCreateMailLog() { // 准备参数 Long userId = randomLongId(); Integer userType = randomEle(UserTypeEnum.values()).getValue(); String toMail = randomEmail(); MailAccountDO account = randomPojo(MailAccountDO.class); MailTemplateDO template = randomPojo(MailTemplateDO.class); String templateContent = randomString(); Map<String, Object> templateParams = randomTemplateParams(); Boolean isSend = true; // mock 方法  // 调用 Long logId = mailLogService.createMailLog(userId, userType, toMail, account, template, templateContent, templateParams, isSend); // 断言 MailLogDO log = mailLogMapper.selectById(logId); "<AssertPlaceHolder>"; assertEquals(MailSendStatusEnum.INIT.getStatus(), log.getSendStatus()); assertEquals(userId, log.getUserId()); assertEquals(userType, log.getUserType()); assertEquals(toMail, log.getToMail()); assertEquals(account.getId(), log.getAccountId()); assertEquals(account.getMail(), log.getFromMail()); assertEquals(template.getId(), log.getTemplateId()); assertEquals(template.getCode(), log.getTemplateCode()); assertEquals(template.getNickname(), log.getTemplateNickname()); assertEquals(template.getTitle(), log.getTemplateTitle()); assertEquals(templateContent, log.getTemplateContent()); assertEquals(templateParams, log.getTemplateParams()); }
+createMailLog(Long userId, Integer userType, String toMail, MailAccountDO account, MailTemplateDO template, String templateContent, Map<String, Object> templateParams, Boolean isSend) { MailLogDO.MailLogDOBuilder logDOBuilder = MailLogDO.builder(); // 根据是否要发送，设置状态 logDOBuilder.sendStatus(Objects.equals(isSend, true) ? MailSendStatusEnum.INIT.getStatus() : MailSendStatusEnum.IGNORE.getStatus()) // 用户信息 .userId(userId).userType(userType).toMail(toMail) .accountId(account.getId()).fromMail(account.getMail()) // 模板相关字段 .templateId(template.getId()).templateCode(template.getCode()).templateNickname(template.getNickname()) .templateTitle(template.getTitle()).templateContent(templateContent).templateParams(templateParams);  // 插入数据库 MailLogDO logDO = logDOBuilder.build(); mailLogMapper.insert(logDO); return logDO.getId(); }
+[*] target: assertNotNull(log)
+[-] pred: org. junit. Assert. assertNotNull ( log )
+************************************
+************************************
+[+] input: shouldProperlyMapModelToDto() { //given LectureModel model = new LectureModel(); model.setId(11L); model.setName("lecture name");  //when LectureDTO dto = mapperUnderTest.toDTO(model);  //then Assertions."<AssertPlaceHolder>"; Assertions.assertEquals(model.getId(), dto.getId()); Assertions.assertEquals(model.getName(), dto.getName()); }
+toDTO(LectureModel model);
+[*] target: assertNotNull(dto)
+[-] pred: org. junit. Assert. assertNotNull ( dto )
+************************************
+************************************
+[+] input: testCreateDiscountActivity_success() { // 准备参数 DiscountActivityCreateReqVO reqVO = randomPojo(DiscountActivityCreateReqVO.class, o -> { // 用于触发进行中的状态 o.setStartTime(addTime(Duration.ofDays(1))).setEndTime(addTime(Duration.ofDays(2))); // 设置商品 o.setProducts(asList(new DiscountActivityBaseVO.Product().setSpuId(1L).setSkuId(2L) .setDiscountType(PromotionDiscountTypeEnum.PRICE.getType()).setDiscountPrice(3), new DiscountActivityBaseVO.Product().setSpuId(10L).setSkuId(20L) .setDiscountType(PromotionDiscountTypeEnum.PERCENT.getType()).setDiscountPercent(30))); });  // 调用 Long discountActivityId = discountActivityService.createDiscountActivity(reqVO); // 断言 "<AssertPlaceHolder>"; // 校验活动 DiscountActivityDO discountActivity = discountActivityMapper.selectById(discountActivityId); assertPojoEquals(reqVO, discountActivity); assertEquals(discountActivity.getStatus(), PromotionActivityStatusEnum.WAIT.getStatus()); // 校验商品 List<DiscountProductDO> discountProducts = discountProductMapper.selectList(DiscountProductDO::getActivityId, discountActivity.getId()); assertEquals(discountProducts.size(), reqVO.getProducts().size()); for (int i = 0; i < reqVO.getProducts().size(); i++) { DiscountActivityBaseVO.Product product = reqVO.getProducts().get(i); DiscountProductDO discountProduct = discountProducts.get(i); assertEquals(discountProduct.getActivityId(), discountActivity.getId()); assertEquals(discountProduct.getSpuId(), product.getSpuId()); assertEquals(discountProduct.getSkuId(), product.getSkuId()); assertEquals(discountProduct.getDiscountType(), product.getDiscountType()); assertEquals(discountProduct.getDiscountPrice(), product.getDiscountPrice()); assertEquals(discountProduct.getDiscountPercent(), product.getDiscountPercent()); } }
+createDiscountActivity(DiscountActivityCreateReqVO createReqVO) { // 校验商品是否冲突 validateDiscountActivityProductConflicts(null, createReqVO.getProducts());  // 插入活动 DiscountActivityDO discountActivity = DiscountActivityConvert.INSTANCE.convert(createReqVO) .setStatus(CommonStatusEnum.ENABLE.getStatus()); discountActivityMapper.insert(discountActivity); // 插入商品 List<DiscountProductDO> discountProducts = BeanUtils.toBean(createReqVO.getProducts(), DiscountProductDO.class, product -> product.setActivityId(discountActivity.getId()).setActivityStatus(discountActivity.getStatus()) .setActivityStartTime(createReqVO.getStartTime()).setActivityEndTime(createReqVO.getEndTime())); discountProductMapper.insertBatch(discountProducts); // 返回 return discountActivity.getId(); }
+[*] target: assertNotNull(discountActivityId)
+[-] pred: org. junit. Assert. assertNotNull ( discountActivityId )
+************************************
+************************************
+[+] input: testExportActiveShouldReturnFullResponseWhenCalledOnRunningServer() { //given final String expected = "value"; final HttpResponse response = mock(HttpResponse.class); when(httpClient.send(httpRequestArgumentCaptor.capture())).thenReturn(Mono.just(response)); when(response.getBodyAsString(eq(StandardCharsets.UTF_8))).thenReturn(Mono.just(expected)); when(response.getStatusCode()).thenReturn(HttpStatus.SC_OK);  //when final String actual = underTest.exportActive();  //then Assertions."<AssertPlaceHolder>"; verify(httpClient, atMostOnce()).send(any()); final HttpRequest request = httpRequestArgumentCaptor.getValue(); Assertions.assertEquals("/management/vault/export", request.getUrl().getPath()); Assertions.assertEquals(HttpMethod.GET, request.getHttpMethod()); Assertions.assertNull(request.getHeaders().get(HttpHeaderName.CONTENT_TYPE)); verify(response).getStatusCode(); verify(response).getBodyAsString(eq(StandardCharsets.UTF_8)); }
+exportActive() { final URI uri = UriUtil.uriBuilderForPath(vaultUrl, MANAGEMENT_VAULT_EXPORT_ACTIVE_PATH); final HttpRequest request = new HttpRequest(HttpMethod.GET, uri.toString()); return sendRaw(request).getResponseBodyAsString(); }
+[*] target: assertEquals(expected, actual)
+[-] pred: org. junit. Assert. assertEquals ( expected, actual )
+************************************
+************************************
+[+] input: getDataset_whenIdIsValid_getDataset() { // Set Security Context OauthUser oauthUser = SecurityUtils.createOauthUserWithTwoOrgsAndWithValues(); SecurityContext.set(oauthUser);  // Given Dataset testDataset = DatasetUtils.createTestDataset(DATASET_ID);  //When when(datasetRepositoryMock.findById(anyString())).thenReturn(java.util.Optional.of(testDataset)); DatasetViewModel dataset = datasetService.getDataset(DATASET_ID, false);  //Then "<AssertPlaceHolder>"; assertEquals(testDataset.getId(), dataset.getId()); assertEquals(testDataset.getName(), dataset.getName()); assertEquals(testDataset.getShortDescription(), dataset.getShortDescription()); assertEquals(testDataset.isDeleted(), dataset.isDeleted()); assertNull(dataset.getDeleteTime()); assertEquals(0, dataset.getProjectCount());  verify(datasetRepositoryMock).findById(anyString()); verify(datasetRepositoryMock, times(1)).findById(anyString()); verifyNoMoreInteractions(datasetRepositoryMock); }
+getDataset(String id, boolean includeMedia) { Dataset datasetById = getDatasetById(id);  //Permissions check String owner = datasetById.getOwner(); DataGymSecurity.isAdminOrUser(owner, true);  if (!datasetById.isDeleted()) { DatasetViewModel datasetViewModel = DatasetMapper.mapToDatasetViewModel(datasetById, includeMedia);  // Deactivate pricing limits for the Unit-Tests if (!deactivateLimiter) { //Check if Organisation-PricingPlan allows upload of Public Urls String pricingPlanType = limitService.getLimitsByOrgId(owner).getPricingPlanType();  datasetViewModel.setAllowPublicUrls(true);  if (DataGymPlan.FREE_DEVELOPER.name().equals(pricingPlanType)) { datasetViewModel.setAllowPublicUrls(false); } }   return datasetViewModel; }  throw new NotFoundException(DATASET_PLACEHOLDER, "id", "" + id); }
+[*] target: assertNotNull(dataset)
+[-] pred: org. junit. Assert. assertNotNull ( dataset )
+************************************
+************************************
+[+] input: shouldBuildElementAvailableInFutureVersion() { Message message = MessageFactory.elementAvailableInFutureVersion("inclusiveGateway", "8.0.0", "8.1.0"); "<AssertPlaceHolder>"; assertNotNull(message.getMessage()); assertThat(message.getMessage()) .isEqualTo( "Element 'inclusiveGateway' is not supported in Zeebe version '8.0.0'. It is available in version '8.1.0'."); }
+elementAvailableInFutureVersion( String elementLocalName, String semanticVersion, String futureVersion) { return INSTANCE.composeMessage( "element-available-in-future-version", ContextBuilder.builder() .context(elementNotSupportedPrefix(elementLocalName, semanticVersion)) .entry("futureVersion", futureVersion) .build()); }
+[*] target: assertNotNull(message)
+[-] pred: org. junit. Assert. assertNotNull ( message )
+************************************
+************************************
+[+] input: testDefaultDataSourceMetadata() { DataSourceMetadata defaultMetadata = DataSourceMetadata.defaultOpenSearchDataSourceMetadata(); "<AssertPlaceHolder>"; assertEquals(DataSourceType.OPENSEARCH, defaultMetadata.getConnector()); assertTrue(defaultMetadata.getAllowedRoles().isEmpty()); assertTrue(defaultMetadata.getProperties().isEmpty()); }
+defaultOpenSearchDataSourceMetadata() { return new DataSourceMetadata.Builder() .setName(DEFAULT_DATASOURCE_NAME) .setDescription(StringUtils.EMPTY) .setConnector(DataSourceType.OPENSEARCH) .setAllowedRoles(Collections.emptyList()) .setProperties(ImmutableMap.of()) .validateAndBuild(); }
+[*] target: assertNotNull(defaultMetadata)
+[-] pred: org. junit. Assert. assertNotNull ( defaultMetadata )
+************************************
+************************************
+[+] input: InterruptedException { boolean queued = reloader.reload(plugin);  "<AssertPlaceHolder>"; assertTrue(reloader.isReloadQueued());  Mockito.verify(reloadShutdownHandler, Mockito.never()).shutdown(plugin); Mockito.verify(reloadStartupHandler, Mockito.never()).start(plugin);  Thread.sleep(200);  Mockito.verify(reloadShutdownHandler, Mockito.times(1)).shutdown(plugin); Mockito.verify(reloadStartupHandler, Mockito.times(1)).start(plugin); }
+reload(@NotNull Plugin plugin) { if (plugin == null) throw new IllegalArgumentException("Plugin must not be null");  synchronized (this) { if (this.reloadQueued) return false; this.reloadQueued = true; }  scheduler.schedule(() -> { try { this.doReload(plugin); } catch (Throwable throwable) { Log.error("Failed to reload plugin " + plugin.getName(), throwable); } finally { synchronized (this) { this.reloadQueued = false; } } }, Duration.ofMillis(this.quietPeriod)); return true; }
+[*] target: assertTrue(queued)
+[-] pred: org. junit. Assert. assertTrue ( queued )
+************************************
+************************************
+[+] input: shouldBuildAttributeRemoved() { Message message = MessageFactory.attributeRemoved(random(), random()); "<AssertPlaceHolder>"; assertNotNull(message.getMessage()); }
+attributeRemoved(String attributeLocalName, String elementLocalName) { return INSTANCE.composeMessage( "attribute-removed", ContextBuilder.builder() .entry("attributeLocalName", attributeLocalName) .entry("elementLocalName", elementLocalName) .build()); }
+[*] target: assertNotNull(message)
+[-] pred: org. junit. Assert. assertNotNull ( message )
+************************************
+************************************
+[+] input: shouldBuildFormKey() { Message message = MessageFactory.formKey(random(), random()); "<AssertPlaceHolder>"; assertNotNull(message.getMessage()); }
+formKey(String attributeLocalName, String elementLocalName) { return INSTANCE.composeMessage( "form-key", ContextBuilder.builder() .context(supportedAttributePrefix(attributeLocalName, elementLocalName)) .build()); }
+[*] target: assertNotNull(message)
+[-] pred: org. junit. Assert. assertNotNull ( message )
+************************************
+************************************
+[+] input: URISyntaxException { var target = new RestClientParser(); var req = new Request(); req.setRequestText( "POST https://www.google.com/test?a=1&b=%202\n" + "Content-Type:text/plain\n" + "\n" + "This is a multiline\n" + "Text\n"); var result = target.parse(req.getRequestText()); "<AssertPlaceHolder>"; assertEquals(2, result.getQuery().size()); assertEquals(1, result.getHeaders().size()); var header = result.getHeader(ConstantsHeader.CONTENT_TYPE); assertEquals("text/plain", header); }
+parse(String requestText) throws URISyntaxException { var call = new Request(); var lines = requestText.trim().split("\\r?\\n"); var requestLine = lines[0]; addRequest(call, requestLine); var body = new StringBuffer(); var headersCompleted = false; for (var i = 1; i < lines.length; i++) { var current = lines[i];  if (headersCompleted) { body.append(current); body.append("\n"); } else { var trimmed = current.trim(); if (trimmed.length() == 0) { headersCompleted = true; continue; } addHeader(call, current); } } call.setRequestText(body.toString()); call.setBinaryRequest(false); return call; }
+[*] target: assertNotNull(result)
+[-] pred: org. junit. Assert. assertNotNull ( result )
+************************************
+************************************
+[+] input: testCreateCombinationActivity_success() { // 准备参数 CombinationActivityCreateReqVO reqVO = randomPojo(CombinationActivityCreateReqVO.class);  // 调用 Long combinationActivityId = combinationActivityService.createCombinationActivity(reqVO); // 断言 "<AssertPlaceHolder>"; // 校验记录的属性是否正确 CombinationActivityDO combinationActivity = combinationActivityMapper.selectById(combinationActivityId); assertPojoEquals(reqVO, combinationActivity); }
+createCombinationActivity(CombinationActivityCreateReqVO createReqVO) { // 校验商品 SPU 是否存在是否参加的别的活动 validateProductConflict(createReqVO.getSpuId(), null); // 校验商品是否存在 validateProductExists(createReqVO.getSpuId(), createReqVO.getProducts());  // 插入拼团活动 CombinationActivityDO activity = CombinationActivityConvert.INSTANCE.convert(createReqVO) .setStatus(CommonStatusEnum.ENABLE.getStatus()); combinationActivityMapper.insert(activity); // 插入商品 List<CombinationProductDO> products = CombinationActivityConvert.INSTANCE.convertList(createReqVO.getProducts(), activity); combinationProductMapper.insertBatch(products); return activity.getId(); }
+[*] target: assertNotNull(combinationActivityId)
+[-] pred: org. junit. Assert. assertNotNull ( combinationActivityId )
+************************************
+************************************
+[+] input: checkForPreApproval_clientAutoApprove() { // 准备参数 Long userId = randomLongId(); Integer userType = randomEle(UserTypeEnum.values()).getValue(); String clientId = randomString(); List<String> requestedScopes = Lists.newArrayList("read"); // mock 方法 when(oauth2ClientService.validOAuthClientFromCache(eq(clientId))) .thenReturn(randomPojo(OAuth2ClientDO.class).setAutoApproveScopes(requestedScopes));  // 调用 boolean success = oauth2ApproveService.checkForPreApproval(userId, userType, clientId, requestedScopes); // 断言 "<AssertPlaceHolder>"; List<OAuth2ApproveDO> result = oauth2ApproveMapper.selectList(); assertEquals(1, result.size()); assertEquals(userId, result.get(0).getUserId()); assertEquals(userType, result.get(0).getUserType()); assertEquals(clientId, result.get(0).getClientId()); assertEquals("read", result.get(0).getScope()); assertTrue(result.get(0).getApproved()); assertFalse(DateUtils.isExpired(result.get(0).getExpiresTime())); }
+checkForPreApproval(Long userId, Integer userType, String clientId, Collection<String> requestedScopes) { // 第一步，基于 Client 的自动授权计算，如果 scopes 都在自动授权中，则返回 true 通过 OAuth2ClientDO clientDO = oauth2ClientService.validOAuthClientFromCache(clientId); Assert.notNull(clientDO, "客户端不能为空"); // 防御性编程 if (CollUtil.containsAll(clientDO.getAutoApproveScopes(), requestedScopes)) { // gh-877 - if all scopes are auto approved, approvals still need to be added to the approval store. LocalDateTime expireTime = LocalDateTime.now().plusSeconds(TIMEOUT); for (String scope : requestedScopes) { saveApprove(userId, userType, clientId, scope, true, expireTime); } return true; }  // 第二步，算上用户已经批准的授权。如果 scopes 都包含，则返回 true List<OAuth2ApproveDO> approveDOs = getApproveList(userId, userType, clientId); Set<String> scopes = convertSet(approveDOs, OAuth2ApproveDO::getScope, OAuth2ApproveDO::getApproved); // 只保留未过期的 + 同意的 return CollUtil.containsAll(scopes, requestedScopes); }
+[*] target: assertTrue(success)
+[-] pred: org. junit. Assert. assertTrue ( success )
+************************************
+************************************
+[+] input: testCreatePost_success() { // 准备参数 PostSaveReqVO reqVO = randomPojo(PostSaveReqVO.class, o -> o.setStatus(randomEle(CommonStatusEnum.values()).getStatus())) .setId(null); // 防止 id 被设置 // 调用 Long postId = postService.createPost(reqVO);  // 断言 "<AssertPlaceHolder>"; // 校验记录的属性是否正确 PostDO post = postMapper.selectById(postId); assertPojoEquals(reqVO, post, "id"); }
+createPost(PostSaveReqVO createReqVO) { // 校验正确性 validatePostForCreateOrUpdate(null, createReqVO.getName(), createReqVO.getCode());  // 插入岗位 PostDO post = BeanUtils.toBean(createReqVO, PostDO.class); postMapper.insert(post); return post.getId(); }
+[*] target: assertNotNull(postId)
+[-] pred: org. junit. Assert. assertNotNull ( postId )
+************************************
+************************************
+[+] input: testCreateKeyVersionShouldReturnIdWhenCalledWithValidOctParameter() { //given final KeyVaultFake underTest = createUnderTest(); final KeyCreateDetailedInput input = KeyCreateDetailedInput.builder() .key(new OctKeyCreationInput(KeyType.OCT_HSM, null)) .build();  //when final VersionedKeyEntityId actual = underTest.createKeyVersion(KEY_NAME_1, input);  //then Assertions."<AssertPlaceHolder>"; Assertions.assertNotNull(actual.version()); Assertions.assertEquals(HTTPS_LOCALHOST, actual.vault()); Assertions.assertEquals(KEY_NAME_1, actual.id()); }
+createKeyVersion(@NonNull final String keyName, @NonNull final KeyCreateDetailedInput input) { Assert.isTrue(!input.isManaged() || (input.getExpiresOn() != null && input.getNotBefore() != null), "Managed key (name=" + keyName + ") must have notBefore and expiresOn parameters set!"); final VersionedKeyEntityId keyEntityId = input.getKey().getKeyType().createKey(this, keyName, input.getKey()); setKeyOperations(keyEntityId, input.getKeyOperations()); //avoid overwriting expiry if it was generated by the rotation policy if (getEntities().getReadOnlyEntity(keyEntityId).getExpiry().isEmpty()) { setExpiry(keyEntityId, input.getNotBefore(), input.getExpiresOn()); } setEnabled(keyEntityId, Objects.requireNonNullElse(input.getEnabled(), true)); setManaged(keyEntityId, input.isManaged()); addTags(keyEntityId, input.getTags()); return keyEntityId; }
+[*] target: assertNotNull(actual)
+[-] pred: org. junit. Assert. assertNotNull ( actual )
+************************************
+************************************
+[+] input: whenUpdateThenReturnSuccess() { when(service.update(userDTO)).thenReturn(user); when(mapper.map(any(), any())).thenReturn(userDTO);  ResponseEntity<UserDTO> response = resource.update(ID, userDTO);  "<AssertPlaceHolder>"; assertNotNull(response.getBody()); assertEquals(HttpStatus.OK, response.getStatusCode()); assertEquals(ResponseEntity.class, response.getClass()); assertEquals(UserDTO.class, response.getBody().getClass());  assertEquals(ID, response.getBody().getId()); assertEquals(NAME, response.getBody().getName()); assertEquals(EMAIL, response.getBody().getEmail()); }
+update(@PathVariable Integer id, @RequestBody UserDTO obj) { obj.setId(id); return ResponseEntity.ok().body(mapper.map(service.update(obj), UserDTO.class)); }
+[*] target: assertNotNull(response)
+[-] pred: org. junit. Assert. assertNotNull ( response )
+************************************
+************************************
+[+] input: shouldBuildResourceOnConditionalFlow() { String resource = random(); Message message = resourceOnConditionalFlow(resource); "<AssertPlaceHolder>"; assertNotNull(message.getMessage()); assertNotNull(message.getSeverity()); assertThat(message.getMessage()) .isEqualTo("Please translate the content from '%s' to a valid FEEL expression.", resource); }
+resourceOnConditionalFlow(String resource) { return INSTANCE.composeMessage( "resource-on-conditional-flow", ContextBuilder.builder().entry("resource", resource).build()); }
+[*] target: assertNotNull(message)
+[-] pred: org. junit. Assert. assertNotNull ( message )
+************************************
+************************************
+[+] input: testCreateArticleCategory_success() { // 准备参数 ArticleCategoryCreateReqVO reqVO = randomPojo(ArticleCategoryCreateReqVO.class);  // 调用 Long articleCategoryId = articleCategoryService.createArticleCategory(reqVO); // 断言 "<AssertPlaceHolder>"; // 校验记录的属性是否正确 ArticleCategoryDO articleCategory = articleCategoryMapper.selectById(articleCategoryId); assertPojoEquals(reqVO, articleCategory); }
+createArticleCategory(ArticleCategoryCreateReqVO createReqVO) { // 插入 ArticleCategoryDO category = ArticleCategoryConvert.INSTANCE.convert(createReqVO); articleCategoryMapper.insert(category); // 返回 return category.getId(); }
+[*] target: assertNotNull(articleCategoryId)
+[-] pred: org. junit. Assert. assertNotNull ( articleCategoryId )
+************************************
+************************************
+[+] input: testAssignUserRole() { // 准备参数 Long userId = 1L; Set<Long> roleIds = asSet(200L, 300L); // mock 数据 UserRoleDO userRole01 = randomPojo(UserRoleDO.class).setUserId(1L).setRoleId(100L); userRoleMapper.insert(userRole01); UserRoleDO userRole02 = randomPojo(UserRoleDO.class).setUserId(1L).setRoleId(200L); userRoleMapper.insert(userRole02);  // 调用 permissionService.assignUserRole(userId, roleIds); // 断言 List<UserRoleDO> userRoleDOList = userRoleMapper.selectList(); "<AssertPlaceHolder>"; assertEquals(1L, userRoleDOList.get(0).getUserId()); assertEquals(200L, userRoleDOList.get(0).getRoleId()); assertEquals(1L, userRoleDOList.get(1).getUserId()); assertEquals(300L, userRoleDOList.get(1).getRoleId()); }
+assignUserRole(Long userId, Set<Long> roleIds);
+[*] target: assertEquals(2, userRoleDOList.size())
+[-] pred: org. junit. Assert. assertEquals ( 2, userRoleDOList. size ( ) )
+************************************
+************************************
+[+] input: shouldBuildElementNotSupportedHint() { Message message = MessageFactory.elementNotSupportedHint(random(), random()); "<AssertPlaceHolder>"; assertNotNull(message.getMessage()); }
+elementNotSupportedHint(String elementLocalName, String semanticVersion) { return INSTANCE.composeMessage( "element-not-supported-hint", ContextBuilder.builder() .context(elementNotSupportedPrefix(elementLocalName, semanticVersion)) .build()); }
+[*] target: assertNotNull(message)
+[-] pred: org. junit. Assert. assertNotNull ( message )
+************************************
+************************************
+[+] input: shouldBuildErrorEventDefinition() { Message message = MessageFactory.errorEventDefinition(random()); "<AssertPlaceHolder>"; assertNotNull(message.getMessage()); }
+errorEventDefinition(String elementLocalName) { return INSTANCE.composeMessage( "error-event-definition", ContextBuilder.builder().context(elementNotTransformablePrefix(elementLocalName)).build()); }
+[*] target: assertNotNull(message)
+[-] pred: org. junit. Assert. assertNotNull ( message )
+************************************
+************************************
+[+] input: JavetException { try (V8ValueObject v8ValueObject = v8Runtime.getExecutor( "let x = {'a': 1, 'b': '2', 'c': 3n, d: 1, e: null, g: {h: 1}, " + "'中文': '測試', '1234567890': '1234567890'}; x;").execute()) { try (IV8ValueArray iV8ValueArray = v8ValueObject.getOwnPropertyNames()) { "<AssertPlaceHolder>"; assertEquals(8, iV8ValueArray.getLength()); // Order is preserved since ES2015. assertEquals(1234567890, iV8ValueArray.getPropertyInteger(0)); assertEquals("a", iV8ValueArray.getPropertyString(1)); assertEquals("b", iV8ValueArray.getPropertyString(2)); assertEquals("c", iV8ValueArray.getPropertyString(3)); assertEquals("d", iV8ValueArray.getPropertyString(4)); assertEquals("e", iV8ValueArray.getPropertyString(5)); assertEquals("g", iV8ValueArray.getPropertyString(6)); assertEquals("中文", iV8ValueArray.getPropertyString(7)); } } }
+getOwnPropertyNames() throws JavetException { return checkV8Runtime().getV8Internal().objectGetOwnPropertyNames(this); }
+[*] target: assertNotNull(iV8ValueArray)
+[-] pred: org. junit. Assert. assertNotNull ( iV8ValueArray )
+************************************
+************************************
+[+] input: testCreateMailAccount_success() { // 准备参数 MailAccountSaveReqVO reqVO = randomPojo(MailAccountSaveReqVO.class, o -> o.setMail(randomEmail())) .setId(null); // 防止 id 被赋值  // 调用 Long mailAccountId = mailAccountService.createMailAccount(reqVO); // 断言 "<AssertPlaceHolder>"; // 校验记录的属性是否正确 MailAccountDO mailAccount = mailAccountMapper.selectById(mailAccountId); assertPojoEquals(reqVO, mailAccount, "id"); }
+createMailAccount(MailAccountSaveReqVO createReqVO) { MailAccountDO account = BeanUtils.toBean(createReqVO, MailAccountDO.class); mailAccountMapper.insert(account); return account.getId(); }
+[*] target: assertNotNull(mailAccountId)
+[-] pred: org. junit. Assert. assertNotNull ( mailAccountId )
+************************************
+************************************
+[+] input: testCreateTag_success() { // 准备参数 MemberTagCreateReqVO reqVO = randomPojo(MemberTagCreateReqVO.class);  // 调用 Long tagId = tagService.createTag(reqVO); // 断言 "<AssertPlaceHolder>"; // 校验记录的属性是否正确 MemberTagDO tag = tagMapper.selectById(tagId); assertPojoEquals(reqVO, tag); }
+createTag(MemberTagCreateReqVO createReqVO) { // 校验名称唯一 validateTagNameUnique(null, createReqVO.getName()); // 插入 MemberTagDO tag = MemberTagConvert.INSTANCE.convert(createReqVO); memberTagMapper.insert(tag); // 返回 return tag.getId(); }
+[*] target: assertNotNull(tagId)
+[-] pred: org. junit. Assert. assertNotNull ( tagId )
+************************************
+************************************
+[+] input: testCreateTenantPackage_success() { // 准备参数 TenantPackageSaveReqVO reqVO = randomPojo(TenantPackageSaveReqVO.class, o -> o.setStatus(randomCommonStatus())) .setId(null); // 防止 id 被赋值  // 调用 Long tenantPackageId = tenantPackageService.createTenantPackage(reqVO); // 断言 "<AssertPlaceHolder>"; // 校验记录的属性是否正确 TenantPackageDO tenantPackage = tenantPackageMapper.selectById(tenantPackageId); assertPojoEquals(reqVO, tenantPackage, "id"); }
+createTenantPackage(TenantPackageSaveReqVO createReqVO) { // 插入 TenantPackageDO tenantPackage = BeanUtils.toBean(createReqVO, TenantPackageDO.class); tenantPackageMapper.insert(tenantPackage); // 返回 return tenantPackage.getId(); }
+[*] target: assertNotNull(tenantPackageId)
+[-] pred: org. junit. Assert. assertNotNull ( tenantPackageId )
+************************************
+************************************
+[+] input: testDefaultConstructor() { op = new Checkpoint(); "<AssertPlaceHolder>"; assertNull(op.getTransactionId()); }
+getNumActiveTxns() { return mTxnSet.size(); }
+[*] target: assertEquals(0, op.getNumActiveTxns())
+[-] pred: org. junit. Assert. assertEquals ( 0, op. getNumActiveTxns() )
+************************************
+************************************
+[+] input: defaultValues() { SplunkRumBuilder builder = SplunkRum.builder();  assertFalse(builder.isDebugEnabled()); assertFalse(builder.isDiskBufferingEnabled()); assertTrue(builder.isCrashReportingEnabled()); assertTrue(builder.isNetworkMonitorEnabled()); assertTrue(builder.isAnrDetectionEnabled()); "<AssertPlaceHolder>"; assertEquals(Attributes.empty(), builder.globalAttributes); assertNull(builder.deploymentEnvironment); assertFalse(builder.sessionBasedSamplerEnabled); }
+isSlowRenderingDetectionEnabled() { return configFlags.isSlowRenderingDetectionEnabled(); }
+[*] target: assertTrue(builder.isSlowRenderingDetectionEnabled())
+[-] pred: org. junit. Assert. assertTrue ( builder. isSlowRenderingDetectionEnabled ( ) )
+************************************
+************************************
+[+] input: shouldBuildInternalScript() { Message message = MessageFactory.internalScript(); "<AssertPlaceHolder>"; assertNotNull(message.getMessage()); assertNotNull(message.getSeverity()); assertThat(message.getMessage()).isEqualTo("Script is transformed to Zeebe script."); }
+internalScript() { return INSTANCE.staticMessage("internal-script"); }
+[*] target: assertNotNull(message)
+[-] pred: org. junit. Assert. assertNotNull ( message )
+************************************
+************************************
+[+] input: shouldBuildScriptFormat() { Message message = MessageFactory.scriptFormat(random(), random()); "<AssertPlaceHolder>"; assertNotNull(message.getMessage()); }
+scriptFormat(String headerName, String scriptFormat) { return INSTANCE.composeMessage( "script-format", ContextBuilder.builder() .entry("headerName", headerName) .entry("scriptFormat", scriptFormat) .build()); }
+[*] target: assertNotNull(message)
+[-] pred: org. junit. Assert. assertNotNull ( message )
+************************************
+************************************
+[+] input: whenFindByIdThenReturnSuccess() { when(service.findById(anyInt())).thenReturn(user); when(mapper.map(any(), any())).thenReturn(userDTO);  ResponseEntity<UserDTO> response = resource.findById(ID);  "<AssertPlaceHolder>"; assertNotNull(response.getBody()); assertEquals(ResponseEntity.class, response.getClass()); assertEquals(UserDTO.class, response.getBody().getClass());  assertEquals(ID, response.getBody().getId()); assertEquals(NAME, response.getBody().getName()); assertEquals(EMAIL, response.getBody().getEmail()); assertEquals(PASSWORD, response.getBody().getPassword()); }
+findById(@PathVariable Integer id) { return ResponseEntity.ok().body(mapper.map(service.findById(id), UserDTO.class)); }
+[*] target: assertNotNull(response)
+[-] pred: org. junit. Assert. assertNotNull ( response )
+************************************
+************************************
+[+] input: shouldBuildConditionExpressionFeel() { String oldExpression = random(); String newExpression = random(); Message message = conditionExpressionFeel(oldExpression, newExpression); "<AssertPlaceHolder>"; assertNotNull(message.getMessage()); assertNotNull(message.getSeverity()); assertThat(message.getMessage()) .isEqualTo( "FEEL Condition expression: Please review transformed expression: '%s' -> '%s'. Check for custom FEEL functions as they are not supported by Zeebe.", oldExpression, newExpression); }
+conditionExpressionFeel( String oldFeelExpression, String newFeelExpression) { return INSTANCE.composeMessage( "condition-expression-feel", ContextBuilder.builder() .context(expressionTransformationResult(oldFeelExpression, newFeelExpression)) .build()); }
+[*] target: assertNotNull(message)
+[-] pred: org. junit. Assert. assertNotNull ( message )
+************************************
+************************************
+[+] input: shouldBuildResource() { Message message = MessageFactory.resource(random(), random(), random()); "<AssertPlaceHolder>"; assertNotNull(message.getMessage()); }
+resource( String attributeLocalName, String elementLocalName, String headerName) { return INSTANCE.composeMessage( "resource", ContextBuilder.builder() .context(supportedAttributePrefix(attributeLocalName, elementLocalName)) .entry("headerName", headerName) .build()); }
+[*] target: assertNotNull(message)
+[-] pred: org. junit. Assert. assertNotNull ( message )
+************************************
+************************************
+[+] input: basicEvents() { StateMachineBuilder builder = StateMachine.builder(); builder.initialState(ExampleState.A); builder.state(ExampleState.A); builder.state(ExampleState.B);  AtomicBoolean startCalled = new AtomicBoolean(false); AtomicBoolean transitionCalled = new AtomicBoolean(false); AtomicBoolean stopCalled = new AtomicBoolean(false);  EventNode<StateMachineEvent> eventNode = builder.eventNode(); eventNode.addListener(StateMachineStartEvent.class, event -> startCalled.set(true)); eventNode.addListener(StateMachineTransitionEvent.class, event -> transitionCalled.set(true)); eventNode.addListener(StateMachineStopEvent.class, event -> stopCalled.set(true));  StateMachine stateMachine = builder.build();  Assertions.assertTrue(startCalled.get()); Assertions.assertFalse(transitionCalled.get()); Assertions.assertFalse(stopCalled.get());  stateMachine.transform(ExampleState.B);  Assertions.assertTrue(transitionCalled.get()); Assertions.assertFalse(stopCalled.get());  stateMachine.stop(Signal.UNDEFINED);  Assertions."<AssertPlaceHolder>"; }
+stop(@NotNull Signal signal);
+[*] target: assertTrue(stopCalled.get())
+[-] pred: org. junit. Assert. assertTrue ( stopCalled. get ( ) )
+************************************
+************************************
+[+] input: JsonProcessingException { //given final HttpResponse response = mock(HttpResponse.class); when(httpClient.send(httpRequestArgumentCaptor.capture())).thenReturn(Mono.just(response)); when(response.getBodyAsString(eq(StandardCharsets.UTF_8))).thenReturn(Mono.just(JSON)); when(response.getStatusCode()).thenReturn(HttpStatus.SC_OK); when(objectReader.forType(eq(Boolean.class))).thenReturn(objectReader); when(objectReader.readValue(eq(JSON))).thenReturn(true);  //when final boolean actual = underTest.delete(URI.create(HTTPS_LOCALHOST));  //then Assertions."<AssertPlaceHolder>"; verify(httpClient, atMostOnce()).send(any()); final HttpRequest request = httpRequestArgumentCaptor.getValue(); Assertions.assertEquals("/management/vault", request.getUrl().getPath()); Assertions.assertEquals(HttpMethod.DELETE, request.getHttpMethod()); Assertions.assertNull(request.getHeaders().get(HttpHeaderName.CONTENT_TYPE)); verify(response).getStatusCode(); verify(response).getBodyAsString(eq(StandardCharsets.UTF_8)); verify(objectReader).forType(eq(Boolean.class)); verify(objectReader).readValue(anyString()); }
+delete(@NonNull final URI baseUri) { final URI uri = UriUtil.uriBuilderForPath(vaultUrl, MANAGEMENT_VAULT_PATH, Map.of(BASE_URI_QUERY_PARAM, baseUri.toString())); final HttpRequest request = new HttpRequest(HttpMethod.DELETE, uri.toString()); return sendAndProcess(request, r -> r.getResponseObject(Boolean.class)); }
+[*] target: assertTrue(actual)
+[-] pred: org. junit. Assert. assertTrue ( actual )
+************************************
+************************************
+[+] input: shouldBuildTimerExpressionNotSupported() { String timerType = random(); String timerValue = random(); String eventType = random(); String semanticVersion = random(); Message message = timerExpressionNotSupported(timerType, timerValue, eventType, semanticVersion); "<AssertPlaceHolder>"; assertNotNull(message.getMessage()); assertNotNull(message.getSeverity()); assertThat(message.getMessage()) .isEqualTo( "Timer of type '" + timerType + "' with value '" + timerValue + "' is not supported for event type '" + eventType + "' in Zeebe version '" + semanticVersion + "'."); }
+timerExpressionNotSupported( String timerType, String timerExpression, String eventType, String semanticVersion) { return INSTANCE.composeMessage( "timer-expression-not-supported", ContextBuilder.builder() .entry("timerType", timerType) .entry("timerExpression", timerExpression) .entry("eventType", eventType) .entry("semanticVersion", semanticVersion) .build()); }
+[*] target: assertNotNull(message)
+[-] pred: org. junit. Assert. assertNotNull ( message )
+************************************
+************************************
+[+] input: JsonProcessingException { //given final List<VaultModel> result = Collections.singletonList(new VaultModel()); final HttpResponse response = mock(HttpResponse.class); when(httpClient.send(httpRequestArgumentCaptor.capture())).thenReturn(Mono.just(response)); when(response.getBodyAsString(eq(StandardCharsets.UTF_8))).thenReturn(Mono.just(JSON)); when(response.getStatusCode()).thenReturn(HttpStatus.SC_OK); when(objectReader.forType(eq(VAULT_MODEL_LIST_TYPE_REF))).thenReturn(objectReader); when(objectReader.readValue(eq(JSON))).thenReturn(result);  //when final List<VaultModel> actual = underTest.listVaults();  //then Assertions."<AssertPlaceHolder>"; verify(httpClient, atMostOnce()).send(any()); final HttpRequest request = httpRequestArgumentCaptor.getValue(); Assertions.assertEquals("/management/vault", request.getUrl().getPath()); Assertions.assertEquals(HttpMethod.GET, request.getHttpMethod()); Assertions.assertNull(request.getHeaders().get(HttpHeaderName.CONTENT_TYPE)); verify(response).getStatusCode(); verify(response).getBodyAsString(eq(StandardCharsets.UTF_8)); verify(objectReader).forType(eq(VAULT_MODEL_LIST_TYPE_REF)); verify(objectReader).readValue(anyString()); }
+listVaults() { final URI uri = UriUtil.uriBuilderForPath(vaultUrl, MANAGEMENT_VAULT_PATH); final HttpRequest request = new HttpRequest(HttpMethod.GET, uri.toString()); return sendAndProcess(request, r -> r.getResponseObject(VAULT_MODEL_LIST_TYPE_REF)); }
+[*] target: assertEquals(result, actual)
+[-] pred: org. junit. Assert. assertEquals ( result, actual )
+************************************
+************************************
+[+] input: testCreateApp_success() { // 准备参数 PayAppCreateReqVO reqVO = randomPojo(PayAppCreateReqVO.class, o -> o.setStatus((RandomUtil.randomEle(CommonStatusEnum.values()).getStatus())) .setOrderNotifyUrl(randomURL()) .setRefundNotifyUrl(randomURL()));  // 调用 Long appId = appService.createApp(reqVO); // 断言 "<AssertPlaceHolder>"; PayAppDO app = appMapper.selectById(appId); assertPojoEquals(reqVO, app); }
+createApp(@Valid PayAppCreateReqVO createReqVO);  /** * 更新支付应用 * * @param updateReqVO 更新 */ void updateApp(@Valid PayAppUpdateReqVO updateReqVO);  /** * 修改应用状态 * * @param id     应用编号 * @param status 状态 */ void updateAppStatus(Long id, Integer status);  /** * 删除支付应用 * * @param id 编号 */ void deleteApp(Long id);  /** * 获得支付应用 * * @param id 编号 * @return 支付应用 */ PayAppDO getApp(Long id);  /** * 获得支付应用列表 * * @param ids 编号 * @return 支付应用列表 */ List<PayAppDO> getAppList(Collection<Long> ids);  /** * 获得支付应用列表 * * @return 支付应用列表 */ List<PayAppDO> getAppList();  /** * 获得支付应用分页 * * @param pageReqVO 分页查询 * @return 支付应用分页 */ PageResult<PayAppDO> getAppPage(PayAppPageReqVO pageReqVO);  /** * 获得指定编号的商户 Map * * @param ids 应用编号集合 * @return 商户 Map */ default Map<Long, PayAppDO> getAppMap(Collection<Long> ids) { List<PayAppDO> list = getAppList(ids); return CollectionUtils.convertMap(list, PayAppDO::getId); }
+[*] target: assertNotNull(appId)
+[-] pred: org. junit. Assert. assertNotNull ( appId )
+************************************
+************************************
+[+] input: prefers_expression_with_longest_non_empty_match() { ParameterType<String> zeroOrMore = new ParameterType<>( "zero-or-more", "[a-z]*", String.class, (Transformer<String>) arg -> arg, true, false ); parameterTypeRegistry.defineParameterType(zeroOrMore); ParameterType<String> exactlyOne = new ParameterType<>( "exactly-one", "[a-z]", String.class, (Transformer<String>) arg -> arg, true, false ); parameterTypeRegistry.defineParameterType(exactlyOne);  List<GeneratedExpression> generatedExpressions = generator.generateExpressions("a simple step"); "<AssertPlaceHolder>"; assertEquals("{exactly-one} {zero-or-more} {zero-or-more}", generatedExpressions.get(0).getSource()); assertEquals("{zero-or-more} {zero-or-more} {zero-or-more}", generatedExpressions.get(1).getSource()); }
+generateExpressions(String text) { List<List<ParameterType<?>>> parameterTypeCombinations = new ArrayList<>(); List<ParameterTypeMatcher> parameterTypeMatchers = createParameterTypeMatchers(text); StringBuilder expressionTemplate = new StringBuilder(); int pos = 0; while (true) { List<ParameterTypeMatcher> matchingParameterTypeMatchers = new ArrayList<>();  for (ParameterTypeMatcher parameterTypeMatcher : parameterTypeMatchers) { if (parameterTypeMatcher.advanceToAndFind(pos)) { matchingParameterTypeMatchers.add(parameterTypeMatcher); } }  if (!matchingParameterTypeMatchers.isEmpty()) { Collections.sort(matchingParameterTypeMatchers);  // Find all the best parameter type matchers, they are all candidates. ParameterTypeMatcher bestParameterTypeMatcher = matchingParameterTypeMatchers.get(0); List<ParameterTypeMatcher> bestParameterTypeMatchers = new ArrayList<>(); for (ParameterTypeMatcher m : matchingParameterTypeMatchers) { if (m.compareTo(bestParameterTypeMatcher) == 0) { bestParameterTypeMatchers.add(m); } }  // Build a list of parameter types without duplicates. The reason there // might be duplicates is that some parameter types have more than one regexp, // which means multiple ParameterTypeMatcher objects will have a reference to the // same ParameterType. // We're sorting the list so preferential parameter types are listed first. // Users are most likely to want these, so they should be listed at the top. Set<ParameterType<?>> set = new HashSet<>(); for (ParameterTypeMatcher parameterTypeMatcher : bestParameterTypeMatchers) { ParameterType<?> parameterType = parameterTypeMatcher.getParameterType(); set.add(parameterType); } SortedSet<ParameterType<?>> parameterTypes = new TreeSet<>(set);  parameterTypeCombinations.add(new ArrayList<>(parameterTypes));  expressionTemplate .append(escape(text.substring(pos, bestParameterTypeMatcher.start()))) .append("{%s}"); pos = bestParameterTypeMatcher.start() + bestParameterTypeMatcher.group().length(); } else { break; }  if (pos >= text.length()) { break; } } expressionTemplate.append(escape(text.substring(pos))); return new CombinatorialGeneratedExpressionFactory(expressionTemplate.toString(), parameterTypeCombinations).generateExpressions(); }
+[*] target: assertEquals(2, generatedExpressions.size())
+[-] pred: org. junit. Assert. assertEquals ( 2, generatedExpressions. size ( ) )
+************************************
+************************************
+[+] input: JsonProcessingException { //given final List<VaultModel> result = Collections.singletonList(new VaultModel()); final HttpResponse response = mock(HttpResponse.class); when(httpClient.send(httpRequestArgumentCaptor.capture())).thenReturn(Mono.just(response)); when(response.getBodyAsString(eq(StandardCharsets.UTF_8))).thenReturn(Mono.just(JSON)); when(response.getStatusCode()).thenReturn(HttpStatus.SC_OK); when(objectReader.forType(eq(VAULT_MODEL_LIST_TYPE_REF))).thenReturn(objectReader); when(objectReader.readValue(eq(JSON))).thenReturn(result);  //when final List<VaultModel> actual = underTest.listDeletedVaults();  //then Assertions."<AssertPlaceHolder>"; verify(httpClient, atMostOnce()).send(any()); final HttpRequest request = httpRequestArgumentCaptor.getValue(); Assertions.assertEquals("/management/vault/deleted", request.getUrl().getPath()); Assertions.assertEquals(HttpMethod.GET, request.getHttpMethod()); Assertions.assertNull(request.getHeaders().get(HttpHeaderName.CONTENT_TYPE)); verify(response).getStatusCode(); verify(response).getBodyAsString(eq(StandardCharsets.UTF_8)); verify(objectReader).forType(eq(VAULT_MODEL_LIST_TYPE_REF)); verify(objectReader).readValue(anyString()); }
+listDeletedVaults() { final URI uri = UriUtil.uriBuilderForPath(vaultUrl, MANAGEMENT_VAULT_DELETED_PATH); final HttpRequest request = new HttpRequest(HttpMethod.GET, uri.toString()); return sendAndProcess(request, r -> r.getResponseObject(VAULT_MODEL_LIST_TYPE_REF)); }
+[*] target: assertEquals(result, actual)
+[-] pred: org. junit. Assert. assertEquals ( result, actual )
+************************************
+************************************
+[+] input: shouldBuildFieldContent() { Message message = MessageFactory.fieldContent(random()); "<AssertPlaceHolder>"; assertNotNull(message.getMessage()); }
+fieldContent(String elementLocalName) { return INSTANCE.composeMessage( "field-content", ContextBuilder.builder().context(elementNotTransformablePrefix(elementLocalName)).build()); }
+[*] target: assertNotNull(message)
+[-] pred: org. junit. Assert. assertNotNull ( message )
+************************************
+************************************
+[+] input: whenObjectNotFoundExceptionThenReturnAResponseEntity() { ResponseEntity<StandardError> response = ecxeptionHandler .objectNotFound( new ObjectNotFoundException(OBJETO_NAO_ENCONTRADO), new MockHttpServletRequest());  "<AssertPlaceHolder>"; assertNotNull(response.getBody()); assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode()); assertEquals(ResponseEntity.class, response.getClass()); assertEquals(StandardError.class, response.getBody().getClass()); assertEquals(OBJETO_NAO_ENCONTRADO, response.getBody().getError()); assertEquals(404, response.getBody().getStatus()); assertNotEquals("/user/2", response.getBody().getPath()); assertNotEquals(LocalDateTime.now(), response.getBody().getTimestamp()); }
+objectNotFound(ObjectNotFoundException ex, HttpServletRequest request) { StandardError error = new StandardError(LocalDateTime.now(), HttpStatus.NOT_FOUND.value(), ex.getMessage(), request.getRequestURI()); return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error); }
+[*] target: assertNotNull(response)
+[-] pred: org. junit. Assert. assertNotNull ( response )
+************************************
+************************************
+[+] input: testCreateScanBuilderWithSqlTableFunction() { SparkQueryRequest sparkQueryRequest = new SparkQueryRequest(); sparkQueryRequest.setSql(QUERY); SparkTable sparkTable = new SparkTable(client, sparkQueryRequest); TableScanBuilder tableScanBuilder = sparkTable.createScanBuilder(); Assertions."<AssertPlaceHolder>"; Assertions.assertTrue(tableScanBuilder instanceof SparkSqlFunctionTableScanBuilder); }
+createScanBuilder() { return new SparkSqlFunctionTableScanBuilder(sparkClient, sparkQueryRequest); }
+[*] target: assertNotNull(tableScanBuilder)
+[-] pred: org. junit. Assert. assertNotNull ( tableScanBuilder )
+************************************
+************************************
+[+] input: testUpdateAfterApproval_reject() { // 准备参数 Long userId = randomLongId(); Integer userType = randomEle(UserTypeEnum.values()).getValue(); String clientId = randomString(); Map<String, Boolean> requestedScopes = new LinkedHashMap<>(); requestedScopes.put("write", false); // mock 方法  // 调用 boolean success = oauth2ApproveService.updateAfterApproval(userId, userType, clientId, requestedScopes); // 断言 "<AssertPlaceHolder>"; List<OAuth2ApproveDO> result = oauth2ApproveMapper.selectList(); assertEquals(1, result.size()); // write assertEquals(userId, result.get(0).getUserId()); assertEquals(userType, result.get(0).getUserType()); assertEquals(clientId, result.get(0).getClientId()); assertEquals("write", result.get(0).getScope()); assertFalse(result.get(0).getApproved()); assertFalse(DateUtils.isExpired(result.get(0).getExpiresTime())); }
+updateAfterApproval(Long userId, Integer userType, String clientId, Map<String, Boolean> requestedScopes) { // 如果 requestedScopes 为空，说明没有要求，则返回 true 通过 if (CollUtil.isEmpty(requestedScopes)) { return true; }  // 更新批准的信息 boolean success = false; // 需要至少有一个同意 LocalDateTime expireTime = LocalDateTime.now().plusSeconds(TIMEOUT); for (Map.Entry<String, Boolean> entry : requestedScopes.entrySet()) { if (entry.getValue()) { success = true; } saveApprove(userId, userType, clientId, entry.getKey(), entry.getValue(), expireTime); } return success; }
+[*] target: assertFalse(success)
+[-] pred: org. junit. Assert. assertFalse ( success )
+************************************
+************************************
+[+] input: InvocationTargetException { MockMethods obj = new MockMethods(); Method method = ReflectionUtils.getMethod(obj.getClass(), "returnFortyTwo");  "<AssertPlaceHolder>"; assertEquals(42, method.invoke(obj)); }
+getMethod(@Nonnull Class<?> c, @Nonnull String method) { for (Method m : c.getMethods()) { if (m.getName().equals(method)) { return m; } }  return null; }
+[*] target: assertNotNull(method)
+[-] pred: org. junit. Assert. assertNotNull ( method )
+************************************
+************************************
+[+] input: test() { SortedMap sortedMap = new TreeMap(); for (int i = 0; i < 9; i = i + 3) { PartitionRange range = new PartitionRange(i, i + 2); List<ServerNode> nodes = Collections.singletonList(new ServerNode( String.valueOf(i), "", i / 3, 0, 0, 0, 0, Sets.newHashSet("test"), true)); sortedMap.put(range, nodes); }  PartitionRangeAssignment partitionRangeAssignment = new PartitionRangeAssignment(sortedMap); List<RssProtos.PartitionRangeAssignment> res = partitionRangeAssignment.convertToGrpcProto(); assertEquals(3, res.size());  for (int i = 0; i < 3; ++i) { RssProtos.PartitionRangeAssignment pra = res.get(i); assertEquals(1, pra.getServerCount()); assertEquals(i, pra.getServer(0).getPort()); assertEquals(3 * i, pra.getStartPartition()); assertEquals(3 * i + 2, pra.getEndPartition()); }  partitionRangeAssignment = new PartitionRangeAssignment(null); res = partitionRangeAssignment.convertToGrpcProto(); "<AssertPlaceHolder>"; }
+isEmpty() { return assignments == null || assignments.isEmpty(); }
+[*] target: assertTrue(res.isEmpty())
+[-] pred: org. junit. Assert. assertTrue ( res. isEmpty() )
+************************************
+************************************
+[+] input: testCreateGroup_success() { // 准备参数 MemberGroupCreateReqVO reqVO = randomPojo(MemberGroupCreateReqVO.class, o -> o.setStatus(randomCommonStatus()));  // 调用 Long groupId = groupService.createGroup(reqVO); // 断言 "<AssertPlaceHolder>"; // 校验记录的属性是否正确 MemberGroupDO group = groupMapper.selectById(groupId); assertPojoEquals(reqVO, group); }
+createGroup(MemberGroupCreateReqVO createReqVO) { // 插入 MemberGroupDO group = MemberGroupConvert.INSTANCE.convert(createReqVO); memberGroupMapper.insert(group); // 返回 return group.getId(); }
+[*] target: assertNotNull(groupId)
+[-] pred: org. junit. Assert. assertNotNull ( groupId )
+************************************
+************************************
+[+] input: shouldBuildProperty() { Message message = MessageFactory.property(random(), random()); "<AssertPlaceHolder>"; assertNotNull(message.getMessage()); }
+property(String elementLocalName, String propertyName) { return INSTANCE.composeMessage( "property", ContextBuilder.builder() .entry("propertyName", propertyName) .context(elementTransformedPrefix(elementLocalName)) .build()); }
+[*] target: assertNotNull(message)
+[-] pred: org. junit. Assert. assertNotNull ( message )
+************************************
+************************************
+[+] input: shouldBuildResultVariableInternalScript() { Message message = MessageFactory.resultVariableInternalScript(); "<AssertPlaceHolder>"; assertNotNull(message.getMessage()); assertNotNull(message.getSeverity()); assertThat(message.getMessage()) .isEqualTo("Result variable is set to Zeebe script result variable."); }
+resultVariableInternalScript() { return INSTANCE.staticMessage("result-variable-internal-script"); }
+[*] target: assertNotNull(message)
+[-] pred: org. junit. Assert. assertNotNull ( message )
+************************************
+************************************
+[+] input: testCreateForm_success() { // 准备参数 BpmFormSaveReqVO reqVO = randomPojo(BpmFormSaveReqVO.class, o -> { o.setConf("{}"); o.setFields(randomFields()); });  // 调用 Long formId = formService.createForm(reqVO); // 断言 "<AssertPlaceHolder>"; // 校验记录的属性是否正确 BpmFormDO form = formMapper.selectById(formId); assertPojoEquals(reqVO, form); }
+createForm(@Valid BpmFormSaveReqVO createReqVO);  /** * 更新动态表单 * * @param updateReqVO 更新信息 */ void updateForm(@Valid BpmFormSaveReqVO updateReqVO);  /** * 删除动态表单 * * @param id 编号 */ void deleteForm(Long id);  /** * 获得动态表单 * * @param id 编号 * @return 动态表单 */ BpmFormDO getForm(Long id);  /** * 获得动态表单列表 * * @return 动态表单列表 */ List<BpmFormDO> getFormList();  /** * 获得动态表单列表 * * @param ids 编号 * @return 动态表单列表 */ List<BpmFormDO> getFormList(Collection<Long> ids);  /** * 获得动态表单 Map * * @param ids 编号 * @return 动态表单 Map */ default Map<Long, BpmFormDO> getFormMap(Collection<Long> ids) { return CollectionUtils.convertMap(this.getFormList(ids), BpmFormDO::getId); }
+[*] target: assertNotNull(formId)
+[-] pred: org. junit. Assert. assertNotNull ( formId )
+************************************
+************************************
+[+] input: testCreateLevel_success() { // 准备参数 MemberLevelCreateReqVO reqVO = randomPojo(MemberLevelCreateReqVO.class, o -> { o.setDiscountPercent(randomInt()); o.setIcon(randomURL()); o.setBackgroundUrl(randomURL()); o.setStatus(randomCommonStatus()); });  // 调用 Long levelId = levelService.createLevel(reqVO); // 断言 "<AssertPlaceHolder>"; // 校验记录的属性是否正确 MemberLevelDO level = memberlevelMapper.selectById(levelId); assertPojoEquals(reqVO, level); }
+createLevel(MemberLevelCreateReqVO createReqVO) { // 校验配置是否有效 validateConfigValid(null, createReqVO.getName(), createReqVO.getLevel(), createReqVO.getExperience());  // 插入 MemberLevelDO level = MemberLevelConvert.INSTANCE.convert(createReqVO); memberLevelMapper.insert(level); // 返回 return level.getId(); }
+[*] target: assertNotNull(levelId)
+[-] pred: org. junit. Assert. assertNotNull ( levelId )
+************************************
+************************************
+[+] input: addsTask() { final String task1Name = "TaskOne";  final TodoList todoList = new TodoList(); todoList.addTask(task1Name);  "<AssertPlaceHolder>"; assertEquals(task1Name, task1NameOf(todoList)); }
+size() { return tasks.size(); }
+[*] target: assertEquals(1, todoList.size())
+[-] pred: org. junit. Assert. assertEquals ( 1, todoList. size() )
+************************************
+************************************
+[+] input: shouldBuildTimerExpressionMappedMessage() { String juelExpression = random(); String feelExpression = random(); Message message = timerExpressionMapped(juelExpression, feelExpression); "<AssertPlaceHolder>"; assertNotNull(message.getMessage()); assertNotNull(message.getSeverity()); assertThat(message.getMessage()) .isEqualTo( String.format( "Timer expression was transformed: Please review transformed expression: '%s' -> '%s'.", juelExpression, feelExpression)); }
+timerExpressionMapped(String juelExpression, String feelExpression) { return INSTANCE.composeMessage( "timer-expression-mapped", ContextBuilder.builder() .context(expressionTransformationResult(juelExpression, feelExpression)) .build()); }
+[*] target: assertNotNull(message)
+[-] pred: org. junit. Assert. assertNotNull ( message )
+************************************
+************************************
+[+] input: getFunctions() { PrometheusStorageEngine engine = new PrometheusStorageEngine(client); Collection<FunctionResolver> functionResolverCollection = engine.getFunctions(); "<AssertPlaceHolder>"; assertEquals(2, functionResolverCollection.size()); Iterator<FunctionResolver> iterator = functionResolverCollection.iterator(); assertTrue(iterator.next() instanceof QueryRangeTableFunctionResolver); assertTrue(iterator.next() instanceof QueryExemplarsTableFunctionResolver); }
+getFunctions() { ArrayList<FunctionResolver> functionList = new ArrayList<>(); functionList.add(new QueryRangeTableFunctionResolver(prometheusClient)); functionList.add(new QueryExemplarsTableFunctionResolver(prometheusClient)); return functionList; }
+[*] target: assertNotNull(functionResolverCollection)
+[-] pred: org. junit. Assert. assertNotNull ( functionResolverCollection )
+************************************
+************************************
+[+] input: shouldBuildCompletionCondition() { Message message = MessageFactory.completionCondition(random(), random()); "<AssertPlaceHolder>"; assertNotNull(message.getMessage()); }
+completionCondition(String juelExpression, String feelExpression) { return INSTANCE.composeMessage( "completion-condition", ContextBuilder.builder() .context(expressionTransformationResult(juelExpression, feelExpression)) .build()); }
+[*] target: assertNotNull(message)
+[-] pred: org. junit. Assert. assertNotNull ( message )
+************************************
+************************************
+[+] input: testIterator() { Set<DataSource> dataSourceSet = new HashSet<>(); dataSourceSet.add(new DataSource("prometheus", DataSourceType.PROMETHEUS, storageEngine)); dataSourceSet.add(new DataSource("opensearch", DataSourceType.OPENSEARCH, storageEngine)); Set<DataSourceMetadata> dataSourceMetadata = dataSourceSet.stream() .map( dataSource -> new DataSourceMetadata.Builder() .setName(dataSource.getName()) .setConnector(dataSource.getConnectorType()) .setProperties(ImmutableMap.of("prometheus.uri", "localhost:9200")) .build()) .collect(Collectors.toSet()); when(dataSourceService.getDataSourceMetadata(false)).thenReturn(dataSourceMetadata);  assertFalse(dataSourceTableScan.hasNext()); dataSourceTableScan.open(); assertTrue(dataSourceTableScan.hasNext()); Set<ExprValue> exprTupleValues = new HashSet<>(); while (dataSourceTableScan.hasNext()) { exprTupleValues.add(dataSourceTableScan.next()); }  Set<ExprValue> expectedExprTupleValues = new HashSet<>(); for (DataSource dataSource : dataSourceSet) { expectedExprTupleValues.add( new ExprTupleValue( new LinkedHashMap<>( ImmutableMap.of( "DATASOURCE_NAME", ExprValueUtils.stringValue(dataSource.getName()), "CONNECTOR_TYPE", ExprValueUtils.stringValue(dataSource.getConnectorType().name()))))); } "<AssertPlaceHolder>"; }
+next() { return iterator.next(); }
+[*] target: assertEquals(expectedExprTupleValues, exprTupleValues)
+[-] pred: org. junit. Assert. assertEquals ( expectedExprTupleValues, exprTupleValues )
+************************************
+************************************
+[+] input: 사용자_포털_메인_예약목록_조회_성공() { ReserveItem saved = reserveItemRepository.save(reserveItem).block(); "<AssertPlaceHolder>";  Map<String, Collection<ReserveItemMainResponseDto>> responseBody = webTestClient.get() .uri(API_URL+"/latest/3") .exchange() .expectStatus().isOk() .expectBody(new ParameterizedTypeReference<Map<String, Collection<ReserveItemMainResponseDto>>>() { }) .returnResult().getResponseBody();  assertThat(responseBody.keySet().size()).isEqualTo(1); assertThat(responseBody.keySet().contains(category.getCodeId())).isTrue(); Collection<ReserveItemMainResponseDto> reserveItemMainResponseDtos = responseBody.get(category.getCodeId()); reserveItemMainResponseDtos.stream().forEach(reserveItemMainResponseDto -> { assertThat(reserveItemMainResponseDto.getReserveItemName().equals(saved.getReserveItemName())); }); }
+save(@Valid @RequestBody ReserveItemSaveRequestDto saveRequestDto) { return reserveItemService.save(saveRequestDto); }
+[*] target: assertNotNull(saved)
+[-] pred: org. junit. Assert. assertNotNull ( saved )
+************************************
+************************************
+[+] input: JsonProcessingException { //given final HttpResponse response = mock(HttpResponse.class); when(httpClient.send(httpRequestArgumentCaptor.capture())).thenReturn(Mono.just(response)); when(response.getBodyAsString(eq(StandardCharsets.UTF_8))).thenReturn(Mono.just(JSON)); when(response.getStatusCode()).thenReturn(HttpStatus.SC_OK); when(objectReader.forType(eq(Boolean.class))).thenReturn(objectReader); when(objectReader.readValue(eq(JSON))).thenReturn(true);  //when final boolean actual = underTest.purge(URI.create(HTTPS_LOCALHOST));  //then Assertions."<AssertPlaceHolder>"; verify(httpClient, atMostOnce()).send(any()); final HttpRequest request = httpRequestArgumentCaptor.getValue(); Assertions.assertEquals("/management/vault/purge", request.getUrl().getPath()); Assertions.assertEquals(HttpMethod.DELETE, request.getHttpMethod()); Assertions.assertNull(request.getHeaders().get(HttpHeaderName.CONTENT_TYPE)); verify(response).getStatusCode(); verify(response).getBodyAsString(eq(StandardCharsets.UTF_8)); verify(objectReader).forType(eq(Boolean.class)); verify(objectReader).readValue(anyString()); }
+purge(@NonNull final URI baseUri) { final Map<String, String> parameters = Map.of(BASE_URI_QUERY_PARAM, baseUri.toString()); final URI uri = UriUtil.uriBuilderForPath(vaultUrl, MANAGEMENT_VAULT_PURGE_PATH, parameters); final HttpRequest request = new HttpRequest(HttpMethod.DELETE, uri.toString()); return sendAndProcess(request, r -> r.getResponseObject(Boolean.class)); }
+[*] target: assertTrue(actual)
+[-] pred: org. junit. Assert. assertTrue ( actual )
+************************************
+************************************
+[+] input: shouldBuildElementNotSupported() { Message message = MessageFactory.elementNotSupported(random(), random()); "<AssertPlaceHolder>"; assertNotNull(message.getMessage()); }
+elementNotSupported(String elementLocalName, String semanticVersion) { return INSTANCE.composeMessage( "element-not-supported", ContextBuilder.builder() .context(elementNotSupportedPrefix(elementLocalName, semanticVersion)) .build()); }
+[*] target: assertNotNull(message)
+[-] pred: org. junit. Assert. assertNotNull ( message )
+************************************
+************************************
+[+] input: shouldBuildInputOutputParameterIsNoExpression() { Message message = MessageFactory.inputOutputParameterIsNoExpression(random(), random()); "<AssertPlaceHolder>"; assertNotNull(message.getMessage()); }
+inputOutputParameterIsNoExpression( String elementLocalName, String parameterName) { return INSTANCE.composeMessage( "input-output-parameter-is-no-expression", ContextBuilder.builder() .context(elementNotTransformablePrefix(elementLocalName)) .entry("parameterName", parameterName) .build()); }
+[*] target: assertNotNull(message)
+[-] pred: org. junit. Assert. assertNotNull ( message )
+************************************
+************************************
+[+] input: test_objectFileName_with_fileExtension() { final String namePattern = "events-%{yyyy-MM-dd'T'hh-mm-ss}.pdf";  when(s3SinkConfig.getObjectKeyOptions().getNamePattern()) .thenReturn(namePattern); when(event.formatString(namePattern, expressionEvaluator, REPLACEMENT_FOR_NON_EXISTENT_KEYS)).thenReturn(namePattern); String objectFileName = ObjectKey.objectFileName(s3SinkConfig, null, event, expressionEvaluator); Assertions."<AssertPlaceHolder>"; Assertions.assertTrue(objectFileName.contains(".pdf")); }
+objectFileName(final S3SinkConfig s3SinkConfig, final String codecExtension, final Event event, final ExpressionEvaluator expressionEvaluator) { String configNamePattern = s3SinkConfig.getObjectKeyOptions().getNamePattern(); String configNamePatternExpressionResult = event.formatString(configNamePattern, expressionEvaluator, REPLACEMENT_FOR_NON_EXISTENT_KEYS); int extensionIndex = configNamePatternExpressionResult.lastIndexOf('.'); if (extensionIndex > 0) { return S3ObjectIndexUtility.getObjectNameWithDateTimeId(configNamePatternExpressionResult.substring(0, extensionIndex)) + "." + (codecExtension!=null? codecExtension :configNamePatternExpressionResult.substring(extensionIndex + 1)); } else { return S3ObjectIndexUtility.getObjectNameWithDateTimeId(configNamePatternExpressionResult) + "." + (codecExtension!=null? codecExtension : DEFAULT_CODEC_FILE_EXTENSION); } }
+[*] target: assertNotNull(objectFileName)
+[-] pred: org. junit. Assert. assertNotNull ( objectFileName )
+************************************
+************************************
+[+] input: testCreateSeckillActivity_success() { // 准备参数 SeckillActivityCreateReqVO reqVO = randomPojo(SeckillActivityCreateReqVO.class);  // 调用 Long seckillActivityId = seckillActivityService.createSeckillActivity(reqVO); // 断言 "<AssertPlaceHolder>"; // 校验记录的属性是否正确 SeckillActivityDO seckillActivity = seckillActivityMapper.selectById(seckillActivityId); assertPojoEquals(reqVO, seckillActivity); }
+createSeckillActivity(SeckillActivityCreateReqVO createReqVO) { // 1.1 校验商品秒杀时段是否冲突 validateProductConflict(createReqVO.getConfigIds(), createReqVO.getSpuId(), null); // 1.2 校验商品是否存在 validateProductExists(createReqVO.getSpuId(), createReqVO.getProducts());  // 2.1 插入秒杀活动 SeckillActivityDO activity = SeckillActivityConvert.INSTANCE.convert(createReqVO) .setStatus(CommonStatusEnum.ENABLE.getStatus()) .setStock(getSumValue(createReqVO.getProducts(), SeckillProductBaseVO::getStock, Integer::sum)); activity.setTotalStock(activity.getStock()); seckillActivityMapper.insert(activity); // 2.2 插入商品 List<SeckillProductDO> products = SeckillActivityConvert.INSTANCE.convertList(createReqVO.getProducts(), activity); seckillProductMapper.insertBatch(products); return activity.getId(); }
+[*] target: assertNotNull(seckillActivityId)
+[-] pred: org. junit. Assert. assertNotNull ( seckillActivityId )
+************************************
+************************************
+[+] input: testCreateUserGroup_success() { // 准备参数 BpmUserGroupSaveReqVO reqVO = RandomUtils.randomPojo(BpmUserGroupSaveReqVO.class);  // 调用 Long userGroupId = userGroupService.createUserGroup(reqVO); // 断言 Assertions."<AssertPlaceHolder>"; // 校验记录的属性是否正确 BpmUserGroupDO userGroup = userGroupMapper.selectById(userGroupId); AssertUtils.assertPojoEquals(reqVO, userGroup); }
+createUserGroup(@Valid BpmUserGroupSaveReqVO createReqVO);
+[*] target: assertNotNull(userGroupId)
+[-] pred: org. junit. Assert. assertNotNull ( userGroupId )
+************************************
+************************************
+[+] input: kill() { ExecutorBiz executorBiz = new ExecutorBizClient(addressUrl, accessToken);  final int jobId = 0;  // Act final ReturnT<String> retval = executorBiz.kill(new KillParam(jobId));  // Assert result Assertions."<AssertPlaceHolder>"; Assertions.assertNull(((ReturnT<String>) retval).getContent()); Assertions.assertEquals(200, retval.getCode()); Assertions.assertNull(retval.getMsg()); }
+kill(KillParam killParam);
+[*] target: assertNotNull(retval)
+[-] pred: org. junit. Assert. assertNotNull ( retval )
+************************************
+************************************
+[+] input: InvocationTargetException { // Set Security Context OauthUser oauthUser = SecurityUtils.createOauthUserWithTwoOrgsAndWithValues(); SecurityContext.set(oauthUser);  //Given Project testProject = ProjectUtils.createTestProject(PROJECT_ID); LabelConfiguration testLabelConfiguration = LabelConfigurationUtils.createTestLabelConfiguration(testProject);  List<LcEntry> testLcEntryLineList = LcEntryUtils.createTestLcEntryGeometryList(3, LcEntryType.LINE, testLabelConfiguration);  //When when(labelConfigRepositoryMock.findById(anyString())) .thenReturn(java.util.Optional.of(testLabelConfiguration));  when(lcEntryRepositoryMock.findAllByParentEntryIsNullAndConfigurationId(anyString())) .thenReturn(testLcEntryLineList);  LcConfigDeleteViewModel lcConfigDeleteViewModel = labelConfigService.clearConfig(LC_CONFIG_ID);  System.out.println();  //Then "<AssertPlaceHolder>"; assertEquals(LC_CONFIG_ID, lcConfigDeleteViewModel.getConfigId());  ArgumentCaptor<String> idCapture = ArgumentCaptor.forClass(String.class); verify(lcEntryRepositoryMock, times(1)).deleteLcEntriesByConfigurationId(idCapture.capture()); assertThat(idCapture.getValue()).isEqualTo(LC_CONFIG_ID); verifyNoMoreInteractions(lcEntryRepositoryMock); }
+clearConfig(String configId) { //Permissions check DataGymSecurity.isAuthenticatedAndHasAnyScope(OAUTH_SCOPE_TYPE, TOKEN_SCOPE_TYPE);  LabelConfiguration labelConfiguration = findConfigById(configId);  //Permissions check String projectOrganisation = labelConfiguration.getProject().getOwner(); DataGymSecurity.isAdminOrUser(projectOrganisation, false);  // Delete all LcEntries for the current Configuration lcEntryRepository.deleteLcEntriesByConfigurationId(configId);  // Change TaskState after clearing the LabelConfiguration userTaskService.changeTaskStateAfterLabelConfigurationUpdate(configId);  LcConfigDeleteViewModel lcConfigDeleteViewModel = new LcConfigDeleteViewModel(); lcConfigDeleteViewModel.setConfigId(configId);  return lcConfigDeleteViewModel; }
+[*] target: assertNotNull(lcConfigDeleteViewModel)
+[-] pred: org. junit. Assert. assertNotNull ( lcConfigDeleteViewModel )
+************************************
+************************************
+[+] input: testCreateSocialClient_success() { // 准备参数 SocialClientSaveReqVO reqVO = randomPojo(SocialClientSaveReqVO.class, o -> o.setSocialType(randomEle(SocialTypeEnum.values()).getType()) .setUserType(randomEle(UserTypeEnum.values()).getValue()) .setStatus(randomCommonStatus())) .setId(null); // 防止 id 被赋值  // 调用 Long socialClientId = socialClientService.createSocialClient(reqVO); // 断言 "<AssertPlaceHolder>"; // 校验记录的属性是否正确 SocialClientDO socialClient = socialClientMapper.selectById(socialClientId); assertPojoEquals(reqVO, socialClient, "id"); }
+createSocialClient(SocialClientSaveReqVO createReqVO) { // 校验重复 validateSocialClientUnique(null, createReqVO.getUserType(), createReqVO.getSocialType());  // 插入 SocialClientDO client = BeanUtils.toBean(createReqVO, SocialClientDO.class); socialClientMapper.insert(client); return client.getId(); }
+[*] target: assertNotNull(socialClientId)
+[-] pred: org. junit. Assert. assertNotNull ( socialClientId )
+************************************
+************************************
+[+] input: shouldBuildEscalationCodeNoExpression() { Message message = escalationCodeNoExpression(); "<AssertPlaceHolder>"; assertNotNull(message.getMessage()); assertNotNull(message.getSeverity()); assertThat(message.getMessage()).isEqualTo("Escalation code cannot be an expression."); }
+escalationCodeNoExpression() { return INSTANCE.staticMessage("escalation-code-no-expression"); }
+[*] target: assertNotNull(message)
+[-] pred: org. junit. Assert. assertNotNull ( message )
+************************************
+************************************
+[+] input: shouldBuildFollowUpDate() { String juelExpression = random(); String feelExpression = random(); Message message = MessageFactory.followUpDate(juelExpression, feelExpression); "<AssertPlaceHolder>"; assertNotNull(message.getMessage()); assertNotNull(message.getSeverity()); assertThat(message.getMessage()) .isEqualTo( String.format( "Attribute 'followUpDate' on 'userTask' was mapped. Please review transformed expression: '%s' -> '%s'.", juelExpression, feelExpression)); }
+followUpDate(String juelExpression, String feelExpression) { return INSTANCE.composeMessage( "follow-up-date", ContextBuilder.builder() .context( supportedAttributeExpression( "followUpDate", "userTask", juelExpression, feelExpression)) .build()); }
+[*] target: assertNotNull(message)
+[-] pred: org. junit. Assert. assertNotNull ( message )
+************************************
+************************************
+[+] input: 한건조회_성공() { ReserveItem saved = reserveItemRepository.save(reserveItem).block(); "<AssertPlaceHolder>";  ReserveItemResponseDto responseBody = webTestClient.get() .uri(API_URL+"/{reserveItemId}", saved.getReserveItemId()) .exchange() .expectStatus().isOk() .expectBody(ReserveItemResponseDto.class) .returnResult().getResponseBody();  assertThat(responseBody.getCategoryId()).isEqualTo(category.getCodeId()); assertThat(responseBody.getReserveItemName()).isEqualTo(saved.getReserveItemName());  }
+save(@Valid @RequestBody ReserveItemSaveRequestDto saveRequestDto) { return reserveItemService.save(saveRequestDto); }
+[*] target: assertNotNull(saved)
+[-] pred: org. junit. Assert. assertNotNull ( saved )
+************************************
+************************************
+[+] input: shouldBuildTopic() { Message message = MessageFactory.topic(random(), random()); "<AssertPlaceHolder>"; assertNotNull(message.getMessage()); }
+topic(String attributeLocalName, String elementLocalName) { return INSTANCE.composeMessage( "topic", ContextBuilder.builder() .context(supportedAttributePrefix(attributeLocalName, elementLocalName)) .build()); }
+[*] target: assertNotNull(message)
+[-] pred: org. junit. Assert. assertNotNull ( message )
+************************************
+************************************
+[+] input: addsTwoTasks() { final String task1Name = "TaskOne"; final String task2Name = "TaskTwo";  final TodoList todoList = new TodoList(); todoList.addTask(task1Name); todoList.addTask(task2Name);  "<AssertPlaceHolder>"; assertEquals(task1Name, task1NameOf(todoList)); assertEquals(task2Name, task2NameOf(todoList)); }
+size() { return tasks.size(); }
+[*] target: assertEquals(2, todoList.size())
+[-] pred: org. junit. Assert. assertEquals ( 2, todoList. size() )
+************************************
+************************************
+[+] input: testCreateCouponTemplate_success() { // 准备参数 CouponTemplateCreateReqVO reqVO = randomPojo(CouponTemplateCreateReqVO.class, o -> o.setProductScope(randomEle(PromotionProductScopeEnum.values()).getScope()) .setValidityType(randomEle(CouponTemplateValidityTypeEnum.values()).getType()) .setDiscountType(randomEle(PromotionDiscountTypeEnum.values()).getType()));  // 调用 Long couponTemplateId = couponTemplateService.createCouponTemplate(reqVO); // 断言 "<AssertPlaceHolder>"; // 校验记录的属性是否正确 CouponTemplateDO couponTemplate = couponTemplateMapper.selectById(couponTemplateId); assertPojoEquals(reqVO, couponTemplate); }
+createCouponTemplate(CouponTemplateCreateReqVO createReqVO) { // 校验商品范围 validateProductScope(createReqVO.getProductScope(), createReqVO.getProductScopeValues()); // 插入 CouponTemplateDO couponTemplate = CouponTemplateConvert.INSTANCE.convert(createReqVO) .setStatus(CommonStatusEnum.ENABLE.getStatus()); couponTemplateMapper.insert(couponTemplate); // 返回 return couponTemplate.getId(); }
+[*] target: assertNotNull(couponTemplateId)
+[-] pred: org. junit. Assert. assertNotNull ( couponTemplateId )
+************************************
+************************************
+[+] input: testUpdateAfterApproval_approved() { // 准备参数 Long userId = randomLongId(); Integer userType = randomEle(UserTypeEnum.values()).getValue(); String clientId = randomString(); Map<String, Boolean> requestedScopes = new LinkedHashMap<>(); // 有序，方便判断 requestedScopes.put("read", true); requestedScopes.put("write", false); // mock 方法  // 调用 boolean success = oauth2ApproveService.updateAfterApproval(userId, userType, clientId, requestedScopes); // 断言 "<AssertPlaceHolder>"; List<OAuth2ApproveDO> result = oauth2ApproveMapper.selectList(); assertEquals(2, result.size()); // read assertEquals(userId, result.get(0).getUserId()); assertEquals(userType, result.get(0).getUserType()); assertEquals(clientId, result.get(0).getClientId()); assertEquals("read", result.get(0).getScope()); assertTrue(result.get(0).getApproved()); assertFalse(DateUtils.isExpired(result.get(0).getExpiresTime())); // write assertEquals(userId, result.get(1).getUserId()); assertEquals(userType, result.get(1).getUserType()); assertEquals(clientId, result.get(1).getClientId()); assertEquals("write", result.get(1).getScope()); assertFalse(result.get(1).getApproved()); assertFalse(DateUtils.isExpired(result.get(1).getExpiresTime())); }
+updateAfterApproval(Long userId, Integer userType, String clientId, Map<String, Boolean> requestedScopes) { // 如果 requestedScopes 为空，说明没有要求，则返回 true 通过 if (CollUtil.isEmpty(requestedScopes)) { return true; }  // 更新批准的信息 boolean success = false; // 需要至少有一个同意 LocalDateTime expireTime = LocalDateTime.now().plusSeconds(TIMEOUT); for (Map.Entry<String, Boolean> entry : requestedScopes.entrySet()) { if (entry.getValue()) { success = true; } saveApprove(userId, userType, clientId, entry.getKey(), entry.getValue(), expireTime); } return success; }
+[*] target: assertTrue(success)
+[-] pred: org. junit. Assert. assertTrue ( success )
+************************************
+************************************
+[+] input: shouldBuildCandidateGroups() { Message message = MessageFactory.candidateGroups(random(), random()); "<AssertPlaceHolder>"; assertNotNull(message.getMessage()); }
+candidateGroups(String juelExpression, String feelExpression) { return INSTANCE.composeMessage( "candidate-groups", ContextBuilder.builder() .context( supportedAttributeExpression( "candidateGroups", "userTask", juelExpression, feelExpression)) .build()); }
+[*] target: assertNotNull(message)
+[-] pred: org. junit. Assert. assertNotNull ( message )
+************************************
+************************************
+[+] input: shouldBuildCandidateUsers() { String juelExpression = random(); String feelExpression = random(); Message message = MessageFactory.candidateUsers(juelExpression, feelExpression); "<AssertPlaceHolder>"; assertNotNull(message.getMessage()); assertNotNull(message.getSeverity()); assertThat(message.getMessage()) .isEqualTo( String.format( "Attribute 'candidateUsers' on 'userTask' was mapped. Please review transformed expression: '%s' -> '%s'.", juelExpression, feelExpression)); }
+candidateUsers(String juelExpression, String feelExpression) { return INSTANCE.composeMessage( "candidate-users", ContextBuilder.builder() .context( supportedAttributeExpression( "candidateUsers", "userTask", juelExpression, feelExpression)) .build()); }
+[*] target: assertNotNull(message)
+[-] pred: org. junit. Assert. assertNotNull ( message )
+************************************
+************************************
+[+] input: shouldBuildCorrelationKeyHint() { Message message = MessageFactory.correlationKeyHint(); "<AssertPlaceHolder>"; assertNotNull(message.getMessage()); }
+correlationKeyHint() { return INSTANCE.staticMessage("correlation-key-hint"); }
+[*] target: assertNotNull(message)
+[-] pred: org. junit. Assert. assertNotNull ( message )
+************************************
+************************************
+[+] input: testCreateCategory_success() { // 准备参数 //ProductCategoryCreateReqVO reqVO = randomPojo(ProductCategoryCreateReqVO.class);  // mock 父类 //ProductCategoryDO parentProductCategory = randomPojo(ProductCategoryDO.class, o -> { //    reqVO.setParentId(o.getId()); //    o.setParentId(PARENT_ID_NULL); //}); //productCategoryMapper.insert(parentProductCategory); // //// 调用 //Long categoryId = productCategoryService.createCategory(reqVO); //// 断言 //"<AssertPlaceHolder>"; //// 校验记录的属性是否正确 //ProductCategoryDO category = productCategoryMapper.selectById(categoryId); //assertPojoEquals(reqVO, category); }
+createCategory(ProductCategorySaveReqVO createReqVO) { // 校验父分类存在 validateParentProductCategory(createReqVO.getParentId());  // 插入 ProductCategoryDO category = BeanUtils.toBean(createReqVO, ProductCategoryDO.class); productCategoryMapper.insert(category); // 返回 return category.getId(); }
+[*] target: assertNotNull(categoryId)
+[-] pred: org. junit. Assert. assertNotNull ( categoryId )
+************************************
+************************************
+[+] input: testUpdateAfterApproval_none() { // 准备参数 Long userId = randomLongId(); Integer userType = randomEle(UserTypeEnum.values()).getValue(); String clientId = randomString();  // 调用 boolean success = oauth2ApproveService.updateAfterApproval(userId, userType, clientId, null); // 断言 "<AssertPlaceHolder>"; List<OAuth2ApproveDO> result = oauth2ApproveMapper.selectList(); assertEquals(0, result.size()); }
+updateAfterApproval(Long userId, Integer userType, String clientId, Map<String, Boolean> requestedScopes) { // 如果 requestedScopes 为空，说明没有要求，则返回 true 通过 if (CollUtil.isEmpty(requestedScopes)) { return true; }  // 更新批准的信息 boolean success = false; // 需要至少有一个同意 LocalDateTime expireTime = LocalDateTime.now().plusSeconds(TIMEOUT); for (Map.Entry<String, Boolean> entry : requestedScopes.entrySet()) { if (entry.getValue()) { success = true; } saveApprove(userId, userType, clientId, entry.getKey(), entry.getValue(), expireTime); } return success; }
+[*] target: assertTrue(success)
+[-] pred: org. junit. Assert. assertTrue ( success )
+************************************
+************************************
+[+] input: shouldBuildDelegateImplementationNoDefaultJobType() { String implementationType = random(); String binding = random(); Message message = delegateImplementationNoDefaultJobType(implementationType, binding); "<AssertPlaceHolder>"; assertNotNull(message.getMessage()); assertNotNull(message.getSeverity()); assertThat(message.getMessage()) .isEqualTo( "Delegate call of type '" + implementationType + "' bound to '" + binding + "' was reset."); }
+delegateImplementationNoDefaultJobType( String implementationType, String binding) { return INSTANCE.composeMessage( "delegate-implementation-no-default-job-type", ContextBuilder.builder() .entry("implementationType", implementationType) .entry("binding", binding) .build()); }
+[*] target: assertNotNull(message)
+[-] pred: org. junit. Assert. assertNotNull ( message )
+************************************
+************************************
+[+] input: testCancelOrder() { when(mockOrderRequest.originOrderId()).thenReturn("order1"); manager.submitOrder(mockOrderRequest); boolean result = manager.cancelOrder("order1"); "<AssertPlaceHolder>"; Map<String, OrderRequest> orderMap = manager.orderMap; assertEquals(0, orderMap.size()); }
+cancelOrder(String originOrderId) { OrderRequest orderReq = orderMap.remove(originOrderId); if(Objects.isNull(orderReq)) { return false; } orderReq.cancelOrder(); return true; }
+[*] target: assertTrue(result)
+[-] pred: org. junit. Assert. assertTrue ( result )
+************************************
+************************************
+[+] input: testCreateArticle_success() { // 准备参数 ArticleCreateReqVO reqVO = randomPojo(ArticleCreateReqVO.class);  // 调用 Long articleId = articleService.createArticle(reqVO); // 断言 "<AssertPlaceHolder>"; // 校验记录的属性是否正确 ArticleDO article = articleMapper.selectById(articleId); assertPojoEquals(reqVO, article); }
+createArticle(ArticleCreateReqVO createReqVO) { // 校验分类存在 validateArticleCategoryExists(createReqVO.getCategoryId());  // 插入 ArticleDO article = ArticleConvert.INSTANCE.convert(createReqVO); article.setBrowseCount(0); // 初始浏览量 articleMapper.insert(article); // 返回 return article.getId(); }
+[*] target: assertNotNull(articleId)
+[-] pred: org. junit. Assert. assertNotNull ( articleId )
+************************************
+************************************
+[+] input: shouldBuildExecutionListener() { Message message = MessageFactory.executionListener("start", "${myExecutionListener}"); "<AssertPlaceHolder>"; assertNotNull(message.getMessage()); assertThat(message.getMessage()) .isEqualTo( "Listener at 'start' with implementation '${myExecutionListener}' cannot be transformed. Execution Listeners do not exist in Zeebe."); }
+executionListener(String event, String implementation) { return INSTANCE.composeMessage( "execution-listener", ContextBuilder.builder() .entry("event", event) .entry("implementation", implementation) .build()); }
+[*] target: assertNotNull(message)
+[-] pred: org. junit. Assert. assertNotNull ( message )
+************************************
+************************************
+[+] input: testCreateFileConfig_success() { // 准备参数 Map<String, Object> config = MapUtil.<String, Object>builder().put("basePath", "/yunai") .put("domain", "https://www.iocoder.cn").build(); FileConfigSaveReqVO reqVO = randomPojo(FileConfigSaveReqVO.class, o -> o.setStorage(FileStorageEnum.LOCAL.getStorage()).setConfig(config)) .setId(null); // 避免 id 被赋值  // 调用 Long fileConfigId = fileConfigService.createFileConfig(reqVO); // 断言 "<AssertPlaceHolder>"; // 校验记录的属性是否正确 FileConfigDO fileConfig = fileConfigMapper.selectById(fileConfigId); assertPojoEquals(reqVO, fileConfig, "id", "config"); assertFalse(fileConfig.getMaster()); assertEquals("/yunai", ((LocalFileClientConfig) fileConfig.getConfig()).getBasePath()); assertEquals("https://www.iocoder.cn", ((LocalFileClientConfig) fileConfig.getConfig()).getDomain()); // 验证 cache assertNull(fileConfigService.getClientCache().getIfPresent(fileConfigId)); }
+createFileConfig(FileConfigSaveReqVO createReqVO) { FileConfigDO fileConfig = FileConfigConvert.INSTANCE.convert(createReqVO) .setConfig(parseClientConfig(createReqVO.getStorage(), createReqVO.getConfig())) .setMaster(false); // 默认非 master fileConfigMapper.insert(fileConfig); return fileConfig.getId(); }
+[*] target: assertNotNull(fileConfigId)
+[-] pred: org. junit. Assert. assertNotNull ( fileConfigId )
+************************************
+************************************
+[+] input: testListSwdsVersionsByJobId() { List<Long> ids = jobDatasetVersionMapper.listDatasetVersionIdsByJobId( 13L); Assertions."<AssertPlaceHolder>"; Assertions.assertTrue( CollectionUtils.isEqualCollection(List.of(datasetVersionEntity.getId(), datasetVersionEntity2.getId()), ids));  }
+listDatasetVersionIdsByJobId(@Param("jobId") Long jobId);  @InsertProvider(value = JobDatasetVersionProvider.class, method = "insertSql") int insert(@Param("jobId") Long jodId, @Param("datasetVersionIds") Set<Long> datasetVersionIds);  class JobDatasetVersionProvider {  public String insertSql(@Param("jobId") Long jobId, @Param("datasetVersionIds") Set<Long> datasetVersionIds) { return new SQL() { { INSERT_INTO("job_dataset_version_rel"); INTO_COLUMNS("job_id", "dataset_version_id"); for (Long datasetVersionId : datasetVersionIds) { INTO_VALUES(String.valueOf(jobId), String.valueOf(datasetVersionId)); ADD_ROW(); } } }.toString(); } }
+[*] target: assertEquals(2, ids.size())
+[-] pred: org. junit. Assert. assertEquals ( 2, ids. size ( ) )
+************************************
+************************************
+[+] input: shouldBuildErrorCode() { Message message = MessageFactory.errorCode("old", "new"); "<AssertPlaceHolder>"; assertNotNull(message.getMessage()); assertNotNull(message.getSeverity()); assertThat(message.getMessage()) .isEqualTo("Error code is transformed from 'old' to 'new'. Please review."); }
+errorCode(String oldCode, String newCode) { return INSTANCE.composeMessage( "error-code", ContextBuilder.builder().entry("oldCode", oldCode).entry("newCode", newCode).build()); }
+[*] target: assertNotNull(message)
+[-] pred: org. junit. Assert. assertNotNull ( message )
+************************************
+************************************
+[+] input: testCreateDictType_success() { // 准备参数 DictTypeSaveReqVO reqVO = randomPojo(DictTypeSaveReqVO.class, o -> o.setStatus(randomEle(CommonStatusEnum.values()).getStatus())) .setId(null); // 避免 id 被赋值  // 调用 Long dictTypeId = dictTypeService.createDictType(reqVO); // 断言 "<AssertPlaceHolder>"; // 校验记录的属性是否正确 DictTypeDO dictType = dictTypeMapper.selectById(dictTypeId); assertPojoEquals(reqVO, dictType, "id"); }
+createDictType(DictTypeSaveReqVO createReqVO) { // 校验字典类型的名字的唯一性 validateDictTypeNameUnique(null, createReqVO.getName()); // 校验字典类型的类型的唯一性 validateDictTypeUnique(null, createReqVO.getType());  // 插入字典类型 DictTypeDO dictType = BeanUtils.toBean(createReqVO, DictTypeDO.class); dictType.setDeletedTime(LocalDateTimeUtils.EMPTY); // 唯一索引，避免 null 值 dictTypeMapper.insert(dictType); return dictType.getId(); }
+[*] target: assertNotNull(dictTypeId)
+[-] pred: org. junit. Assert. assertNotNull ( dictTypeId )
+************************************
+************************************
+[+] input: shouldBuildConditionExpression() { Message message = MessageFactory.conditionExpression(random(), random()); "<AssertPlaceHolder>"; assertNotNull(message.getMessage()); }
+conditionExpression(String juelExpression, String feelExpression) { return INSTANCE.composeMessage( "condition-expression", ContextBuilder.builder() .context(expressionTransformationResult(juelExpression, feelExpression)) .build()); }
+[*] target: assertNotNull(message)
+[-] pred: org. junit. Assert. assertNotNull ( message )
+************************************
+************************************
+[+] input: fromOptionValue_users_test() { DatasetTypeOptions datasetTypeOptions = DatasetTypeOptions.fromOptionValue("users"); "<AssertPlaceHolder>"; assertThat(datasetTypeOptions.toString(), equalTo("USERS")); }
+fromOptionValue(final String option) { return OPTIONS_MAP.get(option); }
+[*] target: assertNotNull(datasetTypeOptions)
+[-] pred: org. junit. Assert. assertNotNull ( datasetTypeOptions )
+************************************
+************************************
+[+] input: shouldProperlyMapStudentToDto() { //given StudentModel studentModel = new StudentModel(); studentModel.setId(1L); studentModel.setName("Ivan");  LectureModel lectureModel = new LectureModel(); lectureModel.setId(2L); lectureModel.setName("Matan");  studentModel.setLectures(singletonList(lectureModel));  LecturerModel lecturerModel = new LecturerModel();  lecturerModel.setId(3L); lecturerModel.setName("Vladimir Kirillovich");  studentModel.setLecturers(singletonList(lecturerModel));  //when StudentDTO studentDTO = studentMapper.toDTO(studentModel);  //then "<AssertPlaceHolder>"; assertEquals(1L, studentDTO.getId()); assertEquals("Ivan", studentDTO.getName());  assertEquals(1, studentDTO.getLecturers().size()); assertEquals(2L, studentDTO.getLectures().get(0).getId()); assertEquals("Matan", studentDTO.getLectures().get(0).getName());  assertEquals(1, studentDTO.getLectures().size()); assertEquals(3L, studentDTO.getLecturers().get(0).getId()); assertEquals("Vladimir Kirillovich", studentDTO.getLecturers().get(0).getName()); }
+toDTO(StudentModel model);
+[*] target: assertNotNull(studentDTO)
+[-] pred: org. junit. Assert. assertNotNull ( studentDTO )
+************************************
+************************************
+[+] input: execute_with_cursor() { List<ExprValue> expected = Arrays.asList( tupleValue(of("name", "John", "age", 20)), tupleValue(of("name", "Allen", "age", 30))); var plan = new FakePhysicalPlan(expected.iterator()); when(protector.protect(plan)).thenReturn(plan);  OpenSearchExecutionEngine executor = new OpenSearchExecutionEngine(client, protector, new PlanSerializer(null)); List<ExprValue> actual = new ArrayList<>(); executor.execute( plan, new ResponseListener<>() { @Override public void onResponse(QueryResponse response) { actual.addAll(response.getResults()); assertTrue(response.getCursor().toString().startsWith("n:")); }  @Override public void onFailure(Exception e) { fail("Error occurred during execution", e); } });  "<AssertPlaceHolder>"; }
+execute( PhysicalPlan physicalPlan, ExecutionContext context, ResponseListener<QueryResponse> listener) { PhysicalPlan plan = executionProtector.protect(physicalPlan); client.schedule( () -> { try { List<ExprValue> result = new ArrayList<>();  context.getSplit().ifPresent(plan::add); plan.open();  while (plan.hasNext()) { result.add(plan.next()); }  QueryResponse response = new QueryResponse( physicalPlan.schema(), result, planSerializer.convertToCursor(plan)); listener.onResponse(response); } catch (Exception e) { listener.onFailure(e); } finally { plan.close(); } }); }
+[*] target: assertEquals(expected, actual)
+[-] pred: org. junit. Assert. assertEquals ( expected, actual )
+************************************
+************************************
+[+] input: shouldBuildPotentialStarter() { Message message = MessageFactory.potentialStarter(random()); "<AssertPlaceHolder>"; assertNotNull(message.getMessage()); }
+potentialStarter(String elementLocalName) { return INSTANCE.composeMessage( "potential-starter", ContextBuilder.builder().context(elementNotTransformablePrefix(elementLocalName)).build()); }
+[*] target: assertNotNull(message)
+[-] pred: org. junit. Assert. assertNotNull ( message )
+************************************
+************************************
+[+] input: shouldProperlyMapDtoToModel() { //given LectureDTO dto = new LectureDTO(); dto.setId(11L); dto.setName("lecture name");  //when LectureModel model = mapperUnderTest.toModel(dto);  //then Assertions."<AssertPlaceHolder>"; Assertions.assertEquals(dto.getId(), model.getId()); Assertions.assertEquals(dto.getName(), model.getName()); }
+toModel(LectureDTO dto);
+[*] target: assertNotNull(model)
+[-] pred: org. junit. Assert. assertNotNull ( model )
+************************************
+************************************
+[+] input: shouldBuildScriptOnConditionalFlow() { String script = random(); String language = random(); Message message = scriptOnConditionalFlow(language, script); "<AssertPlaceHolder>"; assertNotNull(message.getMessage()); assertNotNull(message.getSeverity()); assertThat(message.getMessage()) .isEqualTo( "Please translate the %s script from '%s' to a valid FEEL expression.", language, script); }
+scriptOnConditionalFlow(String language, String script) { return INSTANCE.composeMessage( "script-on-conditional-flow", ContextBuilder.builder().entry("language", language).entry("script", script).build()); }
+[*] target: assertNotNull(message)
+[-] pred: org. junit. Assert. assertNotNull ( message )
+************************************
+************************************
+[+] input: fromOptionValue_interactions_test() { DatasetTypeOptions datasetTypeOptions = DatasetTypeOptions.fromOptionValue("interactions"); "<AssertPlaceHolder>"; assertThat(datasetTypeOptions.toString(), equalTo("INTERACTIONS")); }
+fromOptionValue(final String option) { return OPTIONS_MAP.get(option); }
+[*] target: assertNotNull(datasetTypeOptions)
+[-] pred: org. junit. Assert. assertNotNull ( datasetTypeOptions )
+************************************
+************************************
+[+] input: shouldBuildScriptJobType() { Message message = MessageFactory.scriptJobType(random(), random()); "<AssertPlaceHolder>"; assertNotNull(message.getMessage()); }
+scriptJobType(String elementLocalName, String jobType) { return INSTANCE.composeMessage( "script-job-type", ContextBuilder.builder() .context(elementTransformedPrefix(elementLocalName)) .entry("jobType", jobType) .build()); }
+[*] target: assertNotNull(message)
+[-] pred: org. junit. Assert. assertNotNull ( message )
+************************************
+************************************
+[+] input: byArguments() {  final String[] args = { "--window-type", "HOPPING", "--name", "bar" };  Options options = OptionsUtil.parse(Options.class, args);  "<AssertPlaceHolder>"; assertEquals(options.getWindowType(), WindowType.HOPPING); assertEquals(options.getName(), "bar"); }
+parse(final Class<T> optionsClass, final String[] args) {  final T options = create(optionsClass);  JCommander jCommander = JCommander.newBuilder() .addObject(options) .build();  //easiest way to set configuration through docker. //similar to how Confluent does this in their Docker images. OptionsUtil.populateByEnvironment(options);  jCommander.parse(args);  if (options.isHelp()) { jCommander.usage(); return null; }  return options; }
+[*] target: assertNotNull(options)
+[-] pred: org. junit. Assert. assertNotNull ( options )
+************************************
+************************************
+[+] input: shouldBuildInOutBusinessKeyNotSupported() { Message message = MessageFactory.inOutBusinessKeyNotSupported(random()); "<AssertPlaceHolder>"; assertNotNull(message.getMessage()); }
+inOutBusinessKeyNotSupported(String elementLocalName) { return INSTANCE.composeMessage( "in-out-business-key-not-supported", ContextBuilder.builder() .context(businessKeyNotSupported()) .context(elementNotTransformablePrefix(elementLocalName)) .build()); }
+[*] target: assertNotNull(message)
+[-] pred: org. junit. Assert. assertNotNull ( message )
+************************************
+************************************
+[+] input: shouldBuildErrorCodeNoExpression() { Message message = errorCodeNoExpression(); "<AssertPlaceHolder>"; assertNotNull(message.getMessage()); assertNotNull(message.getSeverity()); assertThat(message.getMessage()).isEqualTo("Error code cannot be an expression."); }
+errorCodeNoExpression() { return INSTANCE.staticMessage("error-code-no-expression"); }
+[*] target: assertNotNull(message)
+[-] pred: org. junit. Assert. assertNotNull ( message )
+************************************
+************************************
+[+] input: shouldBuildMap() { Message message = MessageFactory.map(); "<AssertPlaceHolder>"; assertNotNull(message.getMessage()); }
+map() { return INSTANCE.emptyMessage(); }
+[*] target: assertNotNull(message)
+[-] pred: org. junit. Assert. assertNotNull ( message )
+************************************
+************************************
+[+] input: testManifestNoChange() {  File bar = getFile("schema/bar.graphqls"); File foo = getFile("schema/foo.graphqls");  Properties properties = new Properties(); properties.put(tempFolder.relativize(bar.toPath()).toString(), "7cada13b5b8770e46f7a69e8856abdb9"); properties.put(tempFolder.relativize(foo.toPath()).toString(), "61bbd2d58c22dfb3c664829ad116f7e9");  File manifest = tempFolder.resolve("manifest.props").toFile(); try (FileOutputStream fis = new FileOutputStream(manifest)) { properties.store(fis, "Schema Manifest"); }  SchemaFileManifest sfm = new SchemaFileManifest(new HashSet<>(Arrays.asList(foo, bar)), manifest, tempFolder.toFile());  Assertions.assertTrue(sfm.getChangedFiles().isEmpty());  sfm.syncManifest();  sfm = new SchemaFileManifest(new HashSet<>(Arrays.asList(foo, bar)), manifest, tempFolder.toFile());  Assertions."<AssertPlaceHolder>"; }
+getChangedFiles() { Set<File> changed = new HashSet<>(); OrderedProperties manifest = loadManifest(); for (File file : files) { String oldChecksum = manifest.getProperty(relativizeToProject(file)); if (oldChecksum == null) { log.info("{} is new, will generate code", file.getName()); } else if (!oldChecksum.equals(generateChecksum(file))) { log.info("{} has changed, will generate code", file.getName()); } else { log.info("{} has not changed, will not generate code", file.getName()); continue; } changed.add(file); } return changed; }
+[*] target: assertTrue(sfm.getChangedFiles().isEmpty())
+[-] pred: org. junit. Assert. assertTrue ( sfm. getChangedFiles ( ). isEmpty ( ) )
+************************************
+************************************
+[+] input: testCreateMailTemplate_success() { // 准备参数 MailTemplateSaveReqVO reqVO = randomPojo(MailTemplateSaveReqVO.class) .setId(null); // 防止 id 被赋值  // 调用 Long mailTemplateId = mailTemplateService.createMailTemplate(reqVO); // 断言 "<AssertPlaceHolder>"; // 校验记录的属性是否正确 MailTemplateDO mailTemplate = mailTemplateMapper.selectById(mailTemplateId); assertPojoEquals(reqVO, mailTemplate, "id"); }
+createMailTemplate(MailTemplateSaveReqVO createReqVO) { // 校验 code 是否唯一 validateCodeUnique(null, createReqVO.getCode());  // 插入 MailTemplateDO template = BeanUtils.toBean(createReqVO, MailTemplateDO.class) .setParams(parseTemplateContentParams(createReqVO.getContent())); mailTemplateMapper.insert(template); return template.getId(); }
+[*] target: assertNotNull(mailTemplateId)
+[-] pred: org. junit. Assert. assertNotNull ( mailTemplateId )
+************************************
+************************************
+[+] input: shouldBuildDueDate() { String juelExpression = random(); String feelExpression = random(); Message message = MessageFactory.dueDate(juelExpression, feelExpression); "<AssertPlaceHolder>"; assertNotNull(message.getMessage()); assertNotNull(message.getSeverity()); assertThat(message.getMessage()) .isEqualTo( String.format( "Attribute 'dueDate' on 'userTask' was mapped. Please review transformed expression: '%s' -> '%s'.", juelExpression, feelExpression)); }
+dueDate(String juelExpression, String feelExpression) { return INSTANCE.composeMessage( "due-date", ContextBuilder.builder() .context( supportedAttributeExpression("dueDate", "userTask", juelExpression, feelExpression)) .build()); }
+[*] target: assertNotNull(message)
+[-] pred: org. junit. Assert. assertNotNull ( message )
+************************************
+************************************
+[+] input: shouldBuildLocalVariablePropagationNotSupported() { Message message = MessageFactory.localVariablePropagationNotSupported(); "<AssertPlaceHolder>"; assertNotNull(message.getMessage()); }
+localVariablePropagationNotSupported() { return INSTANCE.staticMessage("local-variable-propagation-not-supported-hint"); }
+[*] target: assertNotNull(message)
+[-] pred: org. junit. Assert. assertNotNull ( message )
