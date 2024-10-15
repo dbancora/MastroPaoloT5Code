@@ -1,0 +1,270 @@
+************************************
+************************************
+[+] input: Exception { SslContext mockSslContext = Mockito.mock(SslContext.class); File tmpCert = File.createTempFile("tmpcacert", ".crt"); tmpCert.deleteOnExit(); ArgumentCaptor<String> truststoreLocationCapture = ArgumentCaptor.forClass(String.class); JobsApiClientFactory jobsApiClientFactorySpy = Mockito.spy(JobsApiClientFactory.getInstance()); Mockito.doReturn(mockSslContext).when(jobsApiClientFactorySpy).createSslContext(anyString());  ApiClient apiClient = jobsApiClientFactorySpy.createApiClient( "https://test.openhouse.com", "", tmpCert.getAbsolutePath()); Mockito.verify(jobsApiClientFactorySpy, Mockito.times(1)) .createSslContext(truststoreLocationCapture.capture()); "<AssertPlaceHolder>"; assertEquals(tmpCert.getAbsolutePath(), truststoreLocationCapture.getValue()); }
+createApiClient(@NonNull String baseUrl, String token, String truststoreLocation) throws MalformedURLException, SSLException { WebClient webClient = createWebClient(baseUrl, token, truststoreLocation); ApiClient apiClient = new ApiClient(webClient); apiClient.setBasePath(baseUrl); return apiClient; }
+[*] target: assertNotNull(apiClient)
+[-] pred: org. junit. Assert. assertNotNull ( apiClient )
+************************************
+************************************
+[+] input: testHasDefaultValue() { InputParameter inputParameter = new InputParameter(); assertFalse(inputParameter.hasDefaultValue());  inputParameter.setDefaultValue("Default value"); "<AssertPlaceHolder>"; }
+hasDefaultValue() { return defaultValue!= null; }
+[*] target: assertTrue(inputParameter.hasDefaultValue())
+[-] pred: org. junit. Assert. assertTrue ( inputParameter. hasDefaultValue() )
+************************************
+************************************
+[+] input: testPoliciesInMetadataNoUpdate() { Map<String, String> props = new HashMap<>(); props.put("policies", "{"retention": {"count": "1", "granularity": "DAY"}}"); TableMetadata metadata = mock(TableMetadata.class); when(metadata.properties()).thenReturn(props); OpenHouseTableOperations openHouseTableOperations = mock(OpenHouseTableOperations.class); when(openHouseTableOperations.buildUpdatedPolicies(metadata)).thenCallRealMethod(); Policies updatedPolicies = openHouseTableOperations.buildUpdatedPolicies(metadata); Assertions."<AssertPlaceHolder>"; Assertions.assertEquals(1, updatedPolicies.getRetention().getCount()); Assertions.assertEquals( Retention.GranularityEnum.DAY, updatedPolicies.getRetention().getGranularity()); }
+buildUpdatedPolicies(TableMetadata metadata) { Map<String, String> properties = metadata.properties(); Policies policies = properties.containsKey(POLICIES_KEY) ? toPoliciesObject(properties.get(POLICIES_KEY)) : null; if (!properties.containsKey(UPDATED_OPENHOUSE_POLICY_KEY)) { return policies; } Policies patchUpdatedPolicy = toPoliciesObject(properties.get(UPDATED_OPENHOUSE_POLICY_KEY));  // Nothing the patch, patchUpdatedPolicy is the new Policy. if (policies == null) { return patchUpdatedPolicy; }  // Update retention config if (patchUpdatedPolicy.getRetention() != null) { policies.setRetention(patchUpdatedPolicy.getRetention()); } // Update sharing config if (patchUpdatedPolicy.getSharingEnabled() != null) { policies.sharingEnabled(patchUpdatedPolicy.getSharingEnabled()); } // Update column policy tag config if (patchUpdatedPolicy.getColumnTags() != null) { if (policies.getColumnTags() != null) { policies .getColumnTags() .forEach( (k, v) -> patchUpdatedPolicy .getColumnTags() .merge(k, v, (updatedSet, oldSet) -> updatedSet)); } policies.setColumnTags(patchUpdatedPolicy.getColumnTags()); } return policies; }
+[*] target: assertNotNull(updatedPolicies)
+[-] pred: org. junit. Assert. assertNotNull ( updatedPolicies )
+************************************
+************************************
+[+] input: bmpContentsShouldUse16BitBuffer() { CodePointCharStream s = CharStreams.fromString("hello \u4E16\u754C"); assertTrue(s.getInternalStorage() instanceof char[]); "<AssertPlaceHolder>"; }
+size() { return size; }
+[*] target: assertEquals(8, s.size())
+[-] pred: org. junit. Assert. assertEquals ( 8, s. size() )
+************************************
+************************************
+[+] input: givenTokenRefreshRequest_WhenDriverRole_ReturnSuccess() {  // Given TokenRefreshRequest request = TokenRefreshRequest.builder() .refreshToken("validRefreshToken") .build();  RefreshToken refreshToken = RefreshToken.builder() .token("validRefreshToken") .userEntity(UserEntity.builder().id("1L").build()) .build();  // When Mockito.when(refreshTokenService.findByToken(request.getRefreshToken())) .thenReturn(Optional.of(refreshToken)); Mockito.when(refreshTokenService.isRefreshExpired(refreshToken)).thenReturn(false); Mockito.when(jwtUtils.generateJwtToken(Mockito.any(CustomUserDetails.class))).thenReturn("newMockedToken");  // Then TokenRefreshResponse tokenRefreshResponse = authService.refreshToken(request);  Assertions."<AssertPlaceHolder>"; Assertions.assertEquals("newMockedToken", tokenRefreshResponse.getAccessToken()); Assertions.assertEquals("validRefreshToken", tokenRefreshResponse.getRefreshToken());  // Verify Mockito.verify(refreshTokenService).findByToken(request.getRefreshToken()); Mockito.verify(refreshTokenService).isRefreshExpired(refreshToken); Mockito.verify(jwtUtils).generateJwtToken(Mockito.any(CustomUserDetails.class));  }
+refreshToken(TokenRefreshRequest request) {  RefreshToken refreshToken = refreshTokenService.findByToken(request.getRefreshToken()) .orElseThrow(RefreshTokenNotFoundException::new);   if (!refreshTokenService.isRefreshExpired(refreshToken)) { CustomUserDetails customUserDetails = new CustomUserDetails(refreshToken.getUserEntity()); String newToken = jwtUtils.generateJwtToken(customUserDetails);  return TokenRefreshResponse.builder() .accessToken(newToken) .refreshToken(refreshToken.getToken()) .build(); }  return null; }
+[*] target: assertNotNull(tokenRefreshResponse)
+[-] pred: org. junit. Assert. assertNotNull ( tokenRefreshResponse )
+************************************
+************************************
+[+] input: testTranspileModuleCount() { String code = "import a from 'a'; a + 1;"; String expectedCode = "import a from 'a';\na + 1;\n"; SimpleList.of(jsProgramTranspileOptions, jsModuleTranspileOptions).forEach(options -> { try { Swc4jPluginCounter pluginCounter = new Swc4jPluginCounter(); Swc4jTranspileOutput output = swc4j.transpile(code, options .setInlineSources(false) .setSourceMap(Swc4jSourceMapOption.None) .setPluginHost(new Swc4jPluginHost().add(pluginCounter))); "<AssertPlaceHolder>"; assertEquals(expectedCode, output.getCode()); assertEquals(1, pluginCounter.getModuleCount()); assertEquals(0, pluginCounter.getScriptCount()); assertEquals(Swc4jParseMode.Module, output.getParseMode()); } catch (Swc4jCoreException e) { fail(e); } }); }
+add(ISwc4jPlugin... plugins) { Collections.addAll(this.plugins, plugins); return this; }
+[*] target: assertNotNull(output)
+[-] pred: org. junit. Assert. assertNotNull ( output )
+************************************
+************************************
+[+] input: Swc4jCoreException { String code = "function add加法(a變量:number, b變量:number) { return a變量+b變量; }"; Swc4jTranspileOutput output = swc4j.transpile(code, tsModuleTranspileOptions .setCaptureTokens(true)); "<AssertPlaceHolder>"; assertEquals(Swc4jParseMode.Module, output.getParseMode()); List<Swc4jToken> tokens = output.getTokens(); assertNotNull(tokens); assertEquals(18, tokens.size()); assertEquals(Swc4jTokenType.Function, tokens.get(0).getType()); assertTrue(tokens.get(0).isLineBreakAhead()); assertEquals(Swc4jTokenType.Return, tokens.get(12).getType()); assertFalse(tokens.get(12).isLineBreakAhead()); tokens.forEach(token -> assertEquals( code.substring(token.getSpan().getStart(), token.getSpan().getEnd()), token.getText())); }
+setCaptureTokens(boolean captureTokens) { super.setCaptureTokens(captureTokens); return this; }
+[*] target: assertNotNull(output)
+[-] pred: org. junit. Assert. assertNotNull ( output )
+************************************
+************************************
+[+] input: singleEmojiCodePointLookAheadShouldReturnCodePoint() { CodePointCharStream s = CharStreams.fromString( new StringBuilder().appendCodePoint(0x1F4A9).toString()); assertEquals(0x1F4A9, s.LA(1)); "<AssertPlaceHolder>"; }
+index() { return position; }
+[*] target: assertEquals(0, s.index())
+[-] pred: org. junit. Assert. assertEquals ( 0, s. index() )
+************************************
+************************************
+[+] input: testSeekPastEOF() { CharStream input = createStream(""); assertEquals(0, input.index()); input.seek(1); "<AssertPlaceHolder>"; }
+index() { return currentCharIndex; }
+[*] target: assertEquals(0, input.index())
+[-] pred: org. junit. Assert. assertEquals ( 0, input. index() )
+************************************
+************************************
+[+] input: testTransformScriptCount() { String code = "a + 1;"; String expectedCode = "a+1;"; SimpleList.of(jsProgramTransformOptions, jsScriptTransformOptions).forEach(options -> { try { Swc4jPluginCounter pluginCounter = new Swc4jPluginCounter(); Swc4jTransformOutput output = swc4j.transform(code, options .setInlineSources(false) .setSourceMap(Swc4jSourceMapOption.None) .setPluginHost(new Swc4jPluginHost().add(pluginCounter))); "<AssertPlaceHolder>"; assertEquals(expectedCode, output.getCode()); assertEquals(0, pluginCounter.getModuleCount()); assertEquals(1, pluginCounter.getScriptCount()); assertEquals(Swc4jParseMode.Script, output.getParseMode()); } catch (Swc4jCoreException e) { fail(e); } }); }
+add(ISwc4jPlugin... plugins) { Collections.addAll(this.plugins, plugins); return this; }
+[*] target: assertNotNull(output)
+[-] pred: org. junit. Assert. assertNotNull ( output )
+************************************
+************************************
+[+] input: getAllCertificates() { when(certificateServiceMock.getAllCertificates(anyInt(), anyInt())).thenReturn(getPageCertificates());  Page<Certificate> result = controllerMock.getAll(anyInt(), anyInt());  verify(certificateServiceMock, times(1)).getAllCertificates(anyInt(), anyInt()); "<AssertPlaceHolder>"; assertEquals(1, result.getTotalPages()); assertEquals(2, result.getContent().size()); }
+getAll(@RequestParam(name = "page", defaultValue = "0") int pageIndex, @RequestParam(name = "size", defaultValue = "30") int pageSize) { return certificateService.getAllCertificates(pageIndex, pageSize); }
+[*] target: assertNotNull(result)
+[-] pred: org. junit. Assert. assertNotNull ( result )
+************************************
+************************************
+[+] input: getAllCertificatesBasedOnConditions() { CertSearchRequest request = new CertSearchRequest(); when(certificateServiceMock.searchAll(request, 1, 10)).thenReturn(getPageCertificates());  Page<Certificate> result = controllerMock.search(request, 1, 10);  verify(certificateServiceMock, times(1)).searchAll(any(CertSearchRequest.class), anyInt(), anyInt()); "<AssertPlaceHolder>"; assertEquals(1, result.getTotalPages()); assertEquals(2, result.getContent().size()); }
+search(@RequestBody CertSearchRequest request, @RequestParam(name = "page", defaultValue = "0") int pageIndex, @RequestParam(name = "size", defaultValue = "30") int pageSize) { return certificateService.searchAll(request, pageIndex, pageSize); }
+[*] target: assertNotNull(result)
+[-] pred: org. junit. Assert. assertNotNull ( result )
+************************************
+************************************
+[+] input: givenLoginRequest_WhenWhenAdminRole_ReturnSuccess() {  // Given LoginRequest request = LoginRequest.builder() .email("admin@parkinglot.com") .password("admin_password") .build();  UserEntity mockUserEntity = UserEntity.builder() .email(request.getEmail()) .fullName("Test User") .username("testuser") .password("hashedPassword") .role(Role.ROLE_ADMIN) .build();  Authentication mockAuthentication = new UsernamePasswordAuthenticationToken( request.getEmail(), request.getPassword());  // When Mockito.when(authenticationManager.authenticate(Mockito.any(UsernamePasswordAuthenticationToken.class))) .thenReturn(mockAuthentication); Mockito.when(jwtUtils.generateJwtToken(mockAuthentication)).thenReturn("mockedToken"); Mockito.when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.of(mockUserEntity)); Mockito.when(refreshTokenService.createRefreshToken(Mockito.any(UserEntity.class))) .thenReturn("actualRefreshToken");  // Then JWTResponse jwtResponse = authService.login(request);  Assertions."<AssertPlaceHolder>"; Assertions.assertEquals(request.getEmail(), jwtResponse.getEmail()); Assertions.assertEquals("mockedToken", jwtResponse.getToken()); Assertions.assertEquals("actualRefreshToken", jwtResponse.getRefreshToken());  // Verify Mockito.verify(authenticationManager).authenticate(Mockito.any(UsernamePasswordAuthenticationToken.class)); Mockito.verify(jwtUtils).generateJwtToken(mockAuthentication); Mockito.verify(userRepository).findByEmail(request.getEmail()); Mockito.verify(refreshTokenService).createRefreshToken(Mockito.any(UserEntity.class));  }
+login(LoginRequest request) {  UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword());  Authentication auth = authenticationManager.authenticate(authToken); SecurityContextHolder.getContext().setAuthentication(auth); String jwtToken = jwtUtils.generateJwtToken(auth);  UserEntity userEntity = userRepository.findByEmail(request.getEmail()).orElseThrow(UserNotFoundException::new);  return JWTResponse.builder() .email(request.getEmail()) .token(jwtToken) .refreshToken(refreshTokenService.createRefreshToken(userEntity)) .build(); }
+[*] target: assertNotNull(jwtResponse)
+[-] pred: org. junit. Assert. assertNotNull ( jwtResponse )
+************************************
+************************************
+[+] input: MetadataException { String idpMetadata = "idpMetadata"; when(idpMetadataServiceMock.getMetadata()).thenReturn(idpMetadata);  String result = metadataControllerMock.metadata();  "<AssertPlaceHolder>"; assertEquals(idpMetadata, result); verify(idpMetadataServiceMock, times(1)).getMetadata(); }
+metadata() throws MetadataException { logger.debug("Receive SAML metadata request!"); return idpMetadataService.getMetadata(); }
+[*] target: assertNotNull(result)
+[-] pred: org. junit. Assert. assertNotNull ( result )
+************************************
+************************************
+[+] input: Swc4jCoreException { String code = "let a: /* Comment 1 */ number = 1; // Comment 2"; Swc4jTranspileOutput output = swc4j.transpile(code, tsModuleTranspileOptions .setKeepComments(false) .setSourceMap(Swc4jSourceMapOption.None)); "<AssertPlaceHolder>"; assertEquals(Swc4jParseMode.Module, output.getParseMode()); assertEquals("let a = 1;\n", output.getCode()); assertNull(output.getComments()); }
+setSourceMap(Swc4jSourceMapOption sourceMap) { this.sourceMap = AssertionUtils.notNull(sourceMap, "Source map"); return this; }
+[*] target: assertNotNull(output)
+[-] pred: org. junit. Assert. assertNotNull ( output )
+************************************
+************************************
+[+] input: givenTokenRefreshRequest_WhenAdminRole_ReturnSuccess() {  // Given TokenRefreshRequest request = TokenRefreshRequest.builder() .refreshToken("validRefreshToken") .build();  RefreshToken refreshToken = RefreshToken.builder() .token("validRefreshToken") .userEntity(UserEntity.builder().id("1L").build()) .build();  // When Mockito.when(refreshTokenService.findByToken(request.getRefreshToken())) .thenReturn(Optional.of(refreshToken)); Mockito.when(refreshTokenService.isRefreshExpired(refreshToken)).thenReturn(false); Mockito.when(jwtUtils.generateJwtToken(Mockito.any(CustomUserDetails.class))).thenReturn("newMockedToken");  // Then TokenRefreshResponse tokenRefreshResponse = authService.refreshToken(request);  Assertions."<AssertPlaceHolder>"; Assertions.assertEquals("newMockedToken", tokenRefreshResponse.getAccessToken()); Assertions.assertEquals("validRefreshToken", tokenRefreshResponse.getRefreshToken());  // Verify Mockito.verify(refreshTokenService).findByToken(request.getRefreshToken()); Mockito.verify(refreshTokenService).isRefreshExpired(refreshToken); Mockito.verify(jwtUtils).generateJwtToken(Mockito.any(CustomUserDetails.class));  }
+refreshToken(TokenRefreshRequest request) {  RefreshToken refreshToken = refreshTokenService.findByToken(request.getRefreshToken()) .orElseThrow(RefreshTokenNotFoundException::new);   if (!refreshTokenService.isRefreshExpired(refreshToken)) { CustomUserDetails customUserDetails = new CustomUserDetails(refreshToken.getUserEntity()); String newToken = jwtUtils.generateJwtToken(customUserDetails);  return TokenRefreshResponse.builder() .accessToken(newToken) .refreshToken(refreshToken.getToken()) .build(); }  return null; }
+[*] target: assertNotNull(tokenRefreshResponse)
+[-] pred: org. junit. Assert. assertNotNull ( tokenRefreshResponse )
+************************************
+************************************
+[+] input: singleEmojiCodePointLookAheadPastEndShouldReturnEOF() { CodePointCharStream s = CharStreams.fromString( new StringBuilder().appendCodePoint(0x1F4A9).toString()); assertEquals(IntStream.EOF, s.LA(2)); "<AssertPlaceHolder>"; }
+index() { return position; }
+[*] target: assertEquals(0, s.index())
+[-] pred: org. junit. Assert. assertEquals ( 0, s. index() )
+************************************
+************************************
+[+] input: givenValidParkingAreaUpdateRequest_whenUpdateParkingArea_thenReturnParkingArea() {  //Given final String mockParkingAreaId = UUID.randomUUID().toString();  final ParkingAreaUpdateRequest mockParkingAreaUpdateRequest = new ParkingAreaUpdateRequestBuilder() .withValidFields() .build();  final ParkingAreaEntity mockParkingAreaEntity = new ParkingAreaEntityBuilder() .withValidFields() .witId(mockParkingAreaId) .build();  final ParkingArea mockBeforeUpdatedParkingArea = parkingAreaEntityToParkingAreaMapper.map(mockParkingAreaEntity);  // When Mockito.when(parkingAreaRepository.findById(mockParkingAreaId)) .thenReturn(Optional.of(mockParkingAreaEntity));  // Then final ParkingArea parkingAreaResponse = parkingAreaUpdateService.parkingAreaUpdateByCapacity(mockParkingAreaId,mockParkingAreaUpdateRequest);  Assertions."<AssertPlaceHolder>";  Assertions.assertEquals( mockParkingAreaUpdateRequest.getCapacity(), parkingAreaResponse.getCapacity() );  Assertions.assertEquals( mockBeforeUpdatedParkingArea.getId(), parkingAreaResponse.getId() );  Assertions.assertEquals( mockBeforeUpdatedParkingArea.getId(), parkingAreaResponse.getId() );  Assertions.assertEquals( mockBeforeUpdatedParkingArea.getLocation(), parkingAreaResponse.getLocation() );  Assertions.assertEquals( mockBeforeUpdatedParkingArea.getCity(), parkingAreaResponse.getCity() );  // Verify Mockito.verify(parkingAreaRepository,Mockito.times(1)).findById(mockParkingAreaId); Mockito.verify(parkingAreaRepository,Mockito.times(1)).save(mockParkingAreaEntity);  }
+parkingAreaUpdateByCapacity( final String parkingAreaId, final ParkingAreaUpdateRequest parkingAreaUpdateRequest ) {  final ParkingAreaEntity parkingAreaEntityToBeUpdate = parkingAreaRepository .findById(parkingAreaId) .orElseThrow(() -> new ParkingAreaNotFoundException("ParkingArea not found given id" + parkingAreaId));  parkingAreaEntityToBeUpdate.setCapacity(parkingAreaUpdateRequest.getCapacity());  parkingAreaRepository.save(parkingAreaEntityToBeUpdate);  return parkingAreaEntityToParkingArea.map(parkingAreaEntityToBeUpdate);  }
+[*] target: assertNotNull(parkingAreaResponse)
+[-] pred: org. junit. Assert. assertNotNull ( parkingAreaResponse )
+************************************
+************************************
+[+] input: testPoliciesExistUpdateExist() { Map<String, String> props = new HashMap<>(); props.put("policies", "{"retention": {"count": "1", "granularity": "DAY"}}"); props.put("updated.openhouse.policy", "{"sharingEnabled": true}"); TableMetadata metadata = mock(TableMetadata.class); when(metadata.properties()).thenReturn(props); OpenHouseTableOperations openHouseTableOperations = mock(OpenHouseTableOperations.class); when(openHouseTableOperations.buildUpdatedPolicies(metadata)).thenCallRealMethod(); Policies updatedPolicies = openHouseTableOperations.buildUpdatedPolicies(metadata); Assertions."<AssertPlaceHolder>"; Assertions.assertTrue(updatedPolicies.getSharingEnabled().booleanValue()); Assertions.assertEquals(1, updatedPolicies.getRetention().getCount()); Assertions.assertEquals( Retention.GranularityEnum.DAY, updatedPolicies.getRetention().getGranularity()); }
+buildUpdatedPolicies(TableMetadata metadata) { Map<String, String> properties = metadata.properties(); Policies policies = properties.containsKey(POLICIES_KEY) ? toPoliciesObject(properties.get(POLICIES_KEY)) : null; if (!properties.containsKey(UPDATED_OPENHOUSE_POLICY_KEY)) { return policies; } Policies patchUpdatedPolicy = toPoliciesObject(properties.get(UPDATED_OPENHOUSE_POLICY_KEY));  // Nothing the patch, patchUpdatedPolicy is the new Policy. if (policies == null) { return patchUpdatedPolicy; }  // Update retention config if (patchUpdatedPolicy.getRetention() != null) { policies.setRetention(patchUpdatedPolicy.getRetention()); } // Update sharing config if (patchUpdatedPolicy.getSharingEnabled() != null) { policies.sharingEnabled(patchUpdatedPolicy.getSharingEnabled()); } // Update column policy tag config if (patchUpdatedPolicy.getColumnTags() != null) { if (policies.getColumnTags() != null) { policies .getColumnTags() .forEach( (k, v) -> patchUpdatedPolicy .getColumnTags() .merge(k, v, (updatedSet, oldSet) -> updatedSet)); } policies.setColumnTags(patchUpdatedPolicy.getColumnTags()); } return policies; }
+[*] target: assertNotNull(updatedPolicies)
+[-] pred: org. junit. Assert. assertNotNull ( updatedPolicies )
+************************************
+************************************
+[+] input: testPoliciesSharingAndRetentionUpdate() { Map<String, String> props = new HashMap<>(); props.put( "policies", "{"retention": {"count": "1", "granularity": "DAY"}, "sharingEnabled": true}"); props.put( "updated.openhouse.policy", "{"retention": {"count": "5", "granularity": "HOUR"}, "sharingEnabled": false}"); TableMetadata metadata = mock(TableMetadata.class); when(metadata.properties()).thenReturn(props); OpenHouseTableOperations openHouseTableOperations = mock(OpenHouseTableOperations.class); when(openHouseTableOperations.buildUpdatedPolicies(metadata)).thenCallRealMethod(); Policies updatedPolicies = openHouseTableOperations.buildUpdatedPolicies(metadata); Assertions."<AssertPlaceHolder>"; Assertions.assertFalse(updatedPolicies.getSharingEnabled().booleanValue()); Assertions.assertEquals(5, updatedPolicies.getRetention().getCount()); Assertions.assertEquals( Retention.GranularityEnum.HOUR, updatedPolicies.getRetention().getGranularity()); }
+buildUpdatedPolicies(TableMetadata metadata) { Map<String, String> properties = metadata.properties(); Policies policies = properties.containsKey(POLICIES_KEY) ? toPoliciesObject(properties.get(POLICIES_KEY)) : null; if (!properties.containsKey(UPDATED_OPENHOUSE_POLICY_KEY)) { return policies; } Policies patchUpdatedPolicy = toPoliciesObject(properties.get(UPDATED_OPENHOUSE_POLICY_KEY));  // Nothing the patch, patchUpdatedPolicy is the new Policy. if (policies == null) { return patchUpdatedPolicy; }  // Update retention config if (patchUpdatedPolicy.getRetention() != null) { policies.setRetention(patchUpdatedPolicy.getRetention()); } // Update sharing config if (patchUpdatedPolicy.getSharingEnabled() != null) { policies.sharingEnabled(patchUpdatedPolicy.getSharingEnabled()); } // Update column policy tag config if (patchUpdatedPolicy.getColumnTags() != null) { if (policies.getColumnTags() != null) { policies .getColumnTags() .forEach( (k, v) -> patchUpdatedPolicy .getColumnTags() .merge(k, v, (updatedSet, oldSet) -> updatedSet)); } policies.setColumnTags(patchUpdatedPolicy.getColumnTags()); } return policies; }
+[*] target: assertNotNull(updatedPolicies)
+[-] pred: org. junit. Assert. assertNotNull ( updatedPolicies )
+************************************
+************************************
+[+] input: singleCJKCodePointLookAheadShouldReturnCodePoint() { CodePointCharStream s = CharStreams.fromString("\u611B"); assertEquals(0x611B, s.LA(1)); "<AssertPlaceHolder>"; }
+index() { return position; }
+[*] target: assertEquals(0, s.index())
+[-] pred: org. junit. Assert. assertEquals ( 0, s. index() )
+************************************
+************************************
+[+] input: findProduct_ProductExists_ReturnsNotEmptyOptional() { // given var product = new Product(1, "Товар №1", "Описание товара №1");  doReturn(Optional.of(product)).when(this.productRepository).findById(1);  // when var result = this.service.findProduct(1);  // then "<AssertPlaceHolder>"; assertTrue(result.isPresent()); assertEquals(product, result.orElseThrow());  verify(this.productRepository).findById(1); verifyNoMoreInteractions(this.productRepository); }
+findProduct(int productId) { return this.productRepository.findById(productId); }
+[*] target: assertNotNull(result)
+[-] pred: org. junit. Assert. assertNotNull ( result )
+************************************
+************************************
+[+] input: Exception { ArgumentCaptor<String> truststoreLocationCapture = ArgumentCaptor.forClass(String.class);  ApiClient apiClient = tablesApiClientFactorySpy.createApiClient( "https://test.openhouse.com", "", tmpCert.getAbsolutePath());  Mockito.verify(tablesApiClientFactorySpy, Mockito.times(1)) .createSslContext(truststoreLocationCapture.capture()); "<AssertPlaceHolder>"; assertEquals(tmpCert.getAbsolutePath(), truststoreLocationCapture.getValue()); }
+createApiClient(@NonNull String baseUrl, String token, String truststoreLocation) throws MalformedURLException, SSLException { WebClient webClient = createWebClient(baseUrl, token, truststoreLocation); ApiClient apiClient = new ApiClient(webClient); if (token != null && !token.isEmpty()) { apiClient.addDefaultHeader(HttpHeaders.AUTHORIZATION, String.format("Bearer %s", token)); } apiClient.setBasePath(baseUrl); return apiClient; }
+[*] target: assertNotNull(apiClient)
+[-] pred: org. junit. Assert. assertNotNull ( apiClient )
+************************************
+************************************
+[+] input: singleEmojiCodePointHasSize1() { CodePointCharStream s = CharStreams.fromString( new StringBuilder().appendCodePoint(0x1F4A9).toString()); assertEquals(1, s.size()); "<AssertPlaceHolder>"; }
+index() { return position; }
+[*] target: assertEquals(0, s.index())
+[-] pred: org. junit. Assert. assertEquals ( 0, s. index() )
+************************************
+************************************
+[+] input: testParseScriptCount() { String code = "1 + 1"; SimpleList.of(jsProgramParseOptions, jsScriptParseOptions).forEach(options -> { try { Swc4jPluginCounter pluginCounter = new Swc4jPluginCounter(); Swc4jParseOutput output = swc4j.parse(code, options .setPluginHost(new Swc4jPluginHost().add(pluginCounter))); "<AssertPlaceHolder>"; assertEquals(0, pluginCounter.getModuleCount()); assertEquals(1, pluginCounter.getScriptCount()); assertEquals(Swc4jParseMode.Script, output.getParseMode()); } catch (Swc4jCoreException e) { fail(e); } }); }
+add(ISwc4jPlugin... plugins) { Collections.addAll(this.plugins, plugins); return this; }
+[*] target: assertNotNull(output)
+[-] pred: org. junit. Assert. assertNotNull ( output )
+************************************
+************************************
+[+] input: getAllConnections() { when(connectionServiceMock.findAll(anyInt(), anyInt())).thenReturn(getPageConnections()); when(connectionServiceMock.convertToConnectionResponse(any(Page.class))).thenReturn(getPageConnectionResponse());  Page<ConnectionResponse> result = controllerMock.getAll(1, 10);  verify(connectionServiceMock, times(1)).findAll(anyInt(), anyInt()); verify(connectionServiceMock, times(1)).convertToConnectionResponse(any(Page.class)); "<AssertPlaceHolder>"; assertEquals(1, result.getTotalPages()); assertEquals(1, result.getContent().size()); }
+getAll( @RequestParam(name = "page", defaultValue = "0") int pageIndex, @RequestParam(name = "size", defaultValue = "30") int pageSize) { Page<Connection> allConnections = connectionService.findAll(pageIndex, pageSize); return connectionService.convertToConnectionResponse(allConnections); }
+[*] target: assertNotNull(result)
+[-] pred: org. junit. Assert. assertNotNull ( result )
+************************************
+************************************
+[+] input: testTransformModuleCount() { String code = "import a from 'a'; a + 1;"; String expectedCode = "import a from"a";a+1;"; SimpleList.of(jsProgramTransformOptions, jsModuleTransformOptions).forEach(options -> { try { Swc4jPluginCounter pluginCounter = new Swc4jPluginCounter(); Swc4jTransformOutput output = swc4j.transform(code, options .setInlineSources(false) .setSourceMap(Swc4jSourceMapOption.None) .setPluginHost(new Swc4jPluginHost().add(pluginCounter))); "<AssertPlaceHolder>"; assertEquals(expectedCode, output.getCode()); assertEquals(1, pluginCounter.getModuleCount()); assertEquals(0, pluginCounter.getScriptCount()); assertEquals(Swc4jParseMode.Module, output.getParseMode()); } catch (Swc4jCoreException e) { fail(e); } }); }
+add(ISwc4jPlugin... plugins) { Collections.addAll(this.plugins, plugins); return this; }
+[*] target: assertNotNull(output)
+[-] pred: org. junit. Assert. assertNotNull ( output )
+************************************
+************************************
+[+] input: MetadataException { String bvdMetadata = "bvdMetadata"; when(bvdMetadataServiceMock.getMetadata()).thenReturn(bvdMetadata);  String result = metadataControllerMock.bvdMetadata();  "<AssertPlaceHolder>"; assertEquals(bvdMetadata, result); verify(bvdMetadataServiceMock, times(1)).getMetadata(); }
+bvdMetadata() throws MetadataException { logger.debug("Receive BVD metadata request!"); return bvdMetadataService.getMetadata(); }
+[*] target: assertNotNull(result)
+[-] pred: org. junit. Assert. assertNotNull ( result )
+************************************
+************************************
+[+] input: SharedServiceClientException { AppAuthenticator leastRecentApp = new AppAuthenticator(); leastRecentApp.setActivatedAt(ZonedDateTime.of(2022, 3, 30, 0, 0, 0, 0, ZoneId.systemDefault())); leastRecentApp.setDeviceName("least-recent-app-name");  when(sharedServiceClientMock.getSSConfigInt("Maximum_aantal_DigiD_apps_eindgebruiker")).thenReturn(2); when(digidClientMock.authenticate(anyString(), anyString())).thenReturn(responseDigidClient); when(appAuthenticatorServiceMock.countByAccountIdAndInstanceIdNot(anyLong(), anyString())).thenReturn(2); when(appAuthenticatorServiceMock.findLeastRecentApp(anyLong())).thenReturn(leastRecentApp);  AppResponse result = passwordConfirmed.process(flow, request);  "<AssertPlaceHolder>"; assertTrue(result instanceof TooManyAppsResponse); TooManyAppsResponse response = (TooManyAppsResponse) result;  assertEquals("NOK", response.getStatus()); assertEquals("30-03-2022", response.getLatestDate()); assertEquals("least-recent-app-name", response.getDeviceName()); }
+process(Flow flow, ActivationUsernamePasswordRequest body) throws SharedServiceClientException { digidClient.remoteLog("1088", Map.of(lowerUnderscore(HIDDEN), true)); var result = digidClient.authenticate(body.getUsername(), body.getPassword());  if (result.get(lowerUnderscore(STATUS)).equals("NOK") && result.get(ERROR) != null ) { final var error = (String) result.get(ERROR);  if (ERROR_DECEASED.equals(error)) { digidClient.remoteLog("1482", Map.of(lowerUnderscore(ACCOUNT_ID), result.get(lowerUnderscore(ACCOUNT_ID)), "hidden", true)); } else if (ERROR_NO_BSN.equals(error)) { digidClient.remoteLog("1074", Map.of(lowerUnderscore(ACCOUNT_ID), result.get(lowerUnderscore(ACCOUNT_ID)))); } else if (ERROR_ACCOUNT_BLOCKED.equals(error)) { return new PasswordConfirmedResponse((String) result.get(ERROR), result); } return new NokResponse((String) result.get(ERROR)); }  return Optional.ofNullable(validateAmountOfApps(Long.valueOf((Integer) result.get(lowerUnderscore(ACCOUNT_ID))), body)) .orElseGet(() -> getActivationUsernamePasswordResponse(body, result));  }
+[*] target: assertNotNull(result)
+[-] pred: org. junit. Assert. assertNotNull ( result )
+************************************
+************************************
+[+] input: testServerStartCustomPortNo() { int portNo = SocketUtils.findAvailableTcpPort(); OpenHouseLocalServer openHouseLocalServer = new OpenHouseLocalServer(portNo); Assertions.assertDoesNotThrow(() -> openHouseLocalServer.start()); Assertions."<AssertPlaceHolder>"; Assertions.assertDoesNotThrow(openHouseLocalServer::stop); }
+getPort() { return port; }
+[*] target: assertEquals(openHouseLocalServer.getPort(), portNo)
+[-] pred: org. junit. Assert. assertEquals ( openHouseLocalServer. getPort(), portNo )
+************************************
+************************************
+[+] input: Exception { when(samlSessionServiceMock.loadSession(anyString())).thenReturn(samlSession); when(adServiceMock.resolveAuthenticationResult(anyString())).thenReturn(adAuthentication);  ArtifactResolveRequest result = artifactResolveService.startArtifactResolveProcess(prepareSoapRequest(artifactResolveValid));  "<AssertPlaceHolder>"; assertEquals(result.getConnectionEntityId(), samlSession.getConnectionEntityId()); }
+startArtifactResolveProcess(HttpServletRequest httpServletRequest) throws SamlParseException { try { final var artifactResolveRequest = validateRequest(httpServletRequest); final var samlSession = updateArtifactResolveRequestWithSamlSession(artifactResolveRequest); validateArtifactResolve(artifactResolveRequest);  dcMetadataService.resolveDcMetadata(artifactResolveRequest); signatureService.validateSamlRequest(artifactResolveRequest, artifactResolveRequest.getArtifactResolve().getSignature());  createAdAuthentication(samlSession, artifactResolveRequest); samlSessionService.updateSamlSession(artifactResolveRequest);  return artifactResolveRequest;  } catch (MessageDecodingException e) { throw new SamlParseException("ArtifactResolveRequest soap11 decode exception", e); } catch (ComponentInitializationException e) { throw new SamlParseException("ArtifactResolveRequest initialization exception", e); } catch (SamlSessionException e) { throw new SamlParseException("Failed to load saml session", e); } catch (AdException e) { throw new SamlParseException("Failed to create an authentication", e); } catch (DienstencatalogusException e) { throw new SamlParseException("Failed to retrieve metadata from DienstenCatalogus", e); } catch (SamlValidationException e) { throw new SamlParseException("ArtifactResolve not valid", e); } catch (ValidationException e) { throw new SamlParseException("Failed to validate", e); } catch (SharedServiceClientException e) { throw new SamlParseException("Failed to retrieve data from sharedServiceClient.getSSConfigLong", e); } }
+[*] target: assertNotNull(result)
+[-] pred: org. junit. Assert. assertNotNull ( result )
+************************************
+************************************
+[+] input: Exception { SslContext mockSslContext = Mockito.mock(SslContext.class); File tmpCert = File.createTempFile("tmpcacert", ".crt"); tmpCert.deleteOnExit(); ArgumentCaptor<String> truststoreLocationCapture = ArgumentCaptor.forClass(String.class); HousetablesApiClientFactory housetablesApiClientFactorySpy = Mockito.spy(HousetablesApiClientFactory.getInstance()); Mockito.doReturn(mockSslContext) .when(housetablesApiClientFactorySpy) .createSslContext(anyString());  ApiClient apiClient = housetablesApiClientFactorySpy.createApiClient( "https://test.openhouse.com", "", tmpCert.getAbsolutePath()); Mockito.verify(housetablesApiClientFactorySpy, Mockito.times(1)) .createSslContext(truststoreLocationCapture.capture()); "<AssertPlaceHolder>"; assertEquals(tmpCert.getAbsolutePath(), truststoreLocationCapture.getValue()); }
+createApiClient(@NonNull String baseUrl, String token, String truststoreLocation) throws MalformedURLException, SSLException { WebClient webClient = createWebClient(baseUrl, token, truststoreLocation); ApiClient apiClient = new ApiClient(webClient); apiClient.setBasePath(baseUrl); return apiClient; }
+[*] target: assertNotNull(apiClient)
+[-] pred: org. junit. Assert. assertNotNull ( apiClient )
+************************************
+************************************
+[+] input: testParseModuleCount() { String code = "import a from 'a';"; SimpleList.of(jsProgramParseOptions, jsModuleParseOptions).forEach(options -> { try { Swc4jPluginCounter pluginCounter = new Swc4jPluginCounter(); Swc4jParseOutput output = swc4j.parse(code, options .setPluginHost(new Swc4jPluginHost().add(pluginCounter))); "<AssertPlaceHolder>"; assertEquals(1, pluginCounter.getModuleCount()); assertEquals(0, pluginCounter.getScriptCount()); assertEquals(Swc4jParseMode.Module, output.getParseMode()); } catch (Swc4jCoreException e) { fail(e); } }); }
+add(ISwc4jPlugin... plugins) { Collections.addAll(this.plugins, plugins); return this; }
+[*] target: assertNotNull(output)
+[-] pred: org. junit. Assert. assertNotNull ( output )
+************************************
+************************************
+[+] input: singleCJKCodePointHasSize1() { CodePointCharStream s = CharStreams.fromString("\u611B"); assertEquals(1, s.size()); "<AssertPlaceHolder>"; }
+index() { return position; }
+[*] target: assertEquals(0, s.index())
+[-] pred: org. junit. Assert. assertEquals ( 0, s. index() )
+************************************
+************************************
+[+] input: shouldHandleNullParameters() { ConfigurerContext context = new ConfigurerContext(null, null);  assertNull(context.namespace()); "<AssertPlaceHolder>"; }
+configurers() { return this.configurers; }
+[*] target: assertNull(context.configurers())
+[-] pred: org. junit. Assert. assertNull ( context. configurers() )
+************************************
+************************************
+[+] input: SamlSessionException { AuthenticationRequest authenticationRequest = new AuthenticationRequest(); SamlSession samlSession = new SamlSession(1L); samlSession.setValidationStatus(STATUS_INVALID.label); samlSession.setArtifact("artifact"); samlSession.setHttpSessionId("httpSessionId"); samlSession.setTransactionId("transactionId");  authenticationRequest.setSamlSession(samlSession);  when(assertionConsumerServiceUrlServiceMock.generateRedirectUrl(anyString(), anyString(), anyString(), any())).thenReturn("redirectUrl"); String result = authenticationEntranceService.redirectWithCorrectAttributesForAd(httpServletRequestMock, authenticationRequest);  "<AssertPlaceHolder>"; assertEquals("redirectUrl", result); }
+redirectWithCorrectAttributesForAd(HttpServletRequest httpRequest, AuthenticationRequest authenticationRequest) throws UnsupportedEncodingException, SamlSessionException { SamlSession samlSession = authenticationRequest.getSamlSession();  if (samlSession.getValidationStatus() != null && samlSession.getValidationStatus().equals(STATUS_INVALID.label)) { return cancelAuthenticationToAd(authenticationRequest, samlSession.getArtifact()); } else if (samlSession.getRequesterId() != null && samlSession.getRequesterId().equals(bvdEntityId)) { prepareAuthenticationToAdForBvd(samlSession); String bvdReturnUrl = generateReturnUrl(httpRequest, samlSession.getArtifact(), ENTRANCE_RETURN_URL_BVD); logger.info("Prepare authentication to Ad for Bvd"); return prepareAuthenticationToAd(bvdReturnUrl, authenticationRequest); } else { String adReturnUrl = generateReturnUrl(httpRequest, samlSession.getArtifact(), REDIRECT_WITH_ARTIFACT_URL); return prepareAuthenticationToAd(adReturnUrl, authenticationRequest); } }
+[*] target: assertNotNull(result)
+[-] pred: org. junit. Assert. assertNotNull ( result )
+************************************
+************************************
+[+] input: AdException { AdSession adSession = new AdSession(); adSession.setSessionId("sessionId"); when(adClientMock.startAppSession(anyString())).thenReturn(adResponse);  Map<String, Object> result = authenticationAppToAppService.createAuthenticationParameters("relayState", authenticationRequest);  "<AssertPlaceHolder>"; assertEquals(6, result.size()); assertEquals("appSessionId", result.get("app_session_id")); assertEquals("artifact", result.get("SAMLart")); assertEquals(20, result.get("authentication_level")); assertEquals("appReturnUrl", result.get("image_domain")); assertEquals("relayState", result.get("RelayState")); }
+createAuthenticationParameters(String relayState, AuthenticationRequest authenticationRequest) throws AdException {  HashMap<String, String> digidApp = new HashMap<>(); digidApp.put("name", authenticationRequest.getServiceName()); digidApp.put("url", authenticationRequest.getAppReturnUrl());  Map<String, Object> authenticationParameters = new HashMap<>(); authenticationParameters.put("app_session_id", retrieveAppSessionIdFromAd(authenticationRequest.getAppReturnUrl(), authenticationRequest)); authenticationParameters.put("SAMLart", authenticationRequest.getSamlSession().getArtifact()); authenticationParameters.put("apps", authenticationRequest.getAppActive() ? Arrays.asList(digidApp) : Collections.emptyList()); authenticationParameters.put("authentication_level", authenticationRequest.getSamlSession().getAuthenticationLevel()); authenticationParameters.put("image_domain", authenticationRequest.getAppReturnUrl()); authenticationParameters.put("RelayState", relayState);  return authenticationParameters; }
+[*] target: assertNotNull(result)
+[-] pred: org. junit. Assert. assertNotNull ( result )
+************************************
+************************************
+[+] input: testTranspileScriptCount() { String code = "a + 1;"; String expectedCode = "a + 1;\n"; SimpleList.of(jsProgramTranspileOptions, jsScriptTranspileOptions).forEach(options -> { try { Swc4jPluginCounter pluginCounter = new Swc4jPluginCounter(); Swc4jTranspileOutput output = swc4j.transpile(code, options .setInlineSources(false) .setSourceMap(Swc4jSourceMapOption.None) .setPluginHost(new Swc4jPluginHost().add(pluginCounter))); "<AssertPlaceHolder>"; assertEquals(expectedCode, output.getCode()); assertEquals(0, pluginCounter.getModuleCount()); assertEquals(1, pluginCounter.getScriptCount()); assertEquals(Swc4jParseMode.Script, output.getParseMode()); } catch (Swc4jCoreException e) { fail(e); } }); }
+add(ISwc4jPlugin... plugins) { Collections.addAll(this.plugins, plugins); return this; }
+[*] target: assertNotNull(output)
+[-] pred: org. junit. Assert. assertNotNull ( output )
+************************************
+************************************
+[+] input: getAllConnectionsBasedOnConditions() { when(connectionServiceMock.search(any(Connection.class), anyInt(), anyInt())).thenReturn(getPageConnections()); when(connectionServiceMock.convertToConnectionResponse(any(Page.class))).thenReturn(getPageConnectionResponse());  Page<ConnectionResponse> result = controllerMock.search(getNewConnection(), 1, 10);  verify(connectionServiceMock, times(1)).search(any(Connection.class), anyInt(), anyInt()); verify(connectionServiceMock, times(1)).convertToConnectionResponse(any(Page.class)); "<AssertPlaceHolder>"; assertEquals(1, result.getTotalPages()); assertEquals(1, result.getContent().size()); }
+search(@RequestBody Connection con, @RequestParam(name = "page", defaultValue = "0") int pageIndex, @RequestParam(name = "size", defaultValue = "30") int pageSize) { Page<Connection> allConnections = connectionService.search(con, pageIndex, pageSize); return connectionService.convertToConnectionResponse(allConnections); }
+[*] target: assertNotNull(result)
+[-] pred: org. junit. Assert. assertNotNull ( result )
+************************************
+************************************
+[+] input: testErrorPolicyObjectFromJson() { Policies policies = policiesMapper.toPoliciesObject(getBadJsonString()); Assertions."<AssertPlaceHolder>"; Assertions.assertNull(policies.getRetention()); }
+toPoliciesObject(String policiesString) throws JsonParseException { if (policiesString.length() != 0) { try { Gson gson = new GsonBuilder().setPrettyPrinting().create(); return gson.fromJson(policiesString, Policies.class); } catch (JsonParseException e) { throw new JsonParseException( "Internal server error. Cannot convert policies Object to json"); } } return null; }
+[*] target: assertNotNull(policies)
+[-] pred: org. junit. Assert. assertNotNull ( policies )
+************************************
+************************************
+[+] input: testGetSession() { String session = sessionManager.newSession(); PullSession pullSession = sessionManager.getSession(session); Assertions.assertNotNull(pullSession); Assertions."<AssertPlaceHolder>"; }
+getSession() { return session; }
+[*] target: assertEquals(session, pullSession.getSession())
+[-] pred: org. junit. Assert. assertEquals ( session, pullSession. getSession() )
+************************************
+************************************
+[+] input: givenLoginRequest_WhenDriverRole_ReturnSuccess() {  // Given LoginRequest request = LoginRequest.builder() .email("driver_1@parkinglot.com") .password("driver_password") .build();  UserEntity mockUserEntity = UserEntity.builder() .email(request.getEmail()) .fullName("Test User") .username("testuser") .password("hashedPassword") .role(Role.ROLE_DRIVER) .build();  Authentication mockAuthentication = new UsernamePasswordAuthenticationToken( request.getEmail(), request.getPassword());  // When Mockito.when(authenticationManager.authenticate(Mockito.any(UsernamePasswordAuthenticationToken.class))) .thenReturn(mockAuthentication); Mockito.when(jwtUtils.generateJwtToken(mockAuthentication)).thenReturn("mockedToken"); Mockito.when(userRepository.findByEmail(request.getEmail())).thenReturn(Optional.of(mockUserEntity)); Mockito.when(refreshTokenService.createRefreshToken(Mockito.any(UserEntity.class))) .thenReturn("actualRefreshToken");  // Then JWTResponse jwtResponse = authService.login(request);  Assertions."<AssertPlaceHolder>"; Assertions.assertEquals(request.getEmail(), jwtResponse.getEmail()); Assertions.assertEquals("mockedToken", jwtResponse.getToken()); Assertions.assertEquals("actualRefreshToken", jwtResponse.getRefreshToken());  // Verify Mockito.verify(authenticationManager).authenticate(Mockito.any(UsernamePasswordAuthenticationToken.class)); Mockito.verify(jwtUtils).generateJwtToken(mockAuthentication); Mockito.verify(userRepository).findByEmail(request.getEmail()); Mockito.verify(refreshTokenService).createRefreshToken(Mockito.any(UserEntity.class));  }
+login(LoginRequest request) {  UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword());  Authentication auth = authenticationManager.authenticate(authToken); SecurityContextHolder.getContext().setAuthentication(auth); String jwtToken = jwtUtils.generateJwtToken(auth);  UserEntity userEntity = userRepository.findByEmail(request.getEmail()).orElseThrow(UserNotFoundException::new);  return JWTResponse.builder() .email(request.getEmail()) .token(jwtToken) .refreshToken(refreshTokenService.createRefreshToken(userEntity)) .build(); }
+[*] target: assertNotNull(jwtResponse)
+[-] pred: org. junit. Assert. assertNotNull ( jwtResponse )
+************************************
+************************************
+[+] input: IOException { // given var request = new MockClientHttpRequest(); var body = new byte[0]; var execution = mock(ClientHttpRequestExecution.class); var response = new MockClientHttpResponse(); var authentication = new TestingAuthenticationToken("j.dewar", "password"); SecurityContextHolder.getContext().setAuthentication(authentication);  var authorizedClient = new OAuth2AuthorizedClient(mock(), "j.dewar", new OAuth2AccessToken(OAuth2AccessToken.TokenType.BEARER, "token", Instant.now(), Instant.MAX)); doReturn(authorizedClient).when(this.authorizedClientManager) .authorize(argThat(authorizationRequest -> authorizationRequest.getPrincipal().equals(authentication) && authorizationRequest.getClientRegistrationId().equals("test")));  doReturn(response).when(execution).execute(request, body);  // when var result = this.interceptor.intercept(request, body, execution);  // then "<AssertPlaceHolder>"; assertEquals("Bearer token", request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION));  verify(execution).execute(request, body); verifyNoMoreInteractions(execution); }
+intercept(HttpRequest request, byte[] body, ClientHttpRequestExecution execution) throws IOException { if (!request.getHeaders().containsKey(HttpHeaders.AUTHORIZATION)) { OAuth2AuthorizedClient authorizedClient = this.authorizedClientManager.authorize( OAuth2AuthorizeRequest.withClientRegistrationId(this.registrationId) .principal(this.securityContextHolderStrategy.getContext().getAuthentication()) .build()); request.getHeaders().setBearerAuth(authorizedClient.getAccessToken().getTokenValue()); }  return execution.execute(request, body); }
+[*] target: assertEquals(response, result)
+[-] pred: org. junit. Assert. assertEquals ( response, result )
+************************************
+************************************
+[+] input: multipleLatinCodePointsLookAheadShouldReturnCodePoints() { CodePointCharStream s = CharStreams.fromString("XYZ"); assertEquals('X', s.LA(1)); assertEquals(0, s.index()); assertEquals('Y', s.LA(2)); assertEquals(0, s.index()); assertEquals('Z', s.LA(3)); "<AssertPlaceHolder>"; }
+index() { return position; }
+[*] target: assertEquals(0, s.index())
+[-] pred: org. junit. Assert. assertEquals ( 0, s. index() )
+************************************
+************************************
+[+] input: testNoPoliciesButUpdateExists() { Map<String, String> props = new HashMap<>(); props.put("updated.openhouse.policy", "{"sharingEnabled": true}"); TableMetadata metadata = mock(TableMetadata.class); when(metadata.properties()).thenReturn(props); OpenHouseTableOperations openHouseTableOperations = mock(OpenHouseTableOperations.class); when(openHouseTableOperations.buildUpdatedPolicies(metadata)).thenCallRealMethod(); Policies updatedPolicies = openHouseTableOperations.buildUpdatedPolicies(metadata); Assertions."<AssertPlaceHolder>"; Assertions.assertTrue(updatedPolicies.getSharingEnabled().booleanValue()); }
+buildUpdatedPolicies(TableMetadata metadata) { Map<String, String> properties = metadata.properties(); Policies policies = properties.containsKey(POLICIES_KEY) ? toPoliciesObject(properties.get(POLICIES_KEY)) : null; if (!properties.containsKey(UPDATED_OPENHOUSE_POLICY_KEY)) { return policies; } Policies patchUpdatedPolicy = toPoliciesObject(properties.get(UPDATED_OPENHOUSE_POLICY_KEY));  // Nothing the patch, patchUpdatedPolicy is the new Policy. if (policies == null) { return patchUpdatedPolicy; }  // Update retention config if (patchUpdatedPolicy.getRetention() != null) { policies.setRetention(patchUpdatedPolicy.getRetention()); } // Update sharing config if (patchUpdatedPolicy.getSharingEnabled() != null) { policies.sharingEnabled(patchUpdatedPolicy.getSharingEnabled()); } // Update column policy tag config if (patchUpdatedPolicy.getColumnTags() != null) { if (policies.getColumnTags() != null) { policies .getColumnTags() .forEach( (k, v) -> patchUpdatedPolicy .getColumnTags() .merge(k, v, (updatedSet, oldSet) -> updatedSet)); } policies.setColumnTags(patchUpdatedPolicy.getColumnTags()); } return policies; }
+[*] target: assertNotNull(updatedPolicies)
+[-] pred: org. junit. Assert. assertNotNull ( updatedPolicies )

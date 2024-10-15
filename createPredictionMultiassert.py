@@ -28,9 +28,9 @@ def parse_entries(filename):
     return entries
 
 def main():
-    file_a = 'T5-Extension/Results/Predictions/AG-Task/with-pretraining-new/RawWithNoRepetitions/NOREP_perfect2023_JUnit5_@10.txt'
-    file_b = 'T5-Extension/Results/Predictions/AG-Task/with-pretraining-new/RawWithNoRepetitions/NOREP_perfect2023_JUnit5_OneAssert_@10.txt'
-    output_file = 'T5-Extension/Results/Predictions/AG-Task/with-pretraining-new/RawWithNoRepetitions/NOREP_perfect2023_JUnit5_MultiAssert_@10.txt'
+    file_a = 'T5-Extension/Results/Predictions/AG-Task/with-pretraining-new/RawWithNoRepetitions/NOREP_perfect2024_JUnit5_@10.txt'
+    file_b = 'T5-Extension/Results/Predictions/AG-Task/with-pretraining-new/RawWithNoRepetitions/NOREP_perfect2024_JUnit5_OneAssert_@10.txt'
+    output_file = 'T5-Extension/Results/Predictions/AG-Task/with-pretraining-new/RawWithNoRepetitions/NOREP_perfect2024_JUnit5_MultiAssert_@10.txt'
 
     # Parsea le voci dai file
     entries_a = parse_entries(file_a)

@@ -1,0 +1,12 @@
+************************************
+************************************
+[+] input: indexZero() { nonEmptyQueue.setIndex(0); assertEquals(0, nonEmptyQueue.getIndex());  doReturn(true).when(emptyQueue).isComplete(); emptyQueue.setIndex(0); assertEquals(0, emptyQueue.getIndex());  doReturn(false).when(emptyQueue).isComplete(); emptyQueue.setIndex(0); "<AssertPlaceHolder>"; }
+getIndex() { return queueIndex.get(); }
+[*] target: assertEquals(0, emptyQueue.getIndex())
+[-] pred: org. junit. Assert. assertEquals ( 0, emptyQueue. getIndex() )
+************************************
+************************************
+[+] input: testInsertAndRemove() { // Crear un comparador de prioridades Comparator<Integer> comparator = new ComparadorNumeros<>();  // Crear un heap utilizando el árbol binario iterativo HeapUsingIterativeBinaryTree<Integer, String> heap = new HeapUsingIterativeBinaryTree<>(comparator);  // Prueba Insert y remove con elementos heap.Insert(10, "A"); heap.Insert(20, "B"); heap.Insert(15, "C");  assertEquals(3, heap.count());  assertEquals("A", heap.remove()); assertEquals(2, heap.count());  assertEquals("C", heap.remove()); assertEquals(1, heap.count());  assertEquals("B", heap.remove()); "<AssertPlaceHolder>"; }
+count() { return _count; }
+[*] target: assertEquals(0, heap.count())
+[-] pred: org. junit. Assert. assertEquals ( 0, heap. count() )
