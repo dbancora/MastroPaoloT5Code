@@ -115,9 +115,9 @@ Nelle seguenti tabelle sono riportati i risultati ottenuti dal modello T5 nel co
 ## Repository create nell'anno 2021 con una sola asserzione senza ripetizioni
 | ANNO | NUMERO METODI TOTALI | VERSIONE JUNIT | BEAM SIZE | BATCH SIZE | % PERFECT PREDICTION | NUMERO DI PLACEHOLDER CORRETTI PREDETTI |
 |------|----------------------|----------------|-----------|------------|----------------------|-----------------------------------------|
-| 2021 | 4759                 | 4              | 1         | 12         | 7,333                | 351                                     |
-| 2021 | 4759                 | 4              | 5         | 12         | 11,914               | 569                                     |
-| 2021 | 4759                 | 4              | 10        | 12         | 13,511               | 645                                     |
+| 2021 | 4759                 | 4              | 1         | 12         | 7,333                | 349                                     |
+| 2021 | 4759                 | 4              | 5         | 12         | 11,914               | 567                                     |
+| 2021 | 4759                 | 4              | 10        | 12         | 13,511               | 643                                     |
 | 2021 | 9582                 | 5              | 1         | 12         | 2,296                | 220                                     |
 | 2021 | 9582                 | 5              | 5         | 12         | 4,415                | 423                                     |
 | 2021 | 9582                 | 5              | 10        | 12         | 4,999                | 479                                     |
