@@ -107,7 +107,7 @@ Nelle seguenti tabelle sono riportati i risultati ottenuti dal modello T5 nel co
 |------|----------------------|----------------|-----------|------------|----------------------|-----------------------------------------|
 | 2020 | 8046                 | 4              | 1         | 12         | 4,188                | 337                                     |
 | 2020 | 8046                 | 4              | 5         | 12         | 6,972                | 561                                     |
-| 2020 | 8046                 | 4              | 10        | 12         | 8,103                | 653                                     |
+| 2020 | 8046                 | 4              | 10        | 12         | 8,103                | 652                                     |
 | 2020 | 11408                | 5              | 1         | 12         | 3,857                | 440                                     |
 | 2020 | 11408                | 5              | 5         | 12         | 6,013                | 686                                     |
 | 2020 | 11408                | 5              | 10        | 12         | 6,522                | 744                                     |
@@ -159,8 +159,8 @@ Nelle seguenti tabelle sono riportati i risultati ottenuti dal modello T5 nel co
 | 2020 | 11080                | 4              | 5         | 12         | 4,693                | 520                                     |
 | 2020 | 11080                | 4              | 10        | 12         | 5,551                | 615                                     |
 | 2020 | 10995                | 5              | 1         | 12         | 1,501                | 165                                     |
-| 2020 | 10995                | 5              | 5         | 12         | 3,365                | 370                                     |
-| 2020 | 10995                | 5              | 10        | 12         | 4,147                | 456                                     |
+| 2020 | 10995                | 5              | 5         | 12         | 3,356                | 369                                     |
+| 2020 | 10995                | 5              | 10        | 12         | 4,138                | 455                                     |
 
 ## Repository create nell'anno 2021 multi asserzione senza ripetizioni
 | ANNO | NUMERO METODI TOTALI | VERSIONE JUNIT | BEAM SIZE | BATCH SIZE | % PERFECT PREDICTION | NUMERO DI PLACEHOLDER CORRETTI PREDETTI |
