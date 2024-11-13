@@ -152,12 +152,12 @@ Nelle seguenti tabelle sono riportati i risultati ottenuti dal modello T5 nel co
 ## Repository create nell'anno 2021 senza ripetizioni
 | ANNO | NUMERO METODI TOTALI | VERSIONE JUNIT | BEAM SIZE | BATCH SIZE | % PERFECT PREDICTION | NUMERO DI PLACEHOLDER CORRETTI PREDETTI |
 |------|----------------------|----------------|-----------|------------|----------------------|-----------------------------------------|
-| 2021 | 10940                | 4              | 1         | 12         | 4,570                | 500                                     |
-| 2021 | 10940                | 4              | 5         | 12         | 7,834                | 857                                     |
-| 2021 | 10940                | 4              | 10        | 12         | 5,319                | 988                                     |
-| 2021 | 16754                | 5              | 1         | 12         | 2,000                | 335                                     |
-| 2021 | 16754                | 5              | 5         | 12         | 4,136                | 693                                     |
-| 2021 | 16754                | 5              | 10        | 12         | 4,793                | 803                                     |
+| 2021 | 10971                | 4              | 1         | 12         | 4,570                | 502                                     |  
+| 2021 | 10971                | 4              | 5         | 12         | 7,834                | 859                                     | 
+| 2021 | DA RIVEDERE          | 4              | 10        | 12         | 5,319                | DA RIVEDERE                             | 
+| 2021 | 16779                | 5              | 1         | 12         | 2,000                | 335                                     | 
+| 2021 | 16779                | 5              | 5         | 12         | 4,136                | 693                                     | 
+| 2021 | 16779                | 5              | 10        | 12         | 4,793                | 803                                     | 
 
 ## Repository create nell'anno 2022 senza ripetizioni
 | ANNO | NUMERO METODI TOTALI | VERSIONE JUNIT | BEAM SIZE | BATCH SIZE | % PERFECT PREDICTION | NUMERO DI PLACEHOLDER CORRETTI PREDETTI |
@@ -204,12 +204,12 @@ Nelle seguenti tabelle sono riportati i risultati ottenuti dal modello T5 nel co
 ## Repository create nell'anno 2021 con una sola asserzione senza ripetizioni
 | ANNO | NUMERO METODI TOTALI | VERSIONE JUNIT | BEAM SIZE | BATCH SIZE | % PERFECT PREDICTION | NUMERO DI PLACEHOLDER CORRETTI PREDETTI |
 |------|----------------------|----------------|-----------|------------|----------------------|-----------------------------------------|
-| 2021 | 4759                 | 4              | 1         | 12         | 7,333                | 349                                     |
-| 2021 | 4759                 | 4              | 5         | 12         | 11,914               | 567                                     |
-| 2021 | 4759                 | 4              | 10        | 12         | 13,511               | 643                                     |
-| 2021 | 9582                 | 5              | 1         | 12         | 2,296                | 220                                     |
-| 2021 | 9582                 | 5              | 5         | 12         | 4,415                | 423                                     |
-| 2021 | 9582                 | 5              | 10        | 12         | 4,999                | 479                                     |
+| 2021 | 4777                 | 4              | 1         | 12         | 7,333                | 351                                     |  
+| 2021 | 4777                 | 4              | 5         | 12         | 11,914               | 569                                     | 
+| 2021 | 4777                 | 4              | 10        | 12         | 13,511               | 645                                     | 
+| 2021 | 9598                 | 5              | 1         | 12         | 2,296                | 220                                     | 
+| 2021 | 9598                 | 5              | 5         | 12         | 4,415                | 423                                     | 
+| 2021 | 9598                 | 5              | 10        | 12         | 4,999                | 479                                     | 
 
 ## Repository create nell'anno 2022 con una sola asserzione senza ripetizioni
 | ANNO | NUMERO METODI TOTALI | VERSIONE JUNIT | BEAM SIZE | BATCH SIZE | % PERFECT PREDICTION | NUMERO DI PLACEHOLDER CORRETTI PREDETTI |
@@ -254,12 +254,12 @@ Nelle seguenti tabelle sono riportati i risultati ottenuti dal modello T5 nel co
 ## Repository create nell'anno 2021 multi asserzione senza ripetizioni
 | ANNO | NUMERO METODI TOTALI | VERSIONE JUNIT | BEAM SIZE | BATCH SIZE | % PERFECT PREDICTION | NUMERO DI PLACEHOLDER CORRETTI PREDETTI |
 |------|----------------------|----------------|-----------|------------|----------------------|-----------------------------------------|
-| 2021 | 6181                 | 4              | 1         | 12         | 2,443                | 151                                     |
-| 2021 | 6181                 | 4              | 5         | 12         | 4,692                | 290                                     |
-| 2021 | 6181                 | 4              | 10        | 12         |                      |                                         |
-| 2021 | 7172                 | 5              | 1         | 12         | 1,861                | 115                                     |
-| 2021 | 7172                 | 5              | 5         | 12         | 4,368                | 270                                     |
-| 2021 | 7172                 | 5              | 10        | 12         | 5,242                | 324                                     |
+| 2021 | 6194                 | 4              | 1         | 12         | 2,443                | 151                                     | 
+| 2021 | 6194                 | 4              | 5         | 12         | 4,692                | 290                                     | 
+| 2021 | DA RIVEDERE          | 4              | 10        | 12         |                      | DA RIVEDERE                             | 
+| 2021 | 7181                 | 5              | 1         | 12         | 1,861                | 115                                     | 
+| 2021 | 7181                 | 5              | 5         | 12         | 4,368                | 270                                     | 
+| 2021 | 7181                 | 5              | 10        | 12         | 5,242                | 324                                     | 
 
 ## Repository create nell'anno 2022 multi asserzione senza ripetizioni
 | ANNO | NUMERO METODI TOTALI | VERSIONE JUNIT | BEAM SIZE | BATCH SIZE | % PERFECT PREDICTION | NUMERO DI PLACEHOLDER CORRETTI PREDETTI |
