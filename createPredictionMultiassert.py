@@ -26,11 +26,11 @@ def parse_entries(filename):
         entry_key = '\n'.join([input_line, target_line, pred_line])
         entries.append((entry_key, raw_entry))
     return entries
-
+# CAMBIA SOLO IL BEAM SIZE, versione di JUnit e anno. Non toccare altro
 def main():
-    file_a = 'T5-Extension/Results/Predictions/AG-Task/with-pretraining-new/RawWithNoRepetitions/NOREP_perfect2024_JUnit5_@10.txt'
-    file_b = 'T5-Extension/Results/Predictions/AG-Task/with-pretraining-new/RawWithNoRepetitions/NOREP_perfect2024_JUnit5_OneAssert_@10.txt'
-    output_file = 'T5-Extension/Results/Predictions/AG-Task/with-pretraining-new/RawWithNoRepetitions/NOREP_perfect2024_JUnit5_MultiAssert_@10.txt'
+    file_a = 'T5-Extension/Results/Predictions/AG-Task/with-pretraining-new/RawWithNoRepetitions/NOREP_prediction_2024_JUnit5_@10.txt'
+    file_b = 'T5-Extension/Results/Predictions/AG-Task/with-pretraining-new/RawWithNoRepetitions/NOREP_prediction_2024_JUnit5_OneAssert_@10.txt'
+    output_file = 'T5-Extension/Results/Predictions/AG-Task/with-pretraining-new/RawWithNoRepetitions/NOREP_prediction_2024_JUnit5_MultiAssert_@10.txt'
 
     # Parsea le voci dai file
     entries_a = parse_entries(file_a)
