@@ -13,7 +13,7 @@ import nlp
 #DEVI MODIFICARE ANCHE QUI PER FAR SI CHE VENGA CARICATO CORRETTAMENTE IL DATASET!!!!!!!!
 # Affinchè funzioni, il percorso della directory deve essere completo!
 
-_TEST_FILE_NAME = "/home/azureuser/PycharmProjects/MastroPaoloT5Code/T5-Extension/Datasets/tsv/fine-tuning/AGraw/results_2024_methods_None_JUnit 5.tsv"  # Percorso assoluto su Windows
+_TEST_FILE_NAME = "/home/azureuser/PycharmProjects/MastroPaoloT5Code/T5-Extension/Datasets/tsv/fine-tuning/AGraw/results_2021_methods_None_JUnit 4.tsv"  # Percorso assoluto su Windows
 
 
 class AssertionConfig(nlp.BuilderConfig):

@@ -19,12 +19,12 @@ import os
 spm_path = 'T5-Extension/Tokenizer/dl4se.model'
 config_file = 'T5-Extension/Trained-Models/with-pretraining-new/MT-Task-Balanced/Pytorch-Model/config.json'
 #Modifica il path del file tsv che contiene i metodi da predire
-test_file = 'T5-Extension/Datasets/tsv/fine-tuning/AGraw/results_2024_methods_None_JUnit 5.tsv'
+test_file = 'T5-Extension/Datasets/tsv/fine-tuning/AGraw/results_2021_methods_None_JUnit 4.tsv'
 finetuned_model_path = 'T5-Extension/Trained-Models/with-pretraining-new/MT-Task-Balanced/Pytorch-Model/pytorch_model.bin'
 #Modifica il nome del file di output
-prediction_output_path = 'T5-Extension/Results/Predictions/AG-Task/with-pretraining-new/Raw/prediction_2024_JUnit5_@{}.txt'
+prediction_output_path = 'T5-Extension/Results/Predictions/AG-Task/with-pretraining-new/Raw/prediction_2021_JUnit4_TEST@{}.txt'
 #Modifica il nome del file di output
-perfect_prediction_output_path = 'T5-Extension/Results/Predictions/AG-Task/with-pretraining-new/Raw/perfect2024_JUnit5_@{}.txt'
+perfect_prediction_output_path = 'T5-Extension/Results/Predictions/AG-Task/with-pretraining-new/Raw/perfect2021_JUnit4_TEST@{}.txt'
 
 # Load tokenizer and config
 config = T5Config.from_json_file(config_file)
@@ -104,7 +104,7 @@ model = T5ForConditionalGeneration.from_pretrained(
 model.eval()
 
 predictions = []
-BEAM_SIZE = 1
+BEAM_SIZE = 10
 
 torch.cuda.empty_cache()
 
