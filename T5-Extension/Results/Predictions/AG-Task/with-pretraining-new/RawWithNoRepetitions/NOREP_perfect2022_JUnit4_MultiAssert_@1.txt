@@ -1,0 +1,798 @@
+[+] input: whenResolve_withSubmodel_success() { Environment environment = AASFull.createEnvironment(); Reference submodelRef = AASFull.AAS_1.getSubmodels().get(0); Submodel expected = AASFull.SUBMODEL_3; Referable asReferable = AasUtils.resolve(submodelRef, environment); assertEquals(expected, asReferable); Submodel asSubmodel = AasUtils.resolve(submodelRef, environment, Submodel.class); "<AssertPlaceHolder>"; }
+resolve(Reference reference, Environment env, Class<T> type) { if (reference == null || reference.getKeys() == null || reference.getKeys().isEmpty()) { return null; } GetChildrenVisitor findChildrenVisitor = new GetChildrenVisitor(env); findChildrenVisitor.visit(env); Referable current = null; for (int i = 0; i < reference.getKeys().size(); i++) { Key key = reference.getKeys().get(i); try { int index = Integer.parseInt(key.getValue()); if (Objects.isNull(current) || !SubmodelElementList.class.isAssignableFrom(current.getClass())) { throw new IllegalArgumentException("reference uses index notation on an element that is not a SubmodelElementList"); } List<SubmodelElement> list = ((SubmodelElementList) current).getValue(); if (list.size() <= index) { throw new IllegalArgumentException(String.format( "index notation out of bounds (list size: %s, requested index: %s)", list.size(), index)); } current = list.get(index); } catch (NumberFormatException e) { current = findChildrenVisitor.getChildren().stream() .filter(x -> Objects.equals(key.getValue(), GetIdentifierVisitor.getIdentifier(x))) .findFirst() .orElseThrow(() -> new IllegalArgumentException(String.format( "unable to resolve reference '%s' as element '%s' does not exist", asString(reference), key.getValue()))); } findChildrenVisitor.reset(); findChildrenVisitor.visit(current); } if (current == null) { return null; } if (!type.isAssignableFrom(current.getClass())) { throw new IllegalArgumentException(String.format( "reference '%s' could not be resolved as target type is not assignable from actual type (target: %s, actual: %s)", asString(reference), type.getName(), current.getClass().getName())); } return type.cast(current); }
+[*] target: assertEquals(expected, asSubmodel)
+[-] pred: org. junit. Assert. assertEquals ( expected, asSubmodel )
+************************************
+************************************
+[+] input: SAXException { XmlSerializer serializer = new XmlSerializer(); XmlDeserializer deserializer = new XmlDeserializer();  // This is the only way to make the serialization to work. Set<Class<?>> subtypes = ReflectionHelper.SUBTYPES.get(DataSpecificationContent.class); subtypes.add(DefaultDummyDataSpecification.class);  String xmlString = serializer.write(Examples.ENVIRONMENT_WITH_DUMMYDATASPEC); "<AssertPlaceHolder>";  validateAgainstXsdSchema(xmlString);  Environment copy = deserializer.read(xmlString); assertNotNull(copy);  assertTrue(Examples.ENVIRONMENT_WITH_DUMMYDATASPEC.equals(copy)); }
+write(Environment aasEnvironment) throws SerializationException { try { ObjectWriter writer = mapper.writer(); return writer.writeValueAsString(aasEnvironment); } catch (JsonProcessingException ex) { throw new SerializationException("serialization failed", ex); } }
+[*] target: assertNotNull(xmlString)
+[-] pred: org. junit. Assert. assertNotNull ( xmlString )
+************************************
+************************************
+[+] input: sharedInfo_withDebugModeEnabled() { SharedInfo.Builder sharedInfoBuilder = SharedInfo.builder() .setVersion(VERSION_0_1) .setApi(ATTRIBUTION_REPORTING_API) .setScheduledReportTime(FIXED_TIME) .setReportingOrigin(REPORTING_ORIGIN) .setDestination(DESTINATION) .setSourceRegistrationTime(FIXED_TIME) .setReportId(RANDOM_UUID) .setReportDebugMode(true);  SharedInfo si = sharedInfoBuilder.build();  assertEquals(si.reportDebugModeString().get(), "enabled"); "<AssertPlaceHolder>"; }
+getReportDebugMode() { return reportDebugModeString().isPresent() && reportDebugModeString().get().equals("enabled"); }
+[*] target: assertTrue(si.getReportDebugMode())
+[-] pred: org. junit. Assert. assertTrue ( si. getReportDebugMode ( ) )
+************************************
+************************************
+[+] input: testEmptyList() { SetBackedList list = new SetBackedList(EMPTY_SET); assertEquals(0, list.size()); assertEquals(true, list.isEmpty()); assertEquals(false, list.contains(1)); assertEquals(false, list.iterator().hasNext()); ListIterator it = list.listIterator(); assertEquals(false, it.hasNext()); assertEquals(-1, it.previousIndex()); "<AssertPlaceHolder>"; }
+nextIndex() { return idx; }
+[*] target: assertEquals(0, it.nextIndex())
+[-] pred: org. junit. Assert. assertEquals ( 0, it. nextIndex() )
+************************************
+************************************
+[+] input: testBuildPath() { String baseURL = "http://localhost"; OpenApiPathBuilder tools = OpenApiPathBuilder.newBuilder(); String path, expected, actual; String env = "test"; String appId = "appid-1001"; String clusterName = "cluster-1001"; String namespaceName = "application.yml"; String key = "spring.profile"; String operator = "junit"; long releaseId = 1L;  // AppOpenApiService path check  path = String.format("apps/%s/envclusters", tools.escapePath(appId)); expected = String.format("%s/%s", baseURL, path); actual = OpenApiPathBuilder.newBuilder() .appsPathVal(appId) .customResource("envclusters") .buildPath(baseURL); assertEquals(expected, actual);  String param = "1,2,3"; path = String.format("apps?appIds=%s", tools.escapeParam(param)); expected = String.format("%s/%s", baseURL, path); actual = OpenApiPathBuilder.newBuilder() .customResource("apps") .addParam("appIds", param) .buildPath(baseURL); assertEquals(expected, actual);  path = "apps/authorized"; expected = String.format("%s/%s", baseURL, path); actual = OpenApiPathBuilder.newBuilder() .customResource("apps/authorized") .buildPath(baseURL); assertEquals(expected, actual);  // ClusterOpenApiService path check  path = String.format("envs/%s/apps/%s/clusters/%s", tools.escapePath(env), tools.escapePath(appId), tools.escapePath(clusterName)); expected = String.format("%s/%s", baseURL, path); actual = OpenApiPathBuilder.newBuilder() .envsPathVal(env) .appsPathVal(appId) .clustersPathVal(clusterName) .buildPath(baseURL); assertEquals(expected, actual);  path = String.format("envs/%s/apps/%s/clusters", tools.escapePath(env), tools.escapePath(appId)); expected = String.format("%s/%s", baseURL, path); actual = OpenApiPathBuilder.newBuilder() .envsPathVal(env) .appsPathVal(appId) .customResource("clusters") .buildPath(baseURL); assertEquals(expected, actual);  // ItemOpenApiService path check  path = String.format("envs/%s/apps/%s/clusters/%s/namespaces/%s/items/%s", tools.escapePath(env), tools.escapePath(appId), tools.escapePath(clusterName), tools.escapePath(namespaceName), tools.escapePath(key)); expected = String.format("%s/%s", baseURL, path); actual = OpenApiPathBuilder.newBuilder() .envsPathVal(env) .appsPathVal(appId) .clustersPathVal(clusterName) .namespacesPathVal(namespaceName) .itemsPathVal(key) .buildPath(baseURL); assertEquals(expected, actual);  path = String.format("envs/%s/apps/%s/clusters/%s/namespaces/%s/items", tools.escapePath(env), tools.escapePath(appId), tools.escapePath(clusterName), tools.escapePath(namespaceName)); expected = String.format("%s/%s", baseURL, path); actual = OpenApiPathBuilder.newBuilder() .envsPathVal(env) .appsPathVal(appId) .clustersPathVal(clusterName) .namespacesPathVal(namespaceName) .customResource("items") .buildPath(baseURL); assertEquals(expected, actual);  path = String.format( "envs/%s/apps/%s/clusters/%s/namespaces/%s/items/%s?createIfNotExists=true", tools.escapePath(env), tools.escapePath(appId), tools.escapePath(clusterName), tools.escapePath(namespaceName), tools.escapePath(key)); expected = String.format("%s/%s", baseURL, path); actual = OpenApiPathBuilder.newBuilder() .envsPathVal(env) .appsPathVal(appId) .clustersPathVal(clusterName) .namespacesPathVal(namespaceName) .itemsPathVal(key) .addParam("createIfNotExists", "true") .buildPath(baseURL); assertEquals(expected, actual);  path = String.format("envs/%s/apps/%s/clusters/%s/namespaces/%s/items/%s?operator=%s", tools.escapePath(env), tools.escapePath(appId), tools.escapePath(clusterName), tools.escapePath(namespaceName), tools.escapePath(key), tools.escapeParam(operator)); expected = String.format("%s/%s", baseURL, path); actual = OpenApiPathBuilder.newBuilder() .envsPathVal(env) .appsPathVal(appId) .clustersPathVal(clusterName) .namespacesPathVal(namespaceName) .itemsPathVal(key) .addParam("operator", operator) .buildPath(baseURL); assertEquals(expected, actual);  // NamespaceOpenApiService path check  path = String.format("envs/%s/apps/%s/clusters/%s/namespaces/%s", tools.escapePath(env), tools.escapePath(appId), tools.escapePath(clusterName), tools.escapePath(namespaceName)); expected = String.format("%s/%s", baseURL, path); actual = OpenApiPathBuilder.newBuilder() .envsPathVal(env) .appsPathVal(appId) .clustersPathVal(clusterName) .namespacesPathVal(namespaceName) .buildPath(baseURL); assertEquals(expected, actual);  path = String.format("envs/%s/apps/%s/clusters/%s/namespaces", tools.escapePath(env), tools.escapePath(appId), tools.escapePath(clusterName)); expected = String.format("%s/%s", baseURL, path); actual = OpenApiPathBuilder.newBuilder() .envsPathVal(env) .appsPathVal(appId) .clustersPathVal(clusterName) .customResource("namespaces") .buildPath(baseURL); assertEquals(expected, actual);  path = String.format("apps/%s/appnamespaces", tools.escapePath(appId)); expected = String.format("%s/%s", baseURL, path); actual = OpenApiPathBuilder.newBuilder() .appsPathVal(appId) .customResource("appnamespaces") .buildPath(baseURL); assertEquals(expected, actual);  path = String.format("envs/%s/apps/%s/clusters/%s/namespaces/%s/lock", tools.escapePath(env), tools.escapePath(appId), tools.escapePath(clusterName), tools.escapePath(namespaceName)); expected = String.format("%s/%s", baseURL, path); actual = OpenApiPathBuilder.newBuilder() .envsPathVal(env) .appsPathVal(appId) .clustersPathVal(clusterName) .namespacesPathVal(namespaceName) .customResource("lock") .buildPath(baseURL); assertEquals(expected, actual);  // ReleaseOpenApiService path check  path = String.format("envs/%s/apps/%s/clusters/%s/namespaces/%s/releases", tools.escapePath(env), tools.escapePath(appId), tools.escapePath(clusterName), tools.escapePath(namespaceName)); expected = String.format("%s/%s", baseURL, path); actual = OpenApiPathBuilder.newBuilder() .envsPathVal(env) .appsPathVal(appId) .clustersPathVal(clusterName) .namespacesPathVal(namespaceName) .customResource("releases") .buildPath(baseURL); assertEquals(expected, actual);  path = String.format("envs/%s/apps/%s/clusters/%s/namespaces/%s/releases/latest", tools.escapePath(env), tools.escapePath(appId), tools.escapePath(clusterName), tools.escapePath(namespaceName)); expected = String.format("%s/%s", baseURL, path); actual = OpenApiPathBuilder.newBuilder() .envsPathVal(env) .appsPathVal(appId) .clustersPathVal(clusterName) .namespacesPathVal(namespaceName) .releasesPathVal("latest") .buildPath(baseURL); assertEquals(expected, actual);  path = String.format("envs/%s/releases/%s/rollback?operator=%s", tools.escapePath(env), releaseId, tools.escapeParam(operator)); expected = String.format("%s/%s", baseURL, path); actual = OpenApiPathBuilder.newBuilder() .envsPathVal(env) .releasesPathVal(String.valueOf(releaseId)) .customResource("rollback") .addParam("operator", operator) .buildPath(baseURL); "<AssertPlaceHolder>"; }
+buildPath(String baseUrl) { if (Strings.isNullOrEmpty(baseUrl)) { throw new IllegalArgumentException("Base url should not be null or empty"); } List<String> parts = new ArrayList<>(); parts.add(baseUrl);  for (String k : SORTED_PATH_KEYS) { if (pathVariable.containsKey(k)) { parts.add(k); String v = pathVariable.get(k); if (!Strings.isNullOrEmpty(v)) { parts.add(v); } } }  if (!Strings.isNullOrEmpty(this.customResource)) { parts.add(this.customResource); }  String path = PATH_JOIN.join(parts);  if (!params.isEmpty()) { StringBuilder sb = new StringBuilder(); for (Map.Entry<String, String> kv : params.entrySet()) { if (sb.length() > 0) { sb.append("&"); } sb.append(kv.getKey()).append("=").append(kv.getValue()); } path += "?" + sb; } return path; }
+[*] target: assertEquals(expected, actual)
+[-] pred: org. junit. Assert. assertEquals ( expected, actual )
+************************************
+************************************
+[+] input: testFoo() { String targetClassName = Foo.class.getCanonicalName(); GetStaticGraph graph = GetStaticGraphGenerator .generate(targetClassName);  Set<String> expectedClasses = new HashSet<>(Arrays.asList( Foo.class.getCanonicalName(), Bar1.class.getCanonicalName(), Bar2.class.getCanonicalName(), Bar3.class.getCanonicalName(), Bar4.class.getCanonicalName(), Bar5.class.getCanonicalName(), Bar6.class.getCanonicalName(), Bar7.class.getCanonicalName(), BarBar1.class.getCanonicalName()));  Set<String> allClasses = new HashSet<>(); allClasses.addAll(graph.getSourceClasses()); allClasses.addAll(graph.getTargetClasses());  assertEquals(expectedClasses, allClasses);  Map<String, Set<String>> expectedStaticFields = new HashMap<>(); expectedStaticFields.put(Bar2.class.getCanonicalName(), new HashSet<>(Arrays.asList("fieldBar2"))); expectedStaticFields.put(Bar6.class.getCanonicalName(), new HashSet<>(Arrays.asList("fieldBar6"))); expectedStaticFields.put(Bar7.class.getCanonicalName(), new HashSet<>(Arrays.asList("fieldBar7")));  Map<String, Set<String>> staticFields = graph.getStaticFields(); "<AssertPlaceHolder>"; }
+getStaticFields() { Map<String, Set<String>> staticFields = new LinkedHashMap<>(); for (StaticFieldReadEntry read : this.staticFieldReads) { String className = read.getTargetClass().replace('/', '.'); if (!staticFields.containsKey(className)) { staticFields.put(className, new LinkedHashSet<>()); } staticFields.get(className).add(read.getTargetField()); } return staticFields; }
+[*] target: assertEquals(expectedStaticFields, staticFields)
+[-] pred: org. junit. Assert. assertEquals ( expectedStaticFields, staticFields )
+************************************
+************************************
+[+] input: ClassNotFoundException { Properties.DSE_SOLVER = Properties.SolverType.SMARTUT_SOLVER; Properties.CRITERION = new Properties.Criterion[] { Criterion.BRANCH }; Properties.TARGET_CLASS = Foo.class.getName();  TestGenerationContext.getInstance().getClassLoaderForSUT().loadClass(Properties.TARGET_CLASS);  BranchCoverageSuiteFitness branchCoverageSuiteFitness = new BranchCoverageSuiteFitness(); TestSuiteChromosome suite = new TestSuiteChromosome(); suite.addFitness(branchCoverageSuiteFitness); branchCoverageSuiteFitness.getFitness(suite);  // no goals covered yet int coveredGoals0 = suite.getNumOfCoveredGoals(); int notCoveredGoals0 = suite.getNumOfNotCoveredGoals(); assertEquals(0, coveredGoals0); assertNotEquals(0, notCoveredGoals0);  DefaultTestCase testCase0 = buildTestCase0(); TestChromosome testChromosome0 = new TestChromosome(); testChromosome0.setTestCase(testCase0); suite.addTest(testChromosome0);  double fitnessBeforeLocalSearch = branchCoverageSuiteFitness.getFitness(suite); int coveredGoalsBeforeLocalSearch = suite.getNumOfCoveredGoals();  // some goal was covered assertTrue(coveredGoalsBeforeLocalSearch > 0);  DefaultTestCase duplicatedTestCase0 = buildTestCase0(); TestChromosome duplicatedTestChromosome0 = new TestChromosome(); duplicatedTestChromosome0.setTestCase(duplicatedTestCase0); suite.addTest(duplicatedTestChromosome0);  TestSuiteLocalSearchObjective localSearchObjective = TestSuiteLocalSearchObjective .buildNewTestSuiteLocalSearchObjective(Collections.singletonList(branchCoverageSuiteFitness), suite, 1);  DSETestCaseLocalSearch localSearch = new DSETestCaseLocalSearch(); boolean improved = localSearch.doSearch(duplicatedTestChromosome0, localSearchObjective); "<AssertPlaceHolder>";  double fitnessAfterLocalSearch = branchCoverageSuiteFitness.getFitness(suite); int coveredGoalsAfterLocalSearch = suite.getNumOfCoveredGoals();  assertTrue(fitnessAfterLocalSearch < fitnessBeforeLocalSearch); assertTrue(coveredGoalsAfterLocalSearch > coveredGoalsBeforeLocalSearch);  }
+doSearch(TestChromosome test, LocalSearchObjective<TestChromosome> objective) { logger.info("Test before local search: " + test.getTestCase().toCode());  // gather covered branches true/false branch indexes  final Set<Branch> coveredBranches; if (suite != null) { coveredBranches = collectCoveredBranches(suite); } else { coveredBranches = getCoveredBranches(test); } final Set<Branch> uncoveredBranches = collectUncoveredBranches(coveredBranches);  if (uncoveredBranches.isEmpty()) { /* * As there are no branches uncovered (true or false branch missing) * in this suite, there is no point in continuing DSE. Therefore, we * should stop DSE (no DSE improvement) */ return false; }  if (!hasUncoveredBranch(test, uncoveredBranches)) { /* * As there are uncovered branches, but none is reached by this * test, the DSE is skipped and we return false (no DSE improvement) */ return false; }  Set<Integer> targetStatementIndexes = collectStatementIndexesWithSymbolicVariables(test, objective);  final boolean fitnessHasImproved; if (targetStatementIndexes.isEmpty()) { // Cannot apply DSE because there are no symbolic variables // Therefore, no improvement on objective. fitnessHasImproved = false; } else { logger.info("Yes, now applying the search at positions {}!", targetStatementIndexes); DSETestGenerator dseTestGenerator; if (suite != null) { dseTestGenerator = new DSETestGenerator(suite); } else { dseTestGenerator = new DSETestGenerator(); } final TestChromosome newTest = dseTestGenerator.generateNewTest(test, targetStatementIndexes, objective); if (newTest != null) { fitnessHasImproved = true; } else { fitnessHasImproved = false; } }  LocalSearchBudget.getInstance().countLocalSearchOnTest();  // Return true iff search was successful return fitnessHasImproved;  // TODO: Handle arrays in local search // TODO: mutating an int might have an effect on array lengths }
+[*] target: assertTrue(improved)
+[-] pred: org. junit. Assert. assertTrue ( improved )
+************************************
+************************************
+[+] input: ClassNotFoundException { String cvc4_path = System.getenv("cvc4_path"); if (cvc4_path != null) { Properties.CVC4_PATH = cvc4_path; } Assume.assumeTrue(Properties.CVC4_PATH!=null); Properties.DSE_SOLVER = Properties.SolverType.CVC4_SOLVER; Properties.CRITERION = new Properties.Criterion[] { Criterion.BRANCH }; Properties.TARGET_CLASS = Foo.class.getName();  TestGenerationContext.getInstance().getClassLoaderForSUT().loadClass(Properties.TARGET_CLASS);  BranchCoverageSuiteFitness branchCoverageSuiteFitness = new BranchCoverageSuiteFitness(); TestSuiteChromosome suite = new TestSuiteChromosome(); suite.addFitness(branchCoverageSuiteFitness); branchCoverageSuiteFitness.getFitness(suite);  // no goals covered yet int coveredGoals0 = suite.getNumOfCoveredGoals(); int notCoveredGoals0 = suite.getNumOfNotCoveredGoals(); assertEquals(0, coveredGoals0); assertNotEquals(0, notCoveredGoals0);  DefaultTestCase testCase0 = buildTestCase0(); TestChromosome testChromosome0 = new TestChromosome(); testChromosome0.setTestCase(testCase0); suite.addTest(testChromosome0);  double fitnessBeforeLocalSearch = branchCoverageSuiteFitness.getFitness(suite); int coveredGoalsBeforeLocalSearch = suite.getNumOfCoveredGoals();  // some goal was covered assertTrue(coveredGoalsBeforeLocalSearch > 0);  DefaultTestCase duplicatedTestCase0 = buildTestCase0(); TestChromosome duplicatedTestChromosome0 = new TestChromosome(); duplicatedTestChromosome0.setTestCase(duplicatedTestCase0); suite.addTest(duplicatedTestChromosome0);  TestSuiteLocalSearchObjective localSearchObjective = TestSuiteLocalSearchObjective .buildNewTestSuiteLocalSearchObjective(Collections.singletonList(branchCoverageSuiteFitness), suite, 1);  DSETestCaseLocalSearch localSearch = new DSETestCaseLocalSearch(); boolean improved = localSearch.doSearch(duplicatedTestChromosome0, localSearchObjective); "<AssertPlaceHolder>";  double fitnessAfterLocalSearch = branchCoverageSuiteFitness.getFitness(suite); int coveredGoalsAfterLocalSearch = suite.getNumOfCoveredGoals();  assertTrue(fitnessAfterLocalSearch < fitnessBeforeLocalSearch); assertTrue(coveredGoalsAfterLocalSearch > coveredGoalsBeforeLocalSearch);  }
+doSearch(TestChromosome test, LocalSearchObjective<TestChromosome> objective) { logger.info("Test before local search: " + test.getTestCase().toCode());  // gather covered branches true/false branch indexes  final Set<Branch> coveredBranches; if (suite != null) { coveredBranches = collectCoveredBranches(suite); } else { coveredBranches = getCoveredBranches(test); } final Set<Branch> uncoveredBranches = collectUncoveredBranches(coveredBranches);  if (uncoveredBranches.isEmpty()) { /* * As there are no branches uncovered (true or false branch missing) * in this suite, there is no point in continuing DSE. Therefore, we * should stop DSE (no DSE improvement) */ return false; }  if (!hasUncoveredBranch(test, uncoveredBranches)) { /* * As there are uncovered branches, but none is reached by this * test, the DSE is skipped and we return false (no DSE improvement) */ return false; }  Set<Integer> targetStatementIndexes = collectStatementIndexesWithSymbolicVariables(test, objective);  final boolean fitnessHasImproved; if (targetStatementIndexes.isEmpty()) { // Cannot apply DSE because there are no symbolic variables // Therefore, no improvement on objective. fitnessHasImproved = false; } else { logger.info("Yes, now applying the search at positions {}!", targetStatementIndexes); DSETestGenerator dseTestGenerator; if (suite != null) { dseTestGenerator = new DSETestGenerator(suite); } else { dseTestGenerator = new DSETestGenerator(); } final TestChromosome newTest = dseTestGenerator.generateNewTest(test, targetStatementIndexes, objective); if (newTest != null) { fitnessHasImproved = true; } else { fitnessHasImproved = false; } }  LocalSearchBudget.getInstance().countLocalSearchOnTest();  // Return true iff search was successful return fitnessHasImproved;  // TODO: Handle arrays in local search // TODO: mutating an int might have an effect on array lengths }
+[*] target: assertTrue(improved)
+[-] pred: org. junit. Assert. assertTrue ( improved )
+************************************
+************************************
+[+] input: testGetCurrentDirectory() {  JFileChooser chooser = new MockJFileChooser(); File dir = chooser.getCurrentDirectory();  Assert."<AssertPlaceHolder>"; Assert.assertTrue(dir instanceof MockFile); }
+getCurrentDirectory() { return currentDirectory; }
+[*] target: assertTrue(dir.exists())
+[-] pred: org. junit. Assert. assertTrue ( dir. exists ( ) )
+************************************
+************************************
+[+] input: testFin() { lista.comenzar(); assertTrue(lista.fin());  lista.agregarFinal(0); lista.comenzar(); assertFalse(lista.fin()); lista.proximo(); assertTrue(lista.fin());  lista.agregarEn(1, 1); lista.comenzar(); assertFalse(lista.fin()); lista.proximo(); assertFalse(lista.fin()); lista.proximo(); "<AssertPlaceHolder>";  }
+fin() { return (this.actual == null); }
+[*] target: assertTrue(lista.fin())
+[-] pred: org. junit. Assert. assertTrue ( lista. fin() )
+************************************
+************************************
+[+] input: testVisitINT_SEXT() { Address instructionAddress = Utils.getDefaultAddress(0x1010); SequenceNumber seq = new SequenceNumber(instructionAddress, 0); AbsEnv tmpEnv = new AbsEnv(); ConstraintSolver constraintSolver = new ConstraintSolver();  Varnode[] in1 = {new Varnode(Utils.getConstantAddress(0xFFFFFFFFL), GlobalState.arch.getDefaultPointerSize())}; Varnode out1 = new Varnode(Utils.getRegisterAddress(8), GlobalState.arch.getDefaultPointerSize()); PcodeOp pcode = new PcodeOp(seq, PcodeOp.COPY, in1, out1); constraintSolver.visit_COPY(pcode, tmpEnv);  Varnode[] in2 = { new Varnode(Utils.getRegisterAddress(8), GlobalState.arch.getDefaultPointerSize()), };  Varnode out2 = new Varnode(Utils.getUniqueAddress(0x10), 8); pcode = new PcodeOp(seq, PcodeOp.INT_ZEXT, in2, out2);  constraintSolver.visit_INT_SEXT(pcode, tmpEnv); optimize = constraintSolver.getOptimize();  optimize.Push(); Assert.assertEquals( optimize.Check(), Status.SATISFIABLE ); Expr res = optimize.getModel() .eval(constraintSolver.getALocExprHashMap().get(ALoc.getALoc(out2)), false); BitVecExpr bitVecExpr = (BitVecExpr) res; BigInteger expect = new BigInteger("FFFFFFFFFFFFFFFF", 16); BigInteger actual = new BigInteger(bitVecExpr.toString()); Assert."<AssertPlaceHolder>"; Assert.assertEquals(bitVecExpr.getSortSize(), 64); optimize.Pop(); }
+getALocExprHashMap() { return aLocExprHashMap; }
+[*] target: assertEquals(expect, actual)
+[-] pred: org. junit. Assert. assertEquals ( expect, actual )
+************************************
+************************************
+[+] input: Exception { WorkflowSummary oldWorkflow = TestUtils.loadWorkflowSnapshot(objectMapper, "workflow_summary"); oldWorkflow.setStatus(WorkflowStatus.RUNNING); oldWorkflow.setUpdateTime(getFormattedTime(new DateTime().minusHours(2).toDate()));  WorkflowSummary recentWorkflow = TestUtils.loadWorkflowSnapshot(objectMapper, "workflow_summary"); recentWorkflow.setStatus(WorkflowStatus.RUNNING); recentWorkflow.setUpdateTime(getFormattedTime(new DateTime().minusHours(1).toDate()));  WorkflowSummary tooRecentWorkflow = TestUtils.loadWorkflowSnapshot(objectMapper, "workflow_summary"); tooRecentWorkflow.setStatus(WorkflowStatus.RUNNING); tooRecentWorkflow.setUpdateTime(getFormattedTime(new DateTime().toDate()));  indexDAO.indexWorkflow(oldWorkflow); indexDAO.indexWorkflow(recentWorkflow); indexDAO.indexWorkflow(tooRecentWorkflow);  Thread.sleep(1000);  List<String> ids = indexDAO.searchRecentRunningWorkflows(2, 1);  "<AssertPlaceHolder>"; assertEquals(recentWorkflow.getWorkflowId(), ids.get(0)); }
+searchRecentRunningWorkflows( int lastModifiedHoursAgoFrom, int lastModifiedHoursAgoTo) { DateTime dateTime = new DateTime(); QueryBuilder q = QueryBuilders.boolQuery() .must( QueryBuilders.rangeQuery("updateTime") .gt(dateTime.minusHours(lastModifiedHoursAgoFrom))) .must( QueryBuilders.rangeQuery("updateTime") .lt(dateTime.minusHours(lastModifiedHoursAgoTo))) .must(QueryBuilders.termQuery("status", "RUNNING"));  SearchResult<String> workflowIds; try { workflowIds = searchObjectIds( workflowIndexName, q, 0, 5000, Collections.singletonList("updateTime:ASC")); } catch (IOException e) { logger.error("Unable to communicate with ES to find recent running workflows", e); return Collections.emptyList(); }  return workflowIds.getResults(); }
+[*] target: assertEquals(1, ids.size())
+[-] pred: org. junit. Assert. assertEquals ( 1, ids. size ( ) )
+************************************
+************************************
+[+] input: testGetAllWorkflowDefsLatestVersions() { WorkflowDef def = new WorkflowDef(); def.setName("test1"); def.setVersion(1); def.setDescription("description"); def.setCreatedBy("unit_test"); def.setCreateTime(1L); def.setOwnerApp("ownerApp"); def.setUpdatedBy("unit_test2"); def.setUpdateTime(2L); metadataDAO.createWorkflowDef(def);  def.setName("test2"); metadataDAO.createWorkflowDef(def); def.setVersion(2); metadataDAO.createWorkflowDef(def);  def.setName("test3"); def.setVersion(1); metadataDAO.createWorkflowDef(def); def.setVersion(2); metadataDAO.createWorkflowDef(def); def.setVersion(3); metadataDAO.createWorkflowDef(def);  // Placed the values in a map because they might not be stored in order of defName. // To test, needed to confirm that the versions are correct for the definitions. Map<String, WorkflowDef> allMap = metadataDAO.getAllWorkflowDefsLatestVersions().stream() .collect(Collectors.toMap(WorkflowDef::getName, Function.identity()));  "<AssertPlaceHolder>"; assertEquals(3, allMap.size()); assertEquals(1, allMap.get("test1").getVersion()); assertEquals(2, allMap.get("test2").getVersion()); assertEquals(3, allMap.get("test3").getVersion()); }
+getAllWorkflowDefsLatestVersions() { final String GET_ALL_WORKFLOW_DEF_LATEST_VERSIONS_QUERY = "SELECT json_data FROM meta_workflow_def wd WHERE wd.version = (SELECT MAX(version) FROM meta_workflow_def wd2 WHERE wd2.name = wd.name)"; return queryWithTransaction( GET_ALL_WORKFLOW_DEF_LATEST_VERSIONS_QUERY, q -> q.executeAndFetch(WorkflowDef.class)); }
+[*] target: assertNotNull(allMap)
+[-] pred: org. junit. Assert. assertNotNull ( allMap )
+************************************
+************************************
+[+] input: randomizedTest() { BuggyAList<Integer> ba = new BuggyAList<>(); AListNoResizing<Integer> anr = new AListNoResizing<>();  int N = 5000; for (int i = 0; i < N; i += 1) { int operationNumber = StdRandom.uniform(0, 4); if (operationNumber == 0) { // addLast int randVal = StdRandom.uniform(0, 100); ba.addLast(randVal); anr.addLast(randVal); System.out.println("addLast(" + randVal + ")"); } else if (operationNumber == 1) { // size int size = ba.size(); int size2 = anr.size(); System.out.println("size: " + size + " size2: " + size2); assertEquals(size, size2); } else if (operationNumber == 2) { // getLast if (ba.size() > 0 && anr.size() > 0) { int ret = ba.getLast(); int ret2 = anr.getLast(); System.out.println("getLast(" + ret + ")" + " getLast(" + ret2 + ")"); assertEquals(ret, ret2); } } else if (operationNumber == 3) { // removeLast if (ba.size() > 0 && anr.size() > 0) { int ret = ba.removeLast(); int ret2 = anr.removeLast(); System.out.println("removeLast(" + ret + ")" + " removeLast(" + ret2 + ")"); "<AssertPlaceHolder>"; } } } }
+removeLast() { if ((size < items.length / 4) && (size > 4)) { resize(items.length / 4); } Item x = getLast(); items[size - 1] = null; size = size - 1; return x; }
+[*] target: assertEquals(ret, ret2)
+[-] pred: org. junit. Assert. assertEquals ( ret, ret2 )
+************************************
+************************************
+[+] input: test_bothHeapifyMethods_shouldConstructArray() { MaxHeap<Integer> heap = new MaxHeap<>(); // 1st heapify, takes in a list of values heap.heapify(Arrays.asList(1, 9, 11, 4, 7, 6, 3, 2, 13)); String firstHeap = heap.toString();  // 2nd heapify, take sin sequence of values heap.heapify(2, 9, 11, 4, 7, 6, 3, 13, 1); String secondHeap = heap.toString();  Assert."<AssertPlaceHolder>"; // should be the same String expected = "[13, 9, 11, 4, 7, 6, 3, 2, 1]"; Assert.assertEquals(expected, firstHeap); }
+toString() { StringBuilder ret = new StringBuilder("["); for (int i = 0; i < size(); i++) { ret.append(heap.get(i)); ret.append(", "); } return ret.substring(0, ret.length() - 2) + "]"; }
+[*] target: assertEquals(firstHeap, secondHeap)
+[-] pred: org. junit. Assert. assertEquals ( firstHeap, secondHeap )
+************************************
+************************************
+[+] input: testEmpty() { MonotonicQueue<Integer> q = new MonotonicQueue<>(); Assert.assertTrue(q.isEmpty()); Assert.assertNull(q.max()); Assert."<AssertPlaceHolder>"; }
+pop() { if (dq.isEmpty()) { return null; } return dq.poll(); // Returns & remove head of deque }
+[*] target: assertNull(q.pop())
+[-] pred: org. junit. Assert. assertNull ( q. pop() )
+************************************
+************************************
+[+] input: Exception { SimpleLineReader reader = new SimpleLineReader(new Document("aha\noho\r\n\r\n\n")); assertEquals("aha\n", reader.readLine()); assertEquals("oho\r\n", reader.readLine()); assertEquals("\r\n", reader.readLine()); assertEquals("\n", reader.readLine()); "<AssertPlaceHolder>"; }
+readLine() { int nLines= fInput.getNumberOfLines(); if (fCurrLine >= nLines) { return null; }  try { IRegion region= fInput.getLineInformation(fCurrLine++); String content= fInput.get(region.getOffset(), region.getLength());  int start= region.getOffset();  boolean continuesOnNext= content.endsWith("\") && !isCommentOrWhiteSpace(content); //$NON-NLS-1$  while (continuesOnNext && fCurrLine < nLines) { region= fInput.getLineInformation(fCurrLine++); content= fInput.get(region.getOffset(), region.getLength()); continuesOnNext= content.endsWith("\") && !isCommentOrWhiteSpace(content); //$NON-NLS-1$ } int end; if (fCurrLine < nLines) { end= fInput.getLineOffset(fCurrLine); // beginning of next } else { end= fInput.getLength(); if (end == start) { return null; // nd of file, empty line -> null } } return fInput.get(start, end - start); } catch (BadLocationException e) { // should not happen JavaManipulationPlugin.log(e); } return null; }
+[*] target: assertNull(reader.readLine())
+[-] pred: org. junit. Assert. assertNull ( reader. readLine() )
+************************************
+************************************
+[+] input: testGettingTaskDescription() { TaskDescriptionProvider provider = TaskDescriptionProvider.getDefault(); String description = provider.getDescriptionForTask("apply"); //$NON-NLS-1$ "<AssertPlaceHolder>"; assertTrue(description.length() > 0); }
+getDescriptionForTask(String aTaskName) { ProposalNode task = taskNodes.get(aTaskName); if (task != null) { return task.desc; } return null; }
+[*] target: assertNotNull(description)
+[-] pred: org. junit. Assert. assertNotNull ( description )
+************************************
+************************************
+[+] input: testGettingAttribute() { TaskDescriptionProvider provider = TaskDescriptionProvider.getDefault(); String description = provider.getDescriptionForTaskAttribute("apply", "executable"); //$NON-NLS-1$ //$NON-NLS-2$ "<AssertPlaceHolder>"; assertTrue(description.length() > 0); }
+getDescriptionForTaskAttribute(String aTaskName, String anAttributeName) { ProposalNode task = taskNodes.get(aTaskName); if (task != null) { ProposalNode att = task.getChild(anAttributeName); if (att != null) { return att.desc; } } return null; }
+[*] target: assertNotNull(description)
+[-] pred: org. junit. Assert. assertNotNull ( description )
+************************************
+************************************
+[+] input: URISyntaxException { File jarFile = createJar(); JdkCheckCompatibleRequest request = new JdkCheckCompatibleRequest(); request.setFromVersion(8); request.setToVersion(11); request.setReportLocale(Locale.CHINA); request.setExternalToolHome(System.getProperty("user.home") + "/emt4j-external"); List<ToCheckTarget> toCheckTargetList = new ArrayList<>(); ToCheckTarget toCheckTarget = new ToCheckTarget(); toCheckTarget.setTargetType(CheckTargetTypeEnum.JAR); toCheckTarget.setTargetIdentifier(jarFile.getCanonicalPath()); toCheckTargetList.add(toCheckTarget); request.setToCheckTargetList(toCheckTargetList);  JdkCheckCompatibleResult result = JdkCompatibleCheckFacade.check(request); "<AssertPlaceHolder>"; assertFalse(result.getResultDetailList().isEmpty());  jarFile.delete(); }
+check(JdkCheckCompatibleRequest request) throws IOException, InterruptedException, ClassNotFoundException, URISyntaxException { checkParam(request); CheckConfig checkConfig = getCheckConfig(request); MemoryHolderOutputConsumer outputConsumer = new MemoryHolderOutputConsumer(); AnalysisExecutor analysisExecutor = new AnalysisExecutor(checkConfig); analysisExecutor.setAnalysisOutputConsumer(outputConsumer); for (ToCheckTarget checkTarget : request.getToCheckTargetList()) { analysisExecutor.add(convert(checkTarget)); } Progress progress = new Progress(0, 1, "JDK Compatible API Check"); analysisExecutor.execute(Collections.singletonList(Feature.DEFAULT), progress);  ReportConfig reportConfig = new ReportConfig(); reportConfig.setOutputFormat("api"); reportConfig.setLocale(request.getReportLocale()); reportConfig.setTargetJdkHome(request.getTargetJdkHome()); reportConfig.setVerbose(request.isVerbose()); reportConfig.setExternalToolRoot(request.getExternalToolHome()); ReportExecutor reportExecutor = new ReportExecutor(reportConfig); reportExecutor.execute(outputConsumer.getInputProvider(), progress, request.isDisableExternalTool());  JdkCheckCompatibleResult result = new JdkCheckCompatibleResult(); result.setResultDetailList(((ApiRender) reportExecutor.getRender()).getResultDetailList()); return result; }
+[*] target: assertNotNull(result)
+[-] pred: org. junit. Assert. assertNotNull ( result )
+************************************
+************************************
+[+] input: Exception { Dictionary<String, Object> dict = getConfiguration("test2").getProperties(); assertFalse(dict.isEmpty()); assertNotNull(dict.remove(Constants.SERVICE_PID)); "<AssertPlaceHolder>"; }
+isEmpty() { return configurationProperties.isEmpty(); }
+[*] target: assertTrue(dict.isEmpty())
+[-] pred: org. junit. Assert. assertTrue ( dict. isEmpty ( ) )
+************************************
+************************************
+[+] input: remove_canRemoveValues() { IntIntMap map = new IntIntMap(); Assert.assertEquals(IntIntMap.NO_VALUE, map.remove(0)); map.put(1234, 5678); Assert.assertEquals(5678, map.remove(1234)); Assert."<AssertPlaceHolder>"; }
+isEmpty() { return size == 0; }
+[*] target: assertTrue(map.isEmpty())
+[-] pred: org. junit. Assert. assertTrue ( map. isEmpty() )
+************************************
+************************************
+[+] input: Exception {  List<String> names = functionManager.getCallingConventionNames(); assertTrue(names.size() >= 1);  for (String name : names) { if (Function.UNKNOWN_CALLING_CONVENTION_STRING.equals(name)) { assertNull(functionManager.getCallingConvention(name)); } else { "<AssertPlaceHolder>"; } } }
+getCallingConvention(String name) { return functions.getCallingConvention(name); }
+[*] target: assertNotNull(functionManager.getCallingConvention(name))
+[-] pred: org. junit. Assert. assertNotNull ( functionManager. getCallingConvention(name) )
+************************************
+************************************
+[+] input: testCreateDataOnInstructionFailure() { // Should NOT be able to create data on top of an instruction Instruction instr1 = listing.getInstructionAfter(addr(0)); Address addr = instr1.getMinAddress(); CreateDataCmd cmd = new CreateDataCmd(addr, new ByteDataType()); cmd.applyTo(program); Instruction instr2 = listing.getInstructionAfter(addr(0)); "<AssertPlaceHolder>"; assertNull(listing.getDataAt(addr)); }
+applyTo(DomainObject obj) { try { DataUtilities.createData((Program) obj, addr, newDataType, -1, stackPointers, clearMode); return true; } catch (Exception e) { msg = e.getMessage(); return false; } }
+[*] target: assertEquals(instr1, instr2)
+[-] pred: org. junit. Assert. assertEquals ( instr1, instr2 )
+************************************
+************************************
+[+] input: Exception {  Memory memory = program.getMemory(); memory.setBytes(addr(0x2000), new byte[] { (byte) 0xd7, (byte) 05 }); Pointer p = new PointerDataType(); listing.createData(addr(0x2000), p, addr(0x2000).getPointerSize()); Data data = listing.getDataAt(addr(0x2000));  "<AssertPlaceHolder>"; Object obj = data.getValue(); assertNotNull(obj); assertTrue(obj instanceof Address); assertEquals(addr(0xd7050000), obj); }
+getDataAt(Address address) { return getDataAt(address, addrMap.getKey(address, false)); }
+[*] target: assertNotNull(data)
+[-] pred: org. junit. Assert. assertNotNull ( data )
+************************************
+************************************
+[+] input: testGetComponent() { Structure struct = createStructure("struct_1", 0); struct.add(new ByteDataType()); struct.add(new StringDataType(), 10); DataTypeComponent newdtc = union.add(struct, "field5", "comments"); DataTypeComponent dtc = union.getComponent(4); "<AssertPlaceHolder>"; assertEquals("field5", dtc.getFieldName()); assertEquals("comments", dtc.getComment());  }
+getComponent(int ordinal) { return components.get(ordinal); }
+[*] target: assertEquals(newdtc, dtc)
+[-] pred: org. junit. Assert. assertEquals ( newdtc, dtc )
+************************************
+************************************
+[+] input: testGetNewAddressSpace() { AddressSpace space = trans12.getNewAddressSpace("ram"); "<AssertPlaceHolder>"; assertEquals("ram", space.getName()); }
+getNewAddressSpace(String oldSpaceName) { if (spaceMap == null) { throw new IllegalStateException("Address space map has not been validated"); } return spaceMap.get(oldSpaceName); }
+[*] target: assertNotNull(space)
+[-] pred: org. junit. Assert. assertNotNull ( space )
+************************************
+************************************
+[+] input: Exception { AddressSet as1 = new AddressSet(); as1.addRange(addr("0x1001100"), addr("0x1001120")); as1.addRange(addr("0x1001150"), addr("0x1001180")); as1.addRange(addr("0x1001200"), addr("0x1001210")); as1.addRange(addr("0x1001260"), addr("0x1001280")); AddressSet as2 = new AddressSet(); as2.addRange(addr("0x1001090"), addr("0x1001130")); as2.addRange(addr("0x1001170"), addr("0x1001190")); as2.addRange(addr("0x1001230"), addr("0x1001240")); as2.addRange(addr("0x1001250"), addr("0x1001270")); AddressSet as3 = new AddressSet(); as3.addRange(addr("0x1001132"), addr("0x1001132")); as3.addRange(addr("0x1001175"), addr("0x1001175")); as3.addRange(addr("0x1001205"), addr("0x1001235"));  AddressSet multiSet = new AddressSet(); multiSet.addRange(addr("0x1001090"), addr("0x1001130")); multiSet.addRange(addr("0x1001132"), addr("0x1001132")); multiSet.addRange(addr("0x1001150"), addr("0x1001190")); multiSet.addRange(addr("0x1001200"), addr("0x1001240")); multiSet.addRange(addr("0x1001250"), addr("0x1001280")); AddressIterator ai; MultiAddressIterator iter;  // Forward tests boolean forward = true; ai = multiSet.getAddresses(forward); iter = new MultiAddressIterator(new AddressIterator[] { as1.getAddresses(forward), as2.getAddresses(forward), as3.getAddresses(forward) }); while (iter.hasNext()) { assertTrue(ai.hasNext()); Address expectedAddress = ai.next(); Address actualAddress = iter.next(); assertEquals(expectedAddress, actualAddress); }  ai = multiSet.getAddresses(forward); iter = new MultiAddressIterator(new AddressIterator[] { as1.getAddresses(forward), as3.getAddresses(forward), as2.getAddresses(forward) }); while (iter.hasNext()) { assertTrue(ai.hasNext()); Address expectedAddress = ai.next(); Address actualAddress = iter.next(); assertEquals(expectedAddress, actualAddress); }  ai = multiSet.getAddresses(forward); iter = new MultiAddressIterator(new AddressIterator[] { as2.getAddresses(forward), as3.getAddresses(forward), as1.getAddresses(forward) }); while (iter.hasNext()) { assertTrue(ai.hasNext()); Address expectedAddress = ai.next(); Address actualAddress = iter.next(); assertEquals(expectedAddress, actualAddress); }  ai = multiSet.getAddresses(forward); iter = new MultiAddressIterator(new AddressIterator[] { as2.getAddresses(forward), as1.getAddresses(forward), as3.getAddresses(forward) }); while (iter.hasNext()) { assertTrue(ai.hasNext()); Address expectedAddress = ai.next(); Address actualAddress = iter.next(); assertEquals(expectedAddress, actualAddress); }  ai = multiSet.getAddresses(forward); iter = new MultiAddressIterator(new AddressIterator[] { as3.getAddresses(forward), as2.getAddresses(forward), as1.getAddresses(forward) }); while (iter.hasNext()) { assertTrue(ai.hasNext()); Address expectedAddress = ai.next(); Address actualAddress = iter.next(); assertEquals(expectedAddress, actualAddress); }  ai = multiSet.getAddresses(forward); iter = new MultiAddressIterator(new AddressIterator[] { as3.getAddresses(forward), as1.getAddresses(forward), as2.getAddresses(forward) }); while (iter.hasNext()) { assertTrue(ai.hasNext()); Address expectedAddress = ai.next(); Address actualAddress = iter.next(); "<AssertPlaceHolder>"; } }
+next() { // Get a next value from each iterator for (int i = 0; i < iters.length; i++) { if (addrs[i] == null) { if (((iters[i] != null) && (iters[i].hasNext()))) { addrs[i] = iters[i].next(); } } }  // Find next address. Address addrNext = null; boolean next[] = new boolean[iters.length]; for (int i = 0; i < iters.length; i++) { if (addrs[i] == null) { continue; } if (addrNext == null) { addrNext = addrs[i]; next[i] = true; } else { int result = addrNext.compareTo(addrs[i]); if (result == 0) { next[i] = true; } else if ((forward && (result > 0)) || (!forward && (result < 0))) { addrNext = addrs[i]; for (int n = 0; n < i; n++) { next[n] = false; } next[i] = true; } } }  // Return next address or null if none. for (int i = 0; i < iters.length; i++) { if (next[i]) { addrs[i] = null; } } return addrNext; }
+[*] target: assertEquals(expectedAddress, actualAddress)
+[-] pred: org. junit. Assert. assertEquals ( expectedAddress, actualAddress )
+************************************
+************************************
+[+] input: testGetNewAddressSpace() { AddressSpace space = trans13.getNewAddressSpace("ram"); "<AssertPlaceHolder>"; assertEquals("ram", space.getName()); }
+getNewAddressSpace(String oldSpaceName) { if (!isValid) { throw new IllegalStateException("Translator has not been validated"); } if (spaceNameMap.isEmpty()) { return super.getNewAddressSpace(oldSpaceName); } String newName = spaceNameMap.get(oldSpaceName); if (newName != null) { return getNewLanguage().getAddressFactory().getAddressSpace(newName); } return null; }
+[*] target: assertNotNull(space)
+[-] pred: org. junit. Assert. assertNotNull ( space )
+************************************
+************************************
+[+] input: testSplitWithMaxAtMaxWithSpacesAtEnd() { // The word is long enough to force a hard split on the first 'n' characters.  The // space at the end allows the remaining 'word' to be kept intact. List<String> lines = HtmlLineSplitter.split("abc        ", 3); "<AssertPlaceHolder>"; assertEquals("abc", lines.get(0)); }
+split(String text, int maxLineLength) { return split(text, maxLineLength, false); }
+[*] target: assertEquals(1, lines.size())
+[-] pred: org. junit. Assert. assertEquals ( 1, lines. size ( ) )
+************************************
+************************************
+[+] input: testSplitWithoutMaxNewlineAtBeginningAndEndOnly() { List<String> lines = HtmlLineSplitter.split("\nabcdefghi\n", 0); "<AssertPlaceHolder>"; assertEquals("", lines.get(0)); assertEquals("abcdefghi", lines.get(1)); assertEquals("", lines.get(2)); }
+split(String text, int maxLineLength) { return split(text, maxLineLength, false); }
+[*] target: assertEquals(3, lines.size())
+[-] pred: org. junit. Assert. assertEquals ( 3, lines. size ( ) )
+************************************
+************************************
+[+] input: testSplitWithMaxNewlineAtBeginningAndEndOnly() { // newlines at begin and end do not create lines; no whitespace--max is below // MAX_WORD_LENGTH, so single line only List<String> lines = HtmlLineSplitter.split("\nabcdefghi\n", 4); "<AssertPlaceHolder>"; assertEquals("", lines.get(0)); assertEquals("abcdefghi", lines.get(1)); assertEquals("", lines.get(2)); }
+split(String text, int maxLineLength) { return split(text, maxLineLength, false); }
+[*] target: assertEquals(3, lines.size())
+[-] pred: org. junit. Assert. assertEquals ( 3, lines. size ( ) )
+************************************
+************************************
+[+] input: Exception {  Program testProgram = buildProgram("libopencoreplayer.so", false);  Listing listing = testProgram.getListing(); AddressSpace space = testProgram.getLanguage().getAddressFactory().getDefaultAddressSpace();  // Offsets where there shouldn't be strings because existing refs were "in the way" int[] nonExpectedOffsets = new int[] { 0xa7195fd4, 0xa7196ee8 }; Data dataHere;  // Verify these aren't here before running Strings Analyzer for (int nonExpectedOffset : nonExpectedOffsets) { dataHere = listing.getDefinedDataAt(addr(space, nonExpectedOffset)); assertNull(dataHere); }  // Create references ReferenceManager refMgr = testProgram.getReferenceManager(); refMgr.addMemoryReference(addr(space, 0xa7197898), addr(space, 0xa7195fda), RefType.DATA, SourceType.USER_DEFINED, 1);  refMgr.addMemoryReference(addr(space, 0xa7196f62), addr(space, 0xa7196efc), RefType.DATA, SourceType.USER_DEFINED, 1);  AutoAnalysisManager manager = AutoAnalysisManager.getAnalysisManager(testProgram);  // Run strings analyzer StringsAnalyzer analyzer = new StringsAnalyzer(); analyzer.setCreateStringOverExistingReference(false);// Option is unchecked analyzer.setStringEndAlignment(1); analyzer.added(testProgram, null, monitor, manager.getMessageLog());  for (int nonExpectedOffset : nonExpectedOffsets) { dataHere = listing.getDefinedDataAt(addr(space, nonExpectedOffset)); assertNull(dataHere); }  // String that would have been created if parameter is checked String[] largerStrs = new String[] { "PVFMVideoMIO", "set to invalid mode (%d)" }; String[] nullBits = new String[] { "00", "00" };  // Now run again with parameter enabled and verify strings are there analyzer.setCreateStringOverExistingReference(true);// Option is checked analyzer.added(testProgram, null, monitor, manager.getMessageLog());  String stringHere; for (int i = 0; i < nonExpectedOffsets.length; i++) { dataHere = listing.getDefinedDataAt(addr(space, nonExpectedOffsets[i])); "<AssertPlaceHolder>"; stringHere = dataHere.getDefaultValueRepresentation(); assertEquals(""" + largerStrs[i] + """, stringHere); } }
+added(Program program, AddressSetView set, TaskMonitor monitor, MessageLog log) throws CancelledException {  AddressFactory factory = program.getAddressFactory(); AddressSpace[] addressSpaces = factory.getAddressSpaces();  AddressSetView initializedMemory = program.getMemory().getLoadedAndInitializedAddressSet();  try {  NGramUtils.startNewSession(trigramFile, forceModelReload);  isLowerCaseModel = NGramUtils.isLowerCaseModel();  if (set == null) { set = new AddressSet(initializedMemory); }  AddressSet searchSet = initializedMemory.intersect(set);  if (searchOnlyAccessibleMemBlocks) {  // Intersect current AddressSet with accessible memory blocks MemoryBlock[] blocks = program.getMemory().getBlocks(); AddressSet memoryBlockAddresses = getMemoryBlockAddresses(blocks); searchSet = searchSet.intersect(memoryBlockAddresses); }  for (AddressSpace space : addressSpaces) {  monitor.checkCanceled();  // Portion of current address space that intersects with initialized memory AddressSet intersecting = searchSet.intersectRange(space.getMinAddress(), space.getMaxAddress());  // Initialize, because we don't want to use the same iterators or // code units when we change address spaces instructionIterator = null; definedDataIterator = null; currInstrCU = null; currDataCU = null;  findStrings(program, intersecting, minStringLength, startAlignment, requireNullEnd, allCharWidths, monitor); } } catch (CancelledException e) { throw e; } catch (IOException e) { String msg = "Error accessing string model file: " + trigramFile + ": " + e.getMessage(); log.appendMsg(msg); log.setStatus(msg); return false; } catch (Exception e) { Msg.error(this, "Unexpected exception during string analysis", e); log.setStatus("Unexpected exception during string analysis (see console)"); return false; }  return true; }
+[*] target: assertNotNull(dataHere)
+[-] pred: org. junit. Assert. assertNotNull ( dataHere )
+************************************
+************************************
+[+] input: Exception { Symbol symbol = getUniqueSymbol(program, "entry"); Address addr = symbol.getAddress(); String originalText = "this is a plate comment that is meant to be longer than the available " + "width, as to trigger clipping"; int transactionID = program.startTransaction("test"); try { CodeUnit cu = program.getListing().getCodeUnitAt(addr); cu.setCommentAsArray(CodeUnit.PLATE_COMMENT, new String[] { originalText }); // create a reference to addr program.getReferenceManager() .addMemoryReference(getAddr(0x010023ee), addr, RefType.DATA, SourceType.USER_DEFINED, 0); } finally { program.endTransaction(transactionID, true); }  program.flushEvents(); waitForPostedSwingRunnables(); cb.updateNow();  goToService.goTo(addr);  setBooleanOption(PlateFieldFactory.SHOW_FUNCTION_PLATES_OPTION, true);  assertTrue(cb.goToField(addr, PlateFieldFactory.FIELD_NAME, 1, 1)); ListingTextField tf = (ListingTextField) cb.getCurrentField(); assertEquals(3, tf.getNumRows()); String text = tf.getText(); assertTrue("Text does not have ellipses: " + text, text.indexOf("... *") != -1);  // check tooltip String fullText = tf.getTextWithLineSeparators(); "<AssertPlaceHolder>"; }
+getTextWithLineSeparators() { return commentText; }
+[*] target: assertEquals(originalText, fullText)
+[-] pred: org. junit. Assert. assertEquals ( originalText, fullText )
+************************************
+************************************
+[+] input: Exception { DomainFolder aFolder = fileMgr.getFolder("/a"); "<AssertPlaceHolder>"; aFolder.getFolders(); // visit folder to receive change events for it  sharedFS.renameFolder("/a", "y", "bigY"); flushFileSystemEvents(); // wait for FileSystemListener callback to update folder  assertEventsSize(2); checkEvent(events.get(0), "Folder Removed", "/a", null, null, null, "y"); checkEvent(events.get(1), "Folder Added", null, "/a/bigY", null, null, null);  }
+getFolder(String path) { int len = path.length(); if (len == 0 || path.charAt(0) != FileSystem.SEPARATOR_CHAR) { throw new IllegalArgumentException( "Absolute path must begin with '" + FileSystem.SEPARATOR_CHAR + "'"); } try { return getRootFolder().getFolderPathData(path).getDomainFolder(); } catch (FileNotFoundException e) { return null; } }
+[*] target: assertNotNull(aFolder)
+[-] pred: org. junit. Assert. assertNotNull ( aFolder )
+************************************
+************************************
+[+] input: Exception { Category sub1 = root.createCategory("SubCat-A"); Category s = sub1.createCategory("Sub-cat"); DataTypeManager dtm = s.getDataTypeManager(); "<AssertPlaceHolder>"; assertEquals(dataMgr, dtm); }
+getDataTypeManager();
+[*] target: assertNotNull(dtm)
+[-] pred: org. junit. Assert. assertNotNull ( dtm )
+************************************
+************************************
+[+] input: Exception { Enum enumm = new EnumDataType("Color", 1); enumm.add("Red", 10); enumm.add("Green", 15); enumm.add("Blue", 20);  Enum enummDT = (Enum) dataMgr.resolve(enumm, null); "<AssertPlaceHolder>";  long id = dataMgr.getResolvedID(enummDT);  assertEquals(enummDT, dataMgr.getDataType(id)); }
+add(String name, long value);
+[*] target: assertNotNull(enummDT)
+[-] pred: org. junit. Assert. assertNotNull ( enummDT )
+************************************
+************************************
+[+] input: testMaxRegisterAddress() { AddressSpace regSpace = p.getAddressFactory().getRegisterSpace(); Address a = regSpace.getAddress(-1); long key = addrMap.getKey(a, false); assertEquals(0x300000000000ffffl, key); Address b = addrMap.decodeAddress(key); "<AssertPlaceHolder>"; assertEquals(regSpace.getAddress(0xffffL), b);  }
+decodeAddress(long value) { return decodeAddress(value, true); }
+[*] target: assertEquals(a, b)
+[-] pred: org. junit. Assert. assertEquals ( a, b )
+************************************
+************************************
+[+] input: testStackAddressNegative() { AddressSpace stackSpace = p.getAddressFactory().getStackSpace(); Address a = stackSpace.getAddress(-1); long key = addrMap.getKey(a, false); assertEquals(0x40000000ffffffffl, key); Address b = addrMap.decodeAddress(key); "<AssertPlaceHolder>";  }
+decodeAddress(long value) { return decodeAddress(value, true); }
+[*] target: assertEquals(a, b)
+[-] pred: org. junit. Assert. assertEquals ( a, b )
+************************************
+************************************
+[+] input: Exception { addBlock("block2", 0x2000, 100);  ProgramModule root = treeManager.createRootModule("MyRoot"); "<AssertPlaceHolder>";  Group[] children = root.getChildren(); assertEquals(2, children.length); assertTrue(children[1] instanceof ProgramFragment); ProgramFragment frag = (ProgramFragment) children[1]; assertEquals(2, frag.getNumAddressRanges()); Iterator<AddressRange> it = frag.iterator(); assertEquals(new AddressRangeImpl(getAddr(0x1000), getAddr(0x1063)), it.next()); assertEquals(new AddressRangeImpl(getAddr(0x2000), getAddr(0x2063)), it.next()); }
+createRootModule(String treeName) throws DuplicateNameException {  lock.acquire(); try { if (treeMap.containsKey(treeName)) { throw new DuplicateNameException( "Root module named " + treeName + " already exists"); } DBRecord record = adapter.createRecord(treeName); ModuleManager m = new ModuleManager(this, record, program, true); treeMap.put(treeName, m); addMemoryBlocks(m); if (openMode != DBConstants.CREATE) { program.programTreeAdded(record.getKey(), ChangeManager.DOCR_TREE_CREATED, null, treeName); } return m.getRootModule(); } catch (IOException e) { errHandler.dbError(e);  } finally { lock.release(); } return null; }
+[*] target: assertNotNull(root)
+[-] pred: org. junit. Assert. assertNotNull ( root )
+************************************
+************************************
+[+] input: Exception { ProgramModule root = treeManager.createRootModule("Test-One"); ProgramModule r2 = treeManager.createRootModule("Test-Two");  addBlock("TestBlock", 0x5000, 100); MemoryBlock b2 = addBlock("TestTwoBlock", 0x6000, 200); addBlock("TestThreeBlock", 0x6500, 100);  int r1FragCount = root.getChildren().length; int r2FragCount = r2.getChildren().length; assertEquals(r1FragCount, r2FragCount); assertEquals(5, r1FragCount); Address startAddr = b2.getStart(); Address endAddr = b2.getEnd(); treeManager.deleteAddressRange(startAddr, endAddr, TaskMonitorAdapter.DUMMY_MONITOR); r1FragCount = root.getChildren().length; r2FragCount = r2.getChildren().length; "<AssertPlaceHolder>"; assertEquals(4, r1FragCount); }
+deleteAddressRange(Address startAddr, Address endAddr, TaskMonitor monitor) throws CancelledException { lock.acquire(); try { Iterator<String> keys = treeMap.keySet().iterator(); while (keys.hasNext()) { if (monitor.isCancelled()) { throw new CancelledException(); } ModuleManager m = treeMap.get(keys.next()); m.removeMemoryBlock(startAddr, endAddr, monitor); } } catch (IOException e) { errHandler.dbError(e);  } finally { lock.release(); } }
+[*] target: assertEquals(r1FragCount, r2FragCount)
+[-] pred: org. junit. Assert. assertEquals ( r1FragCount, r2FragCount )
+************************************
+************************************
+[+] input: Exception { createLabel(addr(100), "primary"); createLabel(addr(100), "fred"); createLabel(addr(100), "joe"); Namespace scope = st.createNameSpace(null, "MyNamespace", SourceType.USER_DEFINED); createLabel(addr(200), "fred", scope); Symbol s = st.getSymbol("fred", addr(200), scope); "<AssertPlaceHolder>"; assertTrue(!s.isGlobal()); assertTrue(s.getSource() == SourceType.USER_DEFINED); }
+getSymbol(String name, Address address, Namespace namespace) { if (namespace == null) { namespace = program.getGlobalNamespace(); }  if (isDeletedNamespace(namespace)) { return null; } checkValidNamespaceArgument(namespace);  long namespaceId = namespace.getID();  lock.acquire(); try { DBRecord record = adapter.getSymbolRecord(address, name, namespaceId); if (record != null) { return getSymbol(record); } } catch (IOException e) { program.dbError(e); } finally { lock.release(); }  // check for default external symbol if (namespace.isExternal() && SymbolUtilities.isPossibleDefaultExternalName(name)) { return searchNamespaceForSymbol(namespace, name, address); }  // also check for possible default parameter or local variable symbol if (namespace instanceof Function && SymbolUtilities.isPossibleDefaultLocalOrParamName(name)) { return searchNamespaceForSymbol(namespace, name, address); }  // check if name is a default name Symbol symbol = getSymbolForDynamicName(name); if (symbol != null && address.equals(symbol.getAddress()) && namespace.equals(symbol.getParentNamespace())) { return symbol; } return null; }
+[*] target: assertNotNull(s)
+[-] pred: org. junit. Assert. assertNotNull ( s )
+************************************
+************************************
+[+] input: Exception { createLabel(addr(100), "primary"); createLabel(addr(100), "fred"); createLabel(addr(100), "joe"); Symbol s = st.getPrimarySymbol(addr(100)); "<AssertPlaceHolder>"; assertEquals("primary", s.getName()); }
+getPrimarySymbol(Address addr) { if (!addr.isMemoryAddress() && !addr.isExternalAddress()) { return null; } if (addr.isExternalAddress()) { Symbol[] symbols = getSymbols(addr); return symbols.length > 0 ? symbols[0] : null; }  lock.acquire(); try { DBRecord record = adapter.getPrimarySymbol(addr); if (record != null) { return getSymbol(record); } if (addr.isMemoryAddress() && refManager.hasReferencesTo(addr)) { return getDynamicSymbol(addr); } } catch (IOException e) { program.dbError(e); } finally { lock.release(); } return null; }
+[*] target: assertNotNull(s)
+[-] pred: org. junit. Assert. assertNotNull ( s )
+************************************
+************************************
+[+] input: Exception { createLabel(addr(100), "A"); createLabel(addr(100), "fred"); createLabel(addr(100), "joe"); Namespace scope = st.createNameSpace(null, "MyNamespace", SourceType.USER_DEFINED); createLabel(addr(200), "fred", scope);  Symbol s = st.getSymbol("fred", addr(200), scope); "<AssertPlaceHolder>"; assertEquals("fred", s.getName()); assertTrue(!s.isGlobal()); assertTrue(s.getSource() == SourceType.USER_DEFINED); assertTrue(s.isPrimary()); }
+getSymbol(String name, Address address, Namespace namespace) { if (namespace == null) { namespace = program.getGlobalNamespace(); }  if (isDeletedNamespace(namespace)) { return null; } checkValidNamespaceArgument(namespace);  long namespaceId = namespace.getID();  lock.acquire(); try { DBRecord record = adapter.getSymbolRecord(address, name, namespaceId); if (record != null) { return getSymbol(record); } } catch (IOException e) { program.dbError(e); } finally { lock.release(); }  // check for default external symbol if (namespace.isExternal() && SymbolUtilities.isPossibleDefaultExternalName(name)) { return searchNamespaceForSymbol(namespace, name, address); }  // also check for possible default parameter or local variable symbol if (namespace instanceof Function && SymbolUtilities.isPossibleDefaultLocalOrParamName(name)) { return searchNamespaceForSymbol(namespace, name, address); }  // check if name is a default name Symbol symbol = getSymbolForDynamicName(name); if (symbol != null && address.equals(symbol.getAddress()) && namespace.equals(symbol.getParentNamespace())) { return symbol; } return null; }
+[*] target: assertNotNull(s)
+[-] pred: org. junit. Assert. assertNotNull ( s )
+************************************
+************************************
+[+] input: Exception { Namespace scope = st.createExternalLibrary("TestScope", SourceType.USER_DEFINED); "<AssertPlaceHolder>"; assertEquals("TestScope", scope.getName()); assertTrue(scope.getBody().isEmpty()); assertTrue(scope instanceof Library); assertEquals(globalScope, scope.getParentNamespace());  Symbol symbol = scope.getSymbol(); assertEquals(scope.getName(), symbol.getName()); assertEquals(globalScope, symbol.getParentNamespace()); }
+createExternalLibrary(String name, SourceType source) throws DuplicateNameException, InvalidInputException { SymbolDB s = createLibrarySymbol(name, null, source); return new LibraryDB(s, namespaceMgr); }
+[*] target: assertNotNull(scope)
+[-] pred: org. junit. Assert. assertNotNull ( scope )
+************************************
+************************************
+[+] input: Exception { Namespace scope = st.createNameSpace(null, "TestNameSpace", SourceType.USER_DEFINED); "<AssertPlaceHolder>"; assertEquals("TestNameSpace", scope.getName()); assertTrue(scope.getBody().isEmpty()); assertEquals(globalScope, scope.getParentNamespace()); Symbol symbol = scope.getSymbol(); assertEquals(scope.getName(), symbol.getName()); assertEquals(globalScope, symbol.getParentNamespace()); }
+createNameSpace(Namespace parent, String name, SourceType source) throws DuplicateNameException, InvalidInputException { SymbolDB s = createNamespaceSymbol(name, parent, source, true); return new NamespaceDB(s, namespaceMgr); }
+[*] target: assertNotNull(scope)
+[-] pred: org. junit. Assert. assertNotNull ( scope )
+************************************
+************************************
+[+] input: Exception {  String typeName = "templated_name<int, void*, custom_type>"; StructureDataType structure = new StructureDataType(typeName, 0);  tx(program, () -> { programDTM.resolve(structure, null); });  DataTypeParser parser = new DataTypeParser(dtmService, AllowedDataTypes.ALL); DataType dt = parser.parse(typeName); "<AssertPlaceHolder>"; assertTrue(dt.isEquivalent(structure)); }
+parse(String dataTypeString) throws InvalidDataTypeException, CancelledException { return parse(dataTypeString, (CategoryPath) null); }
+[*] target: assertNotNull(dt)
+[-] pred: org. junit. Assert. assertNotNull ( dt )
+************************************
+************************************
+[+] input: Exception {  // // Attempt to resolve a pointer to an existing type when that pointer does not already // exist. //  String typeName = "templated_name<int, void*, custom_type>"; StructureDataType structure = new StructureDataType(typeName, 0); PointerDataType pointer = new PointerDataType(structure); String pointerName = pointer.getName();  tx(program, () -> { programDTM.resolve(structure, null); });  DataTypeParser parser = new DataTypeParser(dtmService, AllowedDataTypes.ALL); DataType dt = parser.parse(pointerName); "<AssertPlaceHolder>"; assertTrue(dt.isEquivalent(pointer)); }
+parse(String dataTypeString) throws InvalidDataTypeException, CancelledException { return parse(dataTypeString, (CategoryPath) null); }
+[*] target: assertNotNull(dt)
+[-] pred: org. junit. Assert. assertNotNull ( dt )
+************************************
+************************************
+[+] input: testDisplayString_ArrayFieldLocation() {  Integer16DataType intDataType = new Integer16DataType(); ArrayDataType innerArray = new ArrayDataType(intDataType, 4, 4); ArrayDataType parentArray = new ArrayDataType(innerArray, 4, innerArray.getElementLength());  Address arrayAddress = addr("0100f2f0"); CreateDataCmd cmd = new CreateDataCmd(arrayAddress, true, parentArray); assertTrue(applyCmd(program, cmd));  int[] componentPath = new int[] { 17 }; String displayText = "int16 0h (int16[4][0][1])"; int index = 0; int charOffset = 0; Address subElementAddress = arrayAddress.add(20); ArrayElementFieldLocation location = new ArrayElementFieldLocation(program, subElementAddress, componentPath, displayText, index, charOffset); PreviewTableCellData data = new PreviewTableCellData(location, formatter); String preview = data.getDisplayString();  "<AssertPlaceHolder>"; }
+getDisplayString() { if (displayString != null) { return displayString; } displayString = getPreview(false); return displayString; }
+[*] target: assertEquals(displayText, preview)
+[-] pred: org. junit. Assert. assertEquals ( displayText, preview )
+************************************
+************************************
+[+] input: testLocallyFrequentItemsBasic() { List<SequenceItem> prefixSequence = new ArrayList<SequenceItem>(); prefixSequence.add(new SequenceItem("A", 0)); prefixSequence.add(new SequenceItem("A", 1)); ProjectedDatabase projDatabase = new ProjectedDatabase(database, prefixSequence); Set<FrequentSequenceItem> globallyFrequent = database.getGloballyFrequentItems(4); Set<FrequentSequenceItem> locallyFrequent = projDatabase.getLocallyFrequentItems(globallyFrequent, 4); "<AssertPlaceHolder>"; assertTrue(locallyFrequent.contains(new FrequentSequenceItem(4, new SequenceItem("B", 3)))); assertTrue(locallyFrequent.contains(new FrequentSequenceItem(4, new SequenceItem("A", 2)))); }
+getLocallyFrequentItems(Set<FrequentSequenceItem> globallyFrequentItems, int minSupport) { Map<SequenceItem, Integer> frequentItemBag = new HashMap<SequenceItem, Integer>(); for (ProjectedSequenceInfo currentProjSeq : projectedInfo) { for (FrequentSequenceItem globFreqItem : globallyFrequentItems) { SequenceItem globalItem = globFreqItem.getItem(); int index = globalItem.getIndex(); if (index < currentProjSeq.getProjectedIndex()) { continue;//the globally frequent item is in a position in the prefix, no need to check } Sequence fullSequence = database.getSequences().get(currentProjSeq.getSequenceIndex()); String symbol = fullSequence.getSequenceAsString().substring(index, index + 1);  if (!symbol.equals(globalItem.getSymbol())) { continue;//symbols are different, check next item }  Integer count = frequentItemBag.get(globalItem); if (count == null) { frequentItemBag.put(globalItem, new Integer(fullSequence.getCount())); } else { frequentItemBag.put(globalItem, count + fullSequence.getCount()); } } }  TreeSet<FrequentSequenceItem> frequentItemSet = new TreeSet<FrequentSequenceItem>(); for (Entry<SequenceItem, Integer> itemAndCount : frequentItemBag.entrySet()) { int count = itemAndCount.getValue(); if (count >= minSupport) { frequentItemSet.add(new FrequentSequenceItem(count, itemAndCount.getKey())); } } return frequentItemSet; }
+[*] target: assertEquals(2, locallyFrequent.size())
+[-] pred: org. junit. Assert. assertEquals ( 2, locallyFrequent. size ( ) )
+************************************
+************************************
+[+] input: Exception {  // // The demangled string contains this string: {default arg#1} // String mangled = "_ZZN12PackManifest18CapabilityRegistry18registerCapabilityEN3gsl17basic_string_spanIKcLln1EEEbSt8functionIFbRS_R10PackReportbEEEd_NKUlS6_S8_bE_clES6_S8_b";  String demangled = process.demangle(mangled);  DemangledObject object = parser.parse(mangled, demangled); "<AssertPlaceHolder>"; assertType(object, DemangledFunction.class);  String signature = object.getSignature(false); assertEquals( "PackManifest::CapabilityRegistry::registerCapability(gsl::basic_string_span<char_const,-1l>,bool,std::function<bool(PackManifest&,PackReport&,bool)>)::{default arg#1}::{lambda(PackManifest&,PackReport&,bool)#1}::operator()(PackManifest &,PackReport &,bool)", signature); }
+parse(String mangled, String demangled) throws DemanglerParseException {  this.mangledSource = mangled; this.demangledSource = demangled;  DemangledObjectBuilder builder = getSpecializedBuilder(demangled); if (builder != null) { return builder.build(); }  return parseFunctionOrVariable(demangled); }
+[*] target: assertNotNull(object)
+[-] pred: org. junit. Assert. assertNotNull ( object )
+************************************
+************************************
+[+] input: Exception {  String mangled = "_ZNSt14__array_traitsIN12LayerDetails15RandomProviderTIZNKS0_9LayerBase10initRandomEllEUlRljE_EELm4EE6_S_refERA4_KS5_m";  String demangled = process.demangle(mangled);  DemangledObject object = parser.parse(mangled, demangled); "<AssertPlaceHolder>"; assertType(object, DemangledFunction.class);  String signature = object.getSignature(false); assertEquals( "undefined std::__array_traits<LayerDetails::RandomProviderT<LayerDetails::LayerBase::initRandom(long,long)const::{lambda(long&,unsigned_int)#1}>,4ul>::_S_ref(LayerDetails::LayerBase::initRandom(long,long) const::{lambda(long&, unsigned int)#1} const &[],unsigned long)", signature); }
+parse(String mangled, String demangled) throws DemanglerParseException {  this.mangledSource = mangled; this.demangledSource = demangled;  DemangledObjectBuilder builder = getSpecializedBuilder(demangled); if (builder != null) { return builder.build(); }  return parseFunctionOrVariable(demangled); }
+[*] target: assertNotNull(object)
+[-] pred: org. junit. Assert. assertNotNull ( object )
+************************************
+************************************
+[+] input: Exception {  /*  Note: the empty template type: '<, std...' <, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char>>>   std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > std::_Bind<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > (EduAppConfigs::*(EduAppConfigs const*))() const>::operator()<, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >()  */ String mangled = "_ZNSt5_BindIFM13EduAppConfigsKFNSt7__cxx1112basic_stringIcSt11char_traitsIcESaIcEEEvEPKS0_EEclIJES6_EET0_DpOT_";  String demangled = process.demangle(mangled);  DemangledObject object = parser.parse(mangled, demangled); "<AssertPlaceHolder>"; assertType(object, DemangledFunction.class);  String signature = object.getSignature(false); assertEquals( "std::__cxx11::basic_string<char,std::char_traits<char>,std::allocator<char>> std::_Bind<std::__cxx11::basic_string<char,std::char_traits<char>,std::allocator<char>>(EduAppConfigs::*(EduAppConfigs_const*))()const>::operator()<missing_argument,std::__cxx11::basic_string<char,std::char_traits<char>,std::allocator<char>>>(void)", signature); }
+parse(String mangled, String demangled) throws DemanglerParseException {  this.mangledSource = mangled; this.demangledSource = demangled;  DemangledObjectBuilder builder = getSpecializedBuilder(demangled); if (builder != null) { return builder.build(); }  return parseFunctionOrVariable(demangled); }
+[*] target: assertNotNull(object)
+[-] pred: org. junit. Assert. assertNotNull ( object )
+************************************
+************************************
+[+] input: Exception {  String mangled = "_ZZNK4entt14basic_registryI8EntityIdE6assureI32FilteredTransformationAttributesI26PreHillsEdgeTransformationEEERKNS2_12pool_handlerIT_EEvENKUlRNS_10sparse_setIS1_EERS2_S1_E_cvPFvSE_SF_S1_EEv"; String demangled = process.demangle(mangled);  /*  Full demangled:  Operator Text  entt:: basic_registry<EntityId>:: assure<FilteredTransformationAttributes<PreHillsEdgeTransformation> >() const:: {lambda(entt::sparse_set<EntityId>&, entt::basic_registry<EntityId>&, EntityId)#1}:: operator void (*)(entt::sparse_set<EntityId>&, entt::basic_registry<EntityId>&, EntityId)() const  Operartor Without Namespace  operator void (*)(entt::sparse_set<EntityId>&, entt::basic_registry<EntityId>&, EntityId)()  Simplified Cast Operator Construct  operator void (*)(A,B,C)()  */  DemangledObject object = parser.parse(mangled, demangled); "<AssertPlaceHolder>"; assertType(object, DemangledFunction.class);  //@formatter:off String expected = "void (* " + "entt::" + "basic_registry::" + "assure() const::" + "{lambda(entt::sparse_set&,entt::basic_registry&,EntityId)#1}::" + "operator.cast.to.function.pointer(void)" + ")(entt::sparse_set<EntityId> &,entt::basic_registry<EntityId> &,EntityId)"; //@formatter:on String signature = object.getSignature(false); assertEquals(expected, signature); }
+parse(String mangled, String demangled) throws DemanglerParseException {  this.mangledSource = mangled; this.demangledSource = demangled;  DemangledObjectBuilder builder = getSpecializedBuilder(demangled); if (builder != null) { return builder.build(); }  return parseFunctionOrVariable(demangled); }
+[*] target: assertNotNull(object)
+[-] pred: org. junit. Assert. assertNotNull ( object )
+************************************
+************************************
+[+] input: Exception {  // // Mangled: _ZNK2cc14ScrollSnapTypeneERKS0_ // // Demangled: cc::ScrollSnapType::operator!=(cc::ScrollSnapType const&) const //  String mangled = "_ZNK2cc14ScrollSnapTypeneERKS0_"; String demangled = process.demangle(mangled);  DemangledObject object = parser.parse(mangled, demangled); "<AssertPlaceHolder>"; assertType(object, DemangledFunction.class);  String signature = object.getSignature(false); assertEquals("undefined cc::ScrollSnapType::operator!=(cc::ScrollSnapType const &)", signature); }
+parse(String mangled, String demangled) throws DemanglerParseException {  this.mangledSource = mangled; this.demangledSource = demangled;  DemangledObjectBuilder builder = getSpecializedBuilder(demangled); if (builder != null) { return builder.build(); }  return parseFunctionOrVariable(demangled); }
+[*] target: assertNotNull(object)
+[-] pred: org. junit. Assert. assertNotNull ( object )
+************************************
+************************************
+[+] input: Exception { String mangled = "_ZN12LayerDetails15RandomProviderTIZNKS_9LayerBase10initRandomEllEUlRljE_EclIiLm2EEET_RAT0__KS6_";  String demangled = process.demangle(mangled);  DemangledObject object = parser.parse(mangled, demangled); "<AssertPlaceHolder>"; assertType(object, DemangledFunction.class);  String signature = object.getSignature(false); assertEquals( "int LayerDetails::RandomProviderT<LayerDetails::LayerBase::initRandom(long,long)const::{lambda(long&,unsigned_int)#1}>::operator()<int,2ul>(LayerDetails::RandomProviderT<LayerDetails::LayerBase::initRandom(long,long)const::{lambda(long&,unsigned_int)#1}>::operator() const &[])", signature); }
+parse(String mangled, String demangled) throws DemanglerParseException {  this.mangledSource = mangled; this.demangledSource = demangled;  DemangledObjectBuilder builder = getSpecializedBuilder(demangled); if (builder != null) { return builder.build(); }  return parseFunctionOrVariable(demangled); }
+[*] target: assertNotNull(object)
+[-] pred: org. junit. Assert. assertNotNull ( object )
+************************************
+************************************
+[+] input: Exception {  // // Mangled: _ZN13SoloGimbalEKFUt_C2Ev // // Demangled: SoloGimbalEKF::{unnamed type#1}::SoloGimbalEKF() // String mangled = "_ZN13SoloGimbalEKFUt_C2Ev"; String demangled = process.demangle(mangled);  DemangledObject object = parser.parse(mangled, demangled); "<AssertPlaceHolder>"; assertType(object, DemangledFunction.class);  String signature = object.getSignature(false); assertEquals("undefined SoloGimbalEKF::{unnamed_type#1}::SoloGimbalEKF(void)", signature); }
+parse(String mangled, String demangled) throws DemanglerParseException {  this.mangledSource = mangled; this.demangledSource = demangled;  DemangledObjectBuilder builder = getSpecializedBuilder(demangled); if (builder != null) { return builder.build(); }  return parseFunctionOrVariable(demangled); }
+[*] target: assertNotNull(object)
+[-] pred: org. junit. Assert. assertNotNull ( object )
+************************************
+************************************
+[+] input: testIterator2() { for (int i = 0; i < 10000; i++) { ps.putInt(i, i); } LongIterator it = ps.getPropertyIterator(); int i = 0; while (it.hasNext()) { long l = it.next(); "<AssertPlaceHolder>"; i++; } assertEquals(i, 10000); }
+putInt(long index, int value) { PropertyPage page = getOrCreatePage(getPageID(index)); int n = page.getSize(); page.addInt(getPageOffset(index), value); numProperties += page.getSize() - n; }
+[*] target: assertEquals(i, l)
+[-] pred: org. junit. Assert. assertEquals ( i, l )
+************************************
+************************************
+[+] input: testIterator2() { for (int i = 0; i < 10000; i++) { ps.putObject(i, new Integer(i)); } LongIterator it = ps.getPropertyIterator(); int i = 0; while (it.hasNext()) { long l = it.next(); "<AssertPlaceHolder>"; i++; } assertEquals(i, 10000); }
+putObject(long index, Object value) { PropertyPage page = getOrCreatePage(getPageID(index)); int n = page.getSize(); page.addObject(getPageOffset(index), value); numProperties += page.getSize() - n; }
+[*] target: assertEquals(i, l)
+[-] pred: org. junit. Assert. assertEquals ( i, l )
+************************************
+************************************
+[+] input: testIterator2() { for (int i = 0; i < 10000; i++) { ps.putObject(i, new SaveableInt(i)); } LongIterator it = ps.getPropertyIterator(); int i = 0; while (it.hasNext()) { long l = it.next(); "<AssertPlaceHolder>"; i++; } assertEquals(i, 10000); }
+putObject(long index, Saveable value) { PropertyPage page = getOrCreatePage(getPageID(index)); int n = page.getSize(); page.addSaveableObject(getPageOffset(index), value); numProperties += page.getSize() - n; }
+[*] target: assertEquals(i, l)
+[-] pred: org. junit. Assert. assertEquals ( i, l )
+************************************
+************************************
+[+] input: testIterator2() { for (int i = 0; i < 10000; i++) { ps.putString(i, "" + i); } LongIterator it = ps.getPropertyIterator(); int i = 0; while (it.hasNext()) { long l = it.next(); "<AssertPlaceHolder>"; i++; } assertEquals(i, 10000); }
+putString(long index, String value) { PropertyPage page = getOrCreatePage(getPageID(index)); int n = page.getSize(); page.addString(getPageOffset(index), value); numProperties += page.getSize() - n; }
+[*] target: assertEquals(i, l)
+[-] pred: org. junit. Assert. assertEquals ( i, l )
+************************************
+************************************
+[+] input: testIterator2() { for (int i = 0; i < 10000; i++) { ps.put(i); } LongIterator it = ps.getPropertyIterator(); int i = 0; while (it.hasNext()) { long l = it.next(); "<AssertPlaceHolder>"; i++; } assertEquals(i, 10000); }
+put(long index) { PropertyPage page = getOrCreatePage(getPageID(index)); int n = page.getSize(); page.add(getPageOffset(index)); numProperties += page.getSize() - n; }
+[*] target: assertEquals(i, l)
+[-] pred: org. junit. Assert. assertEquals ( i, l )
+************************************
+************************************
+[+] input: testAsSet_VarArgs_Null() {  Set<String> set = CollectionUtils.asSet((String) null); assertNotNull(set); "<AssertPlaceHolder>"; }
+isEmpty() { return removed.isEmpty() && added.isEmpty(); }
+[*] target: assertTrue(set.isEmpty())
+[-] pred: org. junit. Assert. assertTrue ( set. isEmpty() )
+************************************
+************************************
+[+] input: testAsSet_Collection_FromNull() {  Collection<String> c = null; Set<String> set = CollectionUtils.asSet(c); assertNotNull(set); "<AssertPlaceHolder>"; }
+isEmpty() { return removed.isEmpty() && added.isEmpty(); }
+[*] target: assertTrue(set.isEmpty())
+[-] pred: org. junit. Assert. assertTrue ( set. isEmpty ( ) )
+************************************
+************************************
+[+] input: testAsList_VarArgs_Null() {  List<String> list = CollectionUtils.asList((String) null); assertNotNull(list); "<AssertPlaceHolder>"; }
+isEmpty() { return removed.isEmpty() && added.isEmpty(); }
+[*] target: assertTrue(list.isEmpty())
+[-] pred: org. junit. Assert. assertTrue ( list. isEmpty ( ) )
+************************************
+************************************
+[+] input: testAsList_Collection_FromNull() {  List<String> list = CollectionUtils.asList((Collection<String>) null); assertNotNull(list); "<AssertPlaceHolder>"; }
+isEmpty() { return removed.isEmpty() && added.isEmpty(); }
+[*] target: assertTrue(list.isEmpty())
+[-] pred: org. junit. Assert. assertTrue ( list. isEmpty() )
+************************************
+************************************
+[+] input: testNonNull_Collection_Null() { Collection<String> c = null; c = CollectionUtils.nonNull(c); assertNotNull(c); "<AssertPlaceHolder>"; }
+isEmpty() { return removed.isEmpty() && added.isEmpty(); }
+[*] target: assertTrue(c.isEmpty())
+[-] pred: org. junit. Assert. assertTrue ( c. isEmpty() )
+************************************
+************************************
+[+] input: testAsList_Iterator_Null() {  List<String> list = CollectionUtils.asList((Iterator<String>) null); assertNotNull(list); "<AssertPlaceHolder>"; }
+isEmpty() { return removed.isEmpty() && added.isEmpty(); }
+[*] target: assertTrue(list.isEmpty())
+[-] pred: org. junit. Assert. assertTrue ( list. isEmpty ( ) )
+************************************
+************************************
+[+] input: testRuntimeTypeDiscovery_MixedHierarchy_AbstractClassAndInterfaceBothDefineValues() {  // // Test to make sure that we get not only a directly hierarchy, but the lateral one // as well, where we pursue interfaces that may have defined some types. //  List<Class<?>> types = ReflectionUtilities.getTypeArguments(RuntimeBaseInterface.class, ChildExtendingPartiallyDefinedTypes.class); "<AssertPlaceHolder>"; assertEquals(String.class, types.get(0)); assertEquals(Double.class, types.get(1)); }
+getTypeArguments(Class<T> baseClass, Class<? extends T> childClass) {  Objects.requireNonNull(baseClass); Objects.requireNonNull(childClass);  Map<Type, Type> resolvedTypesDictionary = new HashMap<>(); Type baseClassAsType = walkClassHierarchyAndResolveTypes(baseClass, resolvedTypesDictionary, childClass);  // try to resolve type arguments defined by 'baseClass' to the raw runtime class Type[] baseClassDeclaredTypeArguments = getDeclaredTypeArguments(baseClassAsType); return resolveBaseClassTypeArguments(resolvedTypesDictionary, baseClassDeclaredTypeArguments); }
+[*] target: assertEquals(2, types.size())
+[-] pred: org. junit. Assert. assertEquals ( 2, types. size ( ) )
+************************************
+************************************
+[+] input: Exception { Structure s = new StructureDataType("foo", 1); assertFalse(s.isNotYetDefined()); assertFalse(s.isZeroLength()); assertEquals(1, s.getNumComponents()); assertEquals(0, s.getNumDefinedComponents()); Structure s2 = (Structure) dataMgr.resolve(s, null); assertFalse(s2.isNotYetDefined()); assertFalse(s2.isZeroLength()); assertEquals(1, s2.getNumComponents()); "<AssertPlaceHolder>"; }
+getNumDefinedComponents() { lock.acquire(); try { return components.size(); } finally { lock.release(); } }
+[*] target: assertEquals(0, s2.getNumDefinedComponents())
+[-] pred: org. junit. Assert. assertEquals ( 0, s2. getNumDefinedComponents ( ) )
+************************************
+************************************
+[+] input: testDeleteAll() {  Structure s = new StructureDataType("test1", 0); s.add(new ByteDataType()); s.add(new FloatDataType());  struct.add(s);  DataType dt = struct.getDataTypeManager().getDataType(struct.getCategoryPath(), "test1"); s = (Structure) dt; s.deleteAll(); assertEquals(1, s.getLength()); assertTrue(s.isNotYetDefined()); assertTrue(s.isZeroLength()); "<AssertPlaceHolder>"; }
+getNumComponents() { lock.acquire(); try { checkIsValid(); return numComponents; } finally { lock.release(); } }
+[*] target: assertEquals(0, s.getNumComponents())
+[-] pred: org. junit. Assert. assertEquals ( 0, s. getNumComponents ( ) )
+************************************
+************************************
+[+] input: testGetComponent() { Structure struct = createStructure("struct_1", 0); struct.add(new ByteDataType()); struct.add(new StringDataType(), 10); DataTypeComponent newdtc = union.add(struct, "field5", "comments"); DataTypeComponent dtc = union.getComponent(4); "<AssertPlaceHolder>"; assertEquals("field5", dtc.getFieldName()); assertEquals("comments", dtc.getComment());  }
+getComponent(int ordinal) { lock.acquire(); try { checkIsValid(); if (ordinal < 0 || ordinal >= components.size()) { return null; } return components.get(ordinal); } finally { lock.release(); } }
+[*] target: assertEquals(newdtc, dtc)
+[-] pred: org. junit. Assert. assertEquals ( newdtc, dtc )
+************************************
+************************************
+[+] input: testTrimStart() { AddressSet set = set(0x10, 0x20, 0x30, 0x40); set.add(space2.getAddress(0x10), space2.getAddress(0x20)); set.add(space2.getAddress(0x30), space2.getAddress(0x40));  AddressSetView trimSet = AddressSetView.trimStart(set, addr(0x15));  AddressSet expectedSet = set(0x16, 0x20, 0x30, 0x40); expectedSet.add(space2.getAddress(0x10), space2.getAddress(0x20)); expectedSet.add(space2.getAddress(0x30), space2.getAddress(0x40)); assertEquals(expectedSet, trimSet);  trimSet = AddressSetView.trimStart(set, space2.getAddress(0x15));  expectedSet = new AddressSet(space2.getAddress(0x16), space2.getAddress(0x20)); expectedSet.add(space2.getAddress(0x30), space2.getAddress(0x40)); "<AssertPlaceHolder>"; }
+add(Address start, Address end) { checkValidRange(start, end);  if (lastNode != null && !lastNode.isDisposed()) { Address value = lastNode.getValue(); if (contains(lastNode, start) || value.isSuccessor(start)) { if (end.compareTo(value) > 0) { updateRangeEndAddress(lastNode, end); consumeFollowOnNodes(lastNode); } return; } }  if (rbTree.isEmpty()) { lastNode = createRangeNode(start, end); return; }  if (start.compareTo(rbTree.getLast().getKey()) > 0) { RedBlackEntry<Address, Address> last = rbTree.getLast(); Address value = last.getValue(); if (contains(last, start) || value.isSuccessor(start)) { if (end.compareTo(value) > 0) { updateRangeEndAddress(last, end); } } else { lastNode = createRangeNode(start, end); } return; }  lastNode = rbTree.getEntryLessThanEqual(start); if (lastNode == null) { lastNode = createRangeNode(start, end); consumeFollowOnNodes(lastNode); return; }  Address nodeEnd = lastNode.getValue(); if (nodeEnd.compareTo(start) >= 0 || nodeEnd.isSuccessor(start)) { if (end.compareTo(nodeEnd) > 0) { updateRangeEndAddress(lastNode, end); consumeFollowOnNodes(lastNode); } return; }  lastNode = createRangeNode(start, end); consumeFollowOnNodes(lastNode);  }
+[*] target: assertEquals(expectedSet, trimSet)
+[-] pred: org. junit. Assert. assertEquals ( expectedSet, trimSet )
+************************************
+************************************
+[+] input: testTrimEnd() { AddressSet set = set(0x10, 0x20, 0x30, 0x40); set.add(space2.getAddress(0x10), space2.getAddress(0x20)); set.add(space2.getAddress(0x30), space2.getAddress(0x40));  AddressSetView trimSet = AddressSetView.trimEnd(set, addr(0x15));  AddressSet expectedSet = set(0x10, 0x14); assertEquals(expectedSet, trimSet);  trimSet = AddressSetView.trimEnd(set, space2.getAddress(0x15));  expectedSet = set(0x10, 0x20, 0x30, 0x40); expectedSet.add(space2.getAddress(0x10), space2.getAddress(0x14)); "<AssertPlaceHolder>"; }
+add(Address start, Address end) { checkValidRange(start, end);  if (lastNode != null && !lastNode.isDisposed()) { Address value = lastNode.getValue(); if (contains(lastNode, start) || value.isSuccessor(start)) { if (end.compareTo(value) > 0) { updateRangeEndAddress(lastNode, end); consumeFollowOnNodes(lastNode); } return; } }  if (rbTree.isEmpty()) { lastNode = createRangeNode(start, end); return; }  if (start.compareTo(rbTree.getLast().getKey()) > 0) { RedBlackEntry<Address, Address> last = rbTree.getLast(); Address value = last.getValue(); if (contains(last, start) || value.isSuccessor(start)) { if (end.compareTo(value) > 0) { updateRangeEndAddress(last, end); } } else { lastNode = createRangeNode(start, end); } return; }  lastNode = rbTree.getEntryLessThanEqual(start); if (lastNode == null) { lastNode = createRangeNode(start, end); consumeFollowOnNodes(lastNode); return; }  Address nodeEnd = lastNode.getValue(); if (nodeEnd.compareTo(start) >= 0 || nodeEnd.isSuccessor(start)) { if (end.compareTo(nodeEnd) > 0) { updateRangeEndAddress(lastNode, end); consumeFollowOnNodes(lastNode); } return; }  lastNode = createRangeNode(start, end); consumeFollowOnNodes(lastNode);  }
+[*] target: assertEquals(expectedSet, trimSet)
+[-] pred: org. junit. Assert. assertEquals ( expectedSet, trimSet )
+************************************
+************************************
+[+] input: testDeleteFrom() { AddressSet set = set(0x10, 0x20, 0x30, 0x40); set.add(space2.getAddress(0x10), space2.getAddress(0x20)); set.add(space2.getAddress(0x30), space2.getAddress(0x40));  AddressSet origSet = new AddressSet(set); set.deleteToMax(space2.getAddress(0x50)); assertEquals(origSet, set);  set.deleteToMax(addr(0x15));  AddressSet expectedSet = set(0x10, 0x14); assertEquals(expectedSet, set);  set = set(0x10, 0x20, 0x30, 0x40); set.add(space2.getAddress(0x10), space2.getAddress(0x20)); set.add(space2.getAddress(0x30), space2.getAddress(0x40));  set.deleteToMax(space2.getAddress(0x15));  expectedSet = set(0x10, 0x20, 0x30, 0x40); expectedSet.add(space2.getAddress(0x10), space2.getAddress(0x14)); assertEquals(expectedSet, set);  set = set(0x10, 0x20, 0x30, 0x40); set.add(space2.getAddress(0x10), space2.getAddress(0x20)); set.add(space2.getAddress(0x30), space2.getAddress(0x40));  set.deleteToMax(addr(0x0)); assertTrue(set.isEmpty());  set = set(0x10, 0x20, 0x30, 0x40); set.add(space2.getAddress(0x10), space2.getAddress(0x20)); set.add(space2.getAddress(0x30), space2.getAddress(0x40));  set.deleteToMax(addr(0x10)); assertTrue(set.isEmpty());  // make sure handles empty set set = new AddressSet(); set.deleteToMax(addr(0x30)); "<AssertPlaceHolder>"; }
+isEmpty() { return rbTree.isEmpty(); }
+[*] target: assertTrue(set.isEmpty())
+[-] pred: org. junit. Assert. assertTrue ( set. isEmpty ( ) )
+************************************
+************************************
+[+] input: testEscapeStringEmpty() { String orig = ""; String escaped = CategoryPath.escapeString(orig); String unescaped = CategoryPath.unescapeString(escaped); "<AssertPlaceHolder>"; assertEquals("", escaped); }
+unescapeString(String escapedString) { return escapedString.replace(ESCAPED_DELIMITER_STRING, DELIMITER_STRING); }
+[*] target: assertEquals(orig, unescaped)
+[-] pred: org. junit. Assert. assertEquals ( orig, unescaped )
+************************************
+************************************
+[+] input: testEscapeString1() { String orig = "/"; String escaped = CategoryPath.escapeString(orig); String unescaped = CategoryPath.unescapeString(escaped); "<AssertPlaceHolder>"; assertEquals("\\/", escaped); }
+unescapeString(String escapedString) { return escapedString.replace(ESCAPED_DELIMITER_STRING, DELIMITER_STRING); }
+[*] target: assertEquals(orig, unescaped)
+[-] pred: org. junit. Assert. assertEquals ( orig, unescaped )
+************************************
+************************************
+[+] input: testEscapeString2() { String orig = "//"; String escaped = CategoryPath.escapeString(orig); String unescaped = CategoryPath.unescapeString(escaped); "<AssertPlaceHolder>"; assertEquals("\\/\\/", escaped); }
+unescapeString(String escapedString) { return escapedString.replace(ESCAPED_DELIMITER_STRING, DELIMITER_STRING); }
+[*] target: assertEquals(orig, unescaped)
+[-] pred: org. junit. Assert. assertEquals ( orig, unescaped )
+************************************
+************************************
+[+] input: testConstructorRoot1() { CategoryPath c = CategoryPath.ROOT; assertEquals("/", c.getPath()); assertEquals("", c.getName()); "<AssertPlaceHolder>"; }
+isRoot() { // parent can only be null for ROOT return parent == null; }
+[*] target: assertTrue(c.isRoot())
+[-] pred: org. junit. Assert. assertTrue ( c. isRoot() )
+************************************
+************************************
+[+] input: testConstructorRoot2() { CategoryPath c = new CategoryPath(null); assertEquals("/", c.getPath()); assertEquals("", c.getName()); "<AssertPlaceHolder>"; }
+isRoot() { // parent can only be null for ROOT return parent == null; }
+[*] target: assertTrue(c.isRoot())
+[-] pred: org. junit. Assert. assertTrue ( c. isRoot() )
+************************************
+************************************
+[+] input: testConstructorRoot3() { CategoryPath c = new CategoryPath(""); assertEquals("/", c.getPath()); assertEquals("", c.getName()); "<AssertPlaceHolder>"; }
+isRoot() { // parent can only be null for ROOT return parent == null; }
+[*] target: assertTrue(c.isRoot())
+[-] pred: org. junit. Assert. assertTrue ( c. isRoot() )
+************************************
+************************************
+[+] input: testConstructorRoot4() { CategoryPath c = new CategoryPath("/"); assertEquals("/", c.getPath()); assertEquals("", c.getName()); "<AssertPlaceHolder>"; }
+isRoot() { // parent can only be null for ROOT return parent == null; }
+[*] target: assertTrue(c.isRoot())
+[-] pred: org. junit. Assert. assertTrue ( c. isRoot() )
+************************************
+************************************
+[+] input: testConstructorParentAndVarargsArray() { CategoryPath parent = new CategoryPath("/apple/peaches"); CategoryPath c = new CategoryPath(parent, new String[] { "pumpkin", "pie" }); assertEquals("pie", c.getName()); c = c.getParent(); assertEquals("pumpkin", c.getName()); c = c.getParent(); assertEquals("peaches", c.getName()); c = c.getParent(); assertEquals("apple", c.getName()); c = c.getParent(); assertEquals("", c.getName()); "<AssertPlaceHolder>"; }
+isRoot() { // parent can only be null for ROOT return parent == null; }
+[*] target: assertTrue(c.isRoot())
+[-] pred: org. junit. Assert. assertTrue ( c. isRoot() )
+************************************
+************************************
+[+] input: Exception { Enum enumm = new EnumDataType("Color", 1); enumm.add("Red", 10); enumm.add("Green", 15); enumm.add("Blue", 20); Category root = dataMgr.getRootCategory(); Category c = root.createCategory("enumms"); Enum enummDT = (Enum) c.addDataType(enumm, DataTypeConflictHandler.DEFAULT_HANDLER);  Enum copyDT = (Enum) enummDT.clone(null); "<AssertPlaceHolder>";  Enum c2 = (Enum) root.addDataType(copyDT, DataTypeConflictHandler.DEFAULT_HANDLER); assertNotNull(c2); assertTrue(copyDT.isEquivalent(c2)); }
+add(String name, long value);
+[*] target: assertNotNull(copyDT)
+[-] pred: org. junit. Assert. assertNotNull ( copyDT )
+************************************
+************************************
+[+] input: Exception { Enum enumm = new EnumDataType("Color", 1); enumm.add("Red", 10); enumm.add("Green", 15); enumm.add("Blue", 20); Category root = dataMgr.getRootCategory(); Category c = root.createCategory("enumms"); Enum enummDT = (Enum) c.addDataType(enumm, DataTypeConflictHandler.DEFAULT_HANDLER);  Enum copyDT = (Enum) enummDT.copy(null); "<AssertPlaceHolder>";  Enum c2 = (Enum) root.addDataType(copyDT, DataTypeConflictHandler.DEFAULT_HANDLER); assertNotNull(c2); assertTrue(copyDT.isEquivalent(c2)); }
+add(String name, long value);
+[*] target: assertNotNull(copyDT)
+[-] pred: org. junit. Assert. assertNotNull ( copyDT )
+************************************
+************************************
+[+] input: Exception { Enum enumm = new EnumDataType("Color", 1); enumm.add("Red", 10); enumm.add("Green", 15); enumm.add("Blue", 20); Category root = dataMgr.getRootCategory(); Category c = root.createCategory("enumms"); Enum enummDT = (Enum) c.addDataType(enumm, DataTypeConflictHandler.DEFAULT_HANDLER); "<AssertPlaceHolder>";  c.remove(enummDT, TaskMonitor.DUMMY); assertNull(c.getDataType("Color"));  assertTrue(enummDT.isDeleted());  }
+add(String name, long value);
+[*] target: assertNotNull(enummDT)
+[-] pred: org. junit. Assert. assertNotNull ( enummDT )
+************************************
+************************************
+[+] input: Exception { selectRow(3); JButton upButton = findButtonByIcon(pathManager.getComponent(), ResourceManager.loadImage("images/up.png")); "<AssertPlaceHolder>"; pressButton(upButton, true); waitForSwing();  int row = table.getSelectedRow(); assertEquals(2, row); assertEquals(new Path("c:\\path_four"), table.getModel().getValueAt(row, 1));  pressButton(upButton, true); waitForSwing(); row = table.getSelectedRow(); assertEquals(1, row); assertEquals(new Path("c:\\path_four"), table.getModel().getValueAt(row, 1));  pressButton(upButton, true); waitForSwing(); row = table.getSelectedRow(); assertEquals(0, row); assertEquals(new Path("c:\\path_four"), table.getModel().getValueAt(row, 1));  pressButton(upButton, true); waitForSwing(); row = table.getSelectedRow(); assertEquals(3, row); assertEquals(new Path("c:\\path_four"), table.getModel().getValueAt(row, 1)); }
+getComponent() { return panel; }
+[*] target: assertNotNull(upButton)
+[-] pred: org. junit. Assert. assertNotNull ( upButton )
+************************************
+************************************
+[+] input: Exception { selectRow(2);  JButton downButton = findButtonByIcon(pathManager.getComponent(), ResourceManager.loadImage("images/down.png")); "<AssertPlaceHolder>"; pressButton(downButton, true); waitForSwing();  int row = table.getSelectedRow(); assertEquals(3, row); assertEquals(new Path("c:\\path_three"), table.getModel().getValueAt(row, 1));  pressButton(downButton, true); waitForSwing(); row = table.getSelectedRow(); assertEquals(0, row); assertEquals(new Path("c:\\path_three"), table.getModel().getValueAt(row, 1));  pressButton(downButton, true); waitForSwing(); row = table.getSelectedRow(); assertEquals(1, row); assertEquals(new Path("c:\\path_three"), table.getModel().getValueAt(row, 1));  pressButton(downButton, true); waitForSwing(); row = table.getSelectedRow(); assertEquals(2, row); assertEquals(new Path("c:\\path_three"), table.getModel().getValueAt(row, 1)); }
+getComponent() { return panel; }
+[*] target: assertNotNull(downButton)
+[-] pred: org. junit. Assert. assertNotNull ( downButton )
+************************************
+************************************
+[+] input: Exception { selectRow(3);  JButton button = findButtonByIcon(pathManager.getComponent(), ResourceManager.loadImage("images/edit-delete.png")); "<AssertPlaceHolder>"; pressButton(button, true); waitForSwing(); int row = table.getSelectedRow(); assertEquals(2, row);  pressButton(button, true); waitForSwing(); row = table.getSelectedRow(); assertEquals(1, row);  pressButton(button, true); waitForSwing(); row = table.getSelectedRow(); assertEquals(0, row);  pressButton(button, true); waitForSwing(); row = table.getSelectedRow(); assertEquals(-1, row);  assertTrue(!button.isEnabled()); }
+getComponent() { return panel; }
+[*] target: assertNotNull(button)
+[-] pred: org. junit. Assert. assertNotNull ( button )
+************************************
+************************************
+[+] input: Exception {  File temp = createTempFileForTest();  Preferences.setProperty(Preferences.LAST_IMPORT_DIRECTORY, temp.getParent()); pathManager.setFileChooserProperties("Select Source Files", Preferences.LAST_IMPORT_DIRECTORY, GhidraFileChooserMode.FILES_AND_DIRECTORIES, true, new ExtensionFileFilter(new String[] { "h" }, "C Header Files"));  JButton button = findButtonByIcon(pathManager.getComponent(), ResourceManager.loadImage("images/Plus.png")); "<AssertPlaceHolder>"; pressButton(button, false);  waitForSwing(); GhidraFileChooser fileChooser = waitForDialogComponent(GhidraFileChooser.class); assertNotNull(fileChooser);  assertEquals(temp.getParentFile().getName(), fileChooser.getCurrentDirectory().getName()); assertTrue(fileChooser.isMultiSelectionEnabled());  File f = new File("c:\\temp\\myInclude.h"); assertTrue(fileChooser.accept(f)); f = new File("c:\\temp\\myFile.c"); assertTrue(!fileChooser.accept(f));  pressButtonByText(fileChooser, "Cancel", true); }
+getComponent() { return panel; }
+[*] target: assertNotNull(button)
+[-] pred: org. junit. Assert. assertNotNull ( button )
+************************************
+************************************
+[+] input: Exception {  panel.setAddToTop(true); File temp = createTempFileForTest(); Preferences.setProperty(Preferences.LAST_IMPORT_DIRECTORY, temp.getParent()); panel.setFileChooserProperties("Select Source Files", Preferences.LAST_IMPORT_DIRECTORY, GhidraFileChooserMode.FILES_AND_DIRECTORIES, true, new ExtensionFileFilter(new String[] { "h" }, "C Header Files"));  JButton button = findButtonByIcon(panel, ResourceManager.loadImage("images/Plus.png")); "<AssertPlaceHolder>"; pressButton(button, false);  waitForPostedSwingRunnables(); selectFromFileChooser();  assertEquals(6, table.getRowCount());  String filename = (String) table.getModel().getValueAt(0, 0); assertTrue(filename.endsWith("fred.h"));  }
+setAddToTop(boolean addToTop) { this.addToTop = addToTop; }
+[*] target: assertNotNull(button)
+[-] pred: org. junit. Assert. assertNotNull ( button )
+************************************
+************************************
+[+] input: Exception {  DockingAction copySpecialAction = getAction(codeBrowserClipboardProvider, COPY_SPECIAL_ACTION_NAME); waitForSwing(); assertFalse(copySpecialAction.isEnabled());  codeBrowserPlugin.goTo(new MnemonicFieldLocation(program, addr("1001050"))); assertTrue(copySpecialAction.isEnabled());  makeSelection(codeViewerWrapper); assertTrue(copySpecialAction.isEnabled());  copySpecial(codeViewerWrapper, copySpecialAction); String clipboardContents = getClipboardContents(); String expectedBytes = "f4 77 33 58 f4 77 91 45"; "<AssertPlaceHolder>"; }
+copySpecial(ClipboardContentProviderService clipboardService, ClipboardType type) { Clipboard systemClipboard = getSystemClipboard(); Transferable transferable = clipboardService.copySpecial(type, TaskMonitor.DUMMY); if (transferable != null) { setClipboardContents(systemClipboard, transferable); updatePasteState(); } }
+[*] target: assertEquals(expectedBytes, clipboardContents)
+[-] pred: org. junit. Assert. assertEquals ( expectedBytes, clipboardContents )
+************************************
+************************************
+[+] input: IOException { // given String path = Objects.requireNonNull( ClassLoader.getSystemClassLoader().getResource("input/sequence.pdf") ).getPath(); File file = new File(path);  // when FilePdfSource source = new FilePdfSource(file); PDDocument document = source.doLoad();  // then Assert."<AssertPlaceHolder>"; // The PDF file has only 3 pages. Assert.assertEquals(3, document.getNumberOfPages()); }
+doLoad() throws IOException { return PDDocument.load(source); }
+[*] target: assertNotNull(document)
+[-] pred: org. junit. Assert. assertNotNull ( document )
+************************************
+************************************
+[+] input: IOException { // given String tempFilePath = temporaryFolder.newFile("output.gif").getAbsolutePath(); AbstractGifEncoder encoder = new GifFileEncoder.Builder() .delay(300) .repeat(1) .filename(tempFilePath) .build(); List<BufferedImage> images = Arrays.asList( TestUtils.getImageFromResource("input/frame/frame-0.jpg"), TestUtils.getImageFromResource("input/frame/frame-1.jpg"), TestUtils.getImageFromResource("input/frame/frame-2.jpg") );  // when encoder.encode(images);  // then GifDecoder decoder = new GifDecoder(); decoder.read(tempFilePath); List<BufferedImage> restoredImages = new ArrayList<>(); for (int i = 0; i < decoder.getFrameCount(); i++) { restoredImages.add(decoder.getFrame(i)); }  /* * The gif format is a compressed format.The parsed buffered image cannot be * directly compared with the original image because original image has been * compressed when written to file. */ Assert."<AssertPlaceHolder>";  /* * The repeat count equals loop count, and the delay time of every frame is 300ms. */ Assert.assertEquals(1, decoder.getLoopCount()); Assert.assertEquals(300, decoder.getDelay(0)); Assert.assertEquals(300, decoder.getDelay(1)); Assert.assertEquals(300, decoder.getDelay(2)); }
+build() { if (StringUtils.isEmpty(filename)) { throw new InvalidSettingException("Filename has not been set."); } return new GifFileEncoder(this); }
+[*] target: assertEquals(images.size(), restoredImages.size())
+[-] pred: org. junit. Assert. assertEquals ( images. size ( ), restoredImages. size ( ) )
+************************************
+************************************
+[+] input: testIssue18() { String template = """ bugged "here" """;  assertEquals("bugged "here"\n", template);  String actual = CodeAppendable.stringConcat(template); String expected = "\n" + "    "bugged \\"here\\"\\n"";  "<AssertPlaceHolder>";  }
+stringConcat(String s) { int i = 0; StringBuilder code = new StringBuilder(); for (String line : split(s, "\n")) { if (i > 0) { code.append(" +"); } code.append("\n    ""); code.append(EscapeUtils.escapeJava(line)); code.append("""); i++; } String result = code.toString(); if (result.isEmpty()) { result = """"; } return result; }
+[*] target: assertEquals(expected, actual)
+[-] pred: org. junit. Assert. assertEquals ( expected, actual )
+************************************
+************************************
+[+] input: Exception { byte[] bytes = new byte[64]; bytes[0] = 15; Node nearNode = new Node(bytes, "127.0.0.19", null, 18888, 18888); bytes[0] = 70; Node farNode = new Node(bytes, "127.0.0.20", null, 18888, 18888); nodeTable.addNode(nearNode); nodeTable.addNode(farNode); for (int i = 0; i < KademliaOptions.BUCKET_SIZE - 1; i++) { //To control totally 17 nodes, however closest's capacity is 16 nodeTable.addNode(new Node(ids.get(i), ips[i], null, 18888, 18888)); TimeUnit.MILLISECONDS.sleep(10); } Assert.assertTrue(nodeTable.getBucketsCount() > 1); //3 buckets, nearnode's distance is 252, far's is 255, others' are 253 List<Node> closest = nodeTable.getClosestNodes(homeNode.getId()); Assert."<AssertPlaceHolder>"; //the farest node should be excluded }
+contains(Node n) { return nodes.containsKey(n.getHostKey()); }
+[*] target: assertTrue(closest.contains(nearNode))
+[-] pred: org. junit. Assert. assertTrue ( closest. contains ( nearNode ) )
+************************************
+************************************
+[+] input: testRecoverPublicKey() { TreeRoot.Builder builder = TreeRoot.newBuilder(); builder.setERoot(ByteString.copyFrom("VXJIDGQECCIIYNY3GZEJSFSG6U".getBytes())); builder.setLRoot(ByteString.copyFrom("FDXN3SN67NA5DKA4J2GOK7BVQI".getBytes())); builder.setSeq(3447);  //String eth_msg = "enrtree-root:v1 e=VXJIDGQECCIIYNY3GZEJSFSG6U l=FDXN3SN67NA5DKA4J2GOK7BVQI seq=3447"; String msg = builder.toString(); byte[] sig = Algorithm.sigData(builder.toString(), privateKey); Assert.assertEquals(65, sig.length); String base64Sig = Algorithm.encode64(sig); Assert.assertEquals( "_Zfgv2g7IUzjhqkMGCPZuPT_HAA01hTxiKAa3D1dyokk8_OKee-Jy2dSNo-nqEr6WOFkxv3A9ukYuiJRsf2v8hs", base64Sig);  byte[] sigData; try { sigData = Algorithm.decode64(base64Sig); Assert.assertArrayEquals(sig, sigData); } catch (Exception e) { Assert.fail(); }  BigInteger publicKeyInt = Algorithm.generateKeyPair(privateKey).getPublicKey(); try { BigInteger recoverPublicKeyInt = Algorithm.recoverPublicKey(msg, sig); Assert."<AssertPlaceHolder>"; } catch (SignatureException e) { Assert.fail(); } }
+recoverPublicKey(String msg, byte[] sig) throws SignatureException { int recId = sig[64]; if (recId < 27) { recId += 27; } Sign.SignatureData signature = new SignatureData((byte) recId, ByteArray.subArray(sig, 0, 32), ByteArray.subArray(sig, 32, 64)); return Sign.signedMessageToKey(msg.getBytes(), signature); }
+[*] target: assertEquals(publicKeyInt, recoverPublicKeyInt)
+[-] pred: org. junit. Assert. assertEquals ( publicKeyInt, recoverPublicKeyInt )
+************************************
+************************************
+[+] input: testGetIP() { //notice: please check that you only have one externalIP String ip1 = null, ip2 = null, ip3 = null; try { Method method = NetUtil.class.getDeclaredMethod("getExternalIp", String.class); method.setAccessible(true); ip1 = (String) method.invoke(NetUtil.class, Constant.ipV4Urls.get(0)); ip2 = (String) method.invoke(NetUtil.class, Constant.ipV4Urls.get(1)); ip3 = (String) method.invoke(NetUtil.class, Constant.ipV4Urls.get(2)); } catch (Exception e) { Assert.fail(); } String ip4 = NetUtil.getExternalIpV4(); Assert."<AssertPlaceHolder>"; Assert.assertEquals(ip2, ip4); Assert.assertEquals(ip3, ip4); }
+getExternalIpV4() { long t1 = System.currentTimeMillis(); String ipV4 = getIp(Constant.ipV4Urls); log.debug("GetExternalIpV4 cost {} ms", System.currentTimeMillis() - t1); return ipV4; }
+[*] target: assertEquals(ip1, ip4)
+[-] pred: org. junit. Assert. assertEquals ( ip1, ip4 )
+************************************
+************************************
+[+] input: addService() {  testRegistry.addService(new TestPlugin(), serviceProperties);  Mockito.verify(registrationService).notifyOfPluginRegistration(ArgumentMatchers.any(PluginMetadata.class)); PluginMetadata pluginMetadata = pluginMetadataCaptor.getValue(); Assert."<AssertPlaceHolder>"; Assert.assertEquals(TEST_ID, pluginMetadata.getPluginName()); Assert.assertEquals(TaskType.DETECTOR, pluginMetadata.getPluginType()); // assertEquals(1, pluginMetadata.getFieldConfigs().size()); }
+addService(S service, ServiceProperties props) { K serviceId = super.addService(service, props);  if (serviceId != null) { log.info("Performing scan on service {}", service.getClass()); PluginMetadata pluginMetadata = new PluginMetadata(serviceId.toString(), TaskType.DETECTOR); if (registrationService != null) { registrationService.notifyOfPluginRegistration(pluginMetadata); } }  return serviceId; }
+[*] target: assertNotNull(pluginMetadata)
+[-] pred: org. junit. Assert. assertNotNull ( pluginMetadata )
+************************************
+************************************
+[+] input: InterruptedException { AtomicBoolean result = new AtomicBoolean(false); NamingSnapshotOperation operation = new NamingSnapshotOperation(storage, lock); final Writer writer = new Writer(snapshotDir); final CountDownLatch latch = new CountDownLatch(1);  operation.onSnapshotSave(writer, (isOk, throwable) -> { result.set(isOk && throwable == null); latch.countDown(); }); latch.await(10, TimeUnit.SECONDS); Assert.assertTrue(isSnapshoted); Assert.assertTrue(result.get());  final Reader reader = new Reader(snapshotDir, writer.listFiles()); boolean res = operation.onSnapshotLoad(reader); Assert."<AssertPlaceHolder>"; }
+onSnapshotLoad(Reader reader) { final String readerPath = reader.getPath(); final String sourceFile = Paths.get(readerPath, snapshotArchive).toString();  TimerContext.start(NAMING_SNAPSHOT_LOAD); final Lock lock = writeLock; lock.lock(); try { final Checksum checksum = new CRC64(); DiskUtils.decompress(sourceFile, readerPath, checksum); LocalFileMeta fileMeta = reader.getFileMeta(snapshotArchive); if (fileMeta.getFileMeta().containsKey(checkSumKey)) { if (!Objects.equals(Long.toHexString(checksum.getValue()), fileMeta.get(checkSumKey))) { throw new IllegalArgumentException("Snapshot checksum failed"); } }  final String loadPath = Paths.get(readerPath, snapshotDir).toString(); storage.snapshotLoad(loadPath); Loggers.RAFT.info("snapshot load from : {}", loadPath); DiskUtils.deleteDirectory(loadPath); return true; } catch (final Throwable t) { Loggers.RAFT.error("Fail to load snapshot, path={}, file list={}, {}.", Paths.get(readerPath, snapshotDir).toString(), reader.listFiles(), t); return false; } finally { lock.unlock(); TimerContext.end(NAMING_SNAPSHOT_LOAD, Loggers.RAFT); } }
+[*] target: assertTrue(res)
+[-] pred: org. junit. Assert. assertTrue ( res )
+************************************
+************************************
+[+] input: JsonProcessingException { ServerNamingAbility expected = new ServerNamingAbility(); expected.setSupportJraft(true); String serializeJson = jacksonMapper.writeValueAsString(expected); ServerNamingAbility actual = jacksonMapper.readValue(serializeJson, ServerNamingAbility.class); assertEquals(expected, actual); actual = new ServerNamingAbility(); assertNotEquals(expected, actual); actual.setSupportJraft(true); "<AssertPlaceHolder>"; }
+setSupportJraft(boolean supportJraft) { this.supportJraft = supportJraft; }
+[*] target: assertEquals(expected, actual)
+[-] pred: org. junit. Assert. assertEquals ( expected, actual )
+************************************
+************************************
+[+] input: testBuilderHeader() { Header header = NamingHttpUtil.builderHeader(); Assert."<AssertPlaceHolder>"; Assert.assertEquals(header.getValue(HttpHeaderConsts.CLIENT_VERSION_HEADER), VersionUtils.version); Assert.assertEquals(header.getValue(HttpHeaderConsts.USER_AGENT_HEADER), VersionUtils.getFullClientVersion()); Assert.assertEquals(header.getValue(HttpHeaderConsts.ACCEPT_ENCODING), "gzip,deflate,sdch"); Assert.assertEquals(header.getValue(HttpHeaderConsts.CONNECTION), "Keep-Alive"); Assert.assertNotNull(header.getValue(HttpHeaderConsts.REQUEST_ID)); Assert.assertEquals(header.getValue(HttpHeaderConsts.REQUEST_MODULE), "Naming"); }
+builderHeader() { Header header = Header.newInstance(); header.addParam(HttpHeaderConsts.CLIENT_VERSION_HEADER, VersionUtils.version); header.addParam(HttpHeaderConsts.USER_AGENT_HEADER, VersionUtils.getFullClientVersion()); header.addParam(HttpHeaderConsts.ACCEPT_ENCODING, "gzip,deflate,sdch"); header.addParam(HttpHeaderConsts.CONNECTION, "Keep-Alive"); header.addParam(HttpHeaderConsts.REQUEST_ID, UuidUtils.generateUuid()); header.addParam(HttpHeaderConsts.REQUEST_MODULE, "Naming"); return header; }
+[*] target: assertNotNull(header)
+[-] pred: org. junit. Assert. assertNotNull ( header )
+************************************
+************************************
+[+] input: NacosException { rpcClient.rpcClientStatus.set(RpcClientStatus.RUNNING); rpcClient.currentConnection = connection; doThrow(new NacosException()).when(connection).asyncRequest(any(), any()); RequestCallBack<?> requestCallBack = mock(RequestCallBack.class); doReturn(10000L).when(requestCallBack).getTimeout(); Exception exception = null;  try { rpcClient.asyncRequest(null, requestCallBack); } catch (NacosException e) { exception = e; }  verify(connection, atLeastOnce()).asyncRequest(any(), any()); verify(rpcClient).switchServerAsyncOnRequestFail(); Assert."<AssertPlaceHolder>"; Assert.assertEquals(RpcClientStatus.UNHEALTHY, rpcClient.rpcClientStatus.get()); }
+switchServerAsyncOnRequestFail() { switchServerAsync(null, true); }
+[*] target: assertNotNull(exception)
+[-] pred: org. junit. Assert. assertNotNull ( exception )
+************************************
+************************************
+[+] input: testGetRemoteExecutorTimesOfProcessors() { int defaultExpectVal = 1 << 4; int defaultVal = RemoteUtils.getRemoteExecutorTimesOfProcessors(); Assert.assertEquals(defaultExpectVal, defaultVal);  System.setProperty("remote.executor.times.of.processors", "10"); int val1 = RemoteUtils.getRemoteExecutorTimesOfProcessors(); Assert.assertEquals(10, val1);  System.setProperty("remote.executor.times.of.processors", "-1"); int val2 = RemoteUtils.getRemoteExecutorTimesOfProcessors(); Assert."<AssertPlaceHolder>"; }
+getRemoteExecutorTimesOfProcessors() { String timesString = System.getProperty("remote.executor.times.of.processors"); if (NumberUtils.isDigits(timesString)) { int times = Integer.parseInt(timesString); return times > 0 ? times : REMOTE_EXECUTOR_TIMES_OF_PROCESSORS; } else { return REMOTE_EXECUTOR_TIMES_OF_PROCESSORS; } }
+[*] target: assertEquals(defaultExpectVal, val2)
+[-] pred: org. junit. Assert. assertEquals ( defaultExpectVal, val2 )
+************************************
+************************************
+[+] input: testGetRemoteExecutorQueueSize() { int defaultExpectVal = 1 << 14; int defaultVal = RemoteUtils.getRemoteExecutorQueueSize(); Assert.assertEquals(defaultExpectVal, defaultVal);  System.setProperty("remote.executor.queue.size", "10"); int val1 = RemoteUtils.getRemoteExecutorQueueSize(); Assert.assertEquals(10, val1);  System.setProperty("remote.executor.queue.size", "-1"); int val2 = RemoteUtils.getRemoteExecutorQueueSize(); Assert."<AssertPlaceHolder>"; }
+getRemoteExecutorQueueSize() { String queueSizeString = System.getProperty("remote.executor.queue.size"); if (NumberUtils.isDigits(queueSizeString)) { int size = Integer.parseInt(queueSizeString); return size > 0 ? size : REMOTE_EXECUTOR_QUEUE_SIZE; } else { return REMOTE_EXECUTOR_QUEUE_SIZE; } }
+[*] target: assertEquals(defaultExpectVal, val2)
+[-] pred: org. junit. Assert. assertEquals ( defaultExpectVal, val2 )
+************************************
+************************************
+[+] input: testGetSubscribedService() { Collection<Service> subscribedService = clientServiceIndexesManager.getSubscribedService();  Assert."<AssertPlaceHolder>"; Assert.assertEquals(subscribedService.size(), 1); }
+getSubscribedService() { return subscriberIndexes.keySet(); }
+[*] target: assertNotNull(subscribedService)
+[-] pred: org. junit. Assert. assertNotNull ( subscribedService )
+************************************
+************************************
+[+] input: testGetOrCreateClientDefault() { OpenSergoClientManager manager = new OpenSergoClientManager(); OpenSergoClient client1 = manager.getOrCreateClient("127.0.0.1", 12345); OpenSergoClient client2 = manager.getOrCreateClient("127.0.0.1", 12345); OpenSergoClient client3 = manager.getOrCreateClient("1.2.3.4", 12345);  "<AssertPlaceHolder>"; assertNotEquals(client1, client3); }
+getOrCreateClient(String host, int port) { return this.getOrCreateClient(host, port, new OpenSergoClientConfig()); }
+[*] target: assertSame(client1, client2)
+[-] pred: org. junit. Assert. assertSame ( client1, client2 )
+************************************
+************************************
+[+] input: testIsAvailable_notIfNull() { mController.onResume(null, mock(NotificationChannel.class), null, null, null, null); assertFalse(mController.isAvailable());  mController.onResume(mock(NotificationBackend.AppRow.class), null, null, null, null, null); "<AssertPlaceHolder>"; }
+isAvailable() { if (!super.isAvailable()) { return false; } return mChannel != null && NotificationChannel.DEFAULT_CHANNEL_ID.equals(mChannel.getId());  }
+[*] target: assertFalse(mController.isAvailable())
+[-] pred: org. junit. Assert. assertFalse ( mController. isAvailable() )
+************************************
+************************************
+[+] input: testNotedNotRemovedAfterActive() { mController.addCallback(new int[]{AppOpsManager.OP_FINE_LOCATION}, mCallback);  mController.onOpNoted(AppOpsManager.OP_FINE_LOCATION, TEST_UID, TEST_PACKAGE_NAME, AppOpsManager.MODE_ALLOWED);  mController.onOpActiveChanged( AppOpsManager.OP_FINE_LOCATION, TEST_UID, TEST_PACKAGE_NAME, true);  mTestableLooper.processAllMessages(); List<AppOpItem> list = mController.getActiveAppOps(); verify(mCallback).onActiveStateChanged( AppOpsManager.OP_FINE_LOCATION, TEST_UID, TEST_PACKAGE_NAME, true);  // Duplicates are not removed between active and noted assertEquals(2, list.size());  mController.onOpActiveChanged( AppOpsManager.OP_FINE_LOCATION, TEST_UID, TEST_PACKAGE_NAME, false);  mTestableLooper.processAllMessages();  verify(mCallback, never()).onActiveStateChanged( AppOpsManager.OP_FINE_LOCATION, TEST_UID, TEST_PACKAGE_NAME, false); list = mController.getActiveAppOps(); "<AssertPlaceHolder>"; }
+getActiveAppOps();
+[*] target: assertEquals(1, list.size())
+[-] pred: org. junit. Assert. assertEquals ( 1, list. size ( ) )
+************************************
+************************************
+[+] input: testAddBubble() { mBubbleController.updateBubble(mRow.getEntry()); "<AssertPlaceHolder>";  assertFalse(mSysUiStateBubblesExpanded); }
+hasBubbles() { if (mStackView == null) { return false; } return mBubbleData.hasBubbles(); }
+[*] target: assertTrue(mBubbleController.hasBubbles())
+[-] pred: org. junit. Assert. assertTrue ( mBubbleController. hasBubbles() )
+************************************
+************************************
+[+] input: removeNotif_inOverflow_intercepted() { // Get bubble with notif in shade. mEntryListener.onPendingEntryAdded(mRow.getEntry()); mBubbleController.updateBubble(mRow.getEntry()); assertTrue(mBubbleController.hasBubbles()); assertFalse(mBubbleController.isBubbleNotificationSuppressedFromShade( mRow.getEntry()));  // Dismiss the bubble into overflow. mBubbleController.removeBubble( mRow.getEntry().getKey(), BubbleController.DISMISS_USER_GESTURE); assertFalse(mBubbleController.hasBubbles());  boolean intercepted = mRemoveInterceptor.onNotificationRemoveRequested( mRow.getEntry().getKey(), mRow.getEntry(), REASON_CANCEL);  // Notif is no longer a bubble, but still in overflow, so we intercept removal. "<AssertPlaceHolder>"; }
+onNotificationRemoveRequested( String key, NotificationEntry entry, int dismissReason) { final boolean isClearAll = dismissReason == REASON_CANCEL_ALL; final boolean isUserDimiss = dismissReason == REASON_CANCEL || dismissReason == REASON_CLICK; final boolean isAppCancel = dismissReason == REASON_APP_CANCEL || dismissReason == REASON_APP_CANCEL_ALL; final boolean isSummaryCancel = dismissReason == REASON_GROUP_SUMMARY_CANCELED;  // Need to check for !appCancel here because the notification may have // previously been dismissed & entry.isRowDismissed would still be true boolean userRemovedNotif = (entry != null && entry.isRowDismissed() && !isAppCancel) || isClearAll || isUserDimiss || isSummaryCancel;  if (userRemovedNotif) { return handleDismissalInterception(entry); } return false; }
+[*] target: assertTrue(intercepted)
+[-] pred: org. junit. Assert. assertTrue ( intercepted )
+************************************
+************************************
+[+] input: testGetEventTypeRecorderSyncTapEvent3() { List<TapEvent> list = new ArrayList<>(); list.add(tapEvent); handler = new SyncGetMemorySizeHandler(new AtomicLong(100)); HandlerUtil.EventTypeRecorder recorder = handler.getEventTypeRecorderSyncTapEvent(list); Assert."<AssertPlaceHolder>"; Assert.assertEquals(100, recorder.getMemorySize()); }
+getEventTypeRecorderSyncTapEvent(List<? extends TapEvent> events) { if (null == events) events = new ArrayList<>(); if (null == memorySize) return HandlerUtil.countTapEvent(events); HandlerUtil.EventTypeRecorder recorder; synchronized (memorySize) { if (memorySize.get() >= 0) { recorder = HandlerUtil.countTapEvent(events, memorySize.get()); memorySize.set(-1); } else { recorder = HandlerUtil.countTapEvent(events); memorySize.set(recorder.getMemorySize()); } } return recorder; }
+[*] target: assertNotNull(recorder)
+[-] pred: org. junit. Assert. assertNotNull ( recorder )
+************************************
+************************************
+[+] input: testGetEventTypeRecorderSyncTapDataEvent3() { List<TapdataEvent> list = new ArrayList<>(); TapdataEvent event = new TapdataEvent(); event.setTapEvent(tapEvent); event.setSourceTime(System.nanoTime()); list.add(event); handler = new SyncGetMemorySizeHandler(new AtomicLong(100)); HandlerUtil.EventTypeRecorder recorder = handler.getEventTypeRecorderSyncTapDataEvent(list); Assert."<AssertPlaceHolder>"; Assert.assertEquals(100, recorder.getMemorySize()); }
+getEventTypeRecorderSyncTapDataEvent(List<TapdataEvent> events) { if (null == events) events = new ArrayList<>(); if (null == memorySize) return HandlerUtil.countTapdataEvent(events); HandlerUtil.EventTypeRecorder recorder; synchronized (memorySize) { if (memorySize.get() >= 0) { recorder = HandlerUtil.countTapDataEvent(events, memorySize.get()); memorySize.set(-1); } else { recorder = HandlerUtil.countTapdataEvent(events); memorySize.set(recorder.getMemorySize()); } } return recorder; }
+[*] target: assertNotNull(recorder)
+[-] pred: org. junit. Assert. assertNotNull ( recorder )
+************************************
+************************************
+[+] input: testFindDefaultAssetProfile() { AssetProfile foundDefaultAssetProfile = assetProfileService.findDefaultAssetProfile(tenantId); Assert."<AssertPlaceHolder>"; Assert.assertNotNull(foundDefaultAssetProfile.getId()); Assert.assertNotNull(foundDefaultAssetProfile.getName()); }
+findDefaultAssetProfile(TenantId tenantId);
+[*] target: assertNotNull(foundDefaultAssetProfile)
+[-] pred: org. junit. Assert. assertNotNull ( foundDefaultAssetProfile )
+************************************
+************************************
+[+] input: testFindDefaultAssetProfileInfo() { AssetProfileInfo foundDefaultAssetProfileInfo = assetProfileService.findDefaultAssetProfileInfo(tenantId); Assert."<AssertPlaceHolder>"; Assert.assertNotNull(foundDefaultAssetProfileInfo.getId()); Assert.assertNotNull(foundDefaultAssetProfileInfo.getName()); }
+findDefaultAssetProfileInfo(TenantId tenantId);
+[*] target: assertNotNull(foundDefaultAssetProfileInfo)
+[-] pred: org. junit. Assert. assertNotNull ( foundDefaultAssetProfileInfo )
+************************************
+************************************
+[+] input: testFindAssetInfoByTenantIdAndType() { Customer customer = new Customer(); customer.setTitle("Customer X"); customer.setTenantId(tenantId); Customer savedCustomer = customerService.saveCustomer(customer);  Asset asset = new Asset(); asset.setTenantId(tenantId); asset.setName("default"); asset.setType("default"); asset.setLabel("label"); asset.setCustomerId(savedCustomer.getId()); Asset savedAsset = assetService.saveAsset(asset);  PageLink pageLinkWithLabel = new PageLink(100, 0, "label"); List<AssetInfo> assetInfosWithLabel = assetService .findAssetInfosByTenantIdAndType(tenantId, asset.getType(), pageLinkWithLabel).getData();  Assert.assertFalse(assetInfosWithLabel.isEmpty()); Assert.assertTrue( assetInfosWithLabel.stream() .anyMatch( d -> d.getId().equals(savedAsset.getId()) && d.getTenantId().equals(tenantId) && d.getAssetProfileName().equals(savedAsset.getType()) && d.getLabel().equals(savedAsset.getLabel()) ) );  PageLink pageLinkWithCustomer = new PageLink(100, 0, savedCustomer.getTitle()); List<AssetInfo> assetInfosWithCustomer = assetService .findAssetInfosByTenantIdAndType(tenantId, asset.getType(), pageLinkWithCustomer).getData();  Assert."<AssertPlaceHolder>"; Assert.assertTrue( assetInfosWithCustomer.stream() .anyMatch( d -> d.getId().equals(savedAsset.getId()) && d.getTenantId().equals(tenantId) && d.getAssetProfileName().equals(savedAsset.getType()) && d.getCustomerId().equals(savedCustomer.getId()) && d.getCustomerTitle().equals(savedCustomer.getTitle()) ) ); }
+findAssetInfosByTenantIdAndType(TenantId tenantId, String type, PageLink pageLink);
+[*] target: assertFalse(assetInfosWithCustomer.isEmpty())
+[-] pred: org. junit. Assert. assertFalse ( assetInfosWithCustomer. isEmpty ( ) )
+************************************
+************************************
+[+] input: testFindAssetInfoByTenantIdAndAssetProfileId() { Customer customer = new Customer(); customer.setTitle("Customer X"); customer.setTenantId(tenantId); Customer savedCustomer = customerService.saveCustomer(customer);  Asset asset = new Asset(); asset.setTenantId(tenantId); asset.setName("default"); asset.setLabel("label"); asset.setCustomerId(savedCustomer.getId()); Asset savedAsset = assetService.saveAsset(asset);  PageLink pageLinkWithLabel = new PageLink(100, 0, "label"); List<AssetInfo> assetInfosWithLabel = assetService .findAssetInfosByTenantIdAndAssetProfileId(tenantId, savedAsset.getAssetProfileId(), pageLinkWithLabel).getData();  Assert.assertFalse(assetInfosWithLabel.isEmpty()); Assert.assertTrue( assetInfosWithLabel.stream() .anyMatch( d -> d.getId().equals(savedAsset.getId()) && d.getTenantId().equals(tenantId) && d.getAssetProfileId().equals(savedAsset.getAssetProfileId()) && d.getLabel().equals(savedAsset.getLabel()) ) );  PageLink pageLinkWithCustomer = new PageLink(100, 0, savedCustomer.getTitle()); List<AssetInfo> assetInfosWithCustomer = assetService .findAssetInfosByTenantIdAndAssetProfileId(tenantId, savedAsset.getAssetProfileId(), pageLinkWithCustomer).getData();  Assert."<AssertPlaceHolder>"; Assert.assertTrue( assetInfosWithCustomer.stream() .anyMatch( d -> d.getId().equals(savedAsset.getId()) && d.getTenantId().equals(tenantId) && d.getAssetProfileId().equals(savedAsset.getAssetProfileId()) && d.getCustomerId().equals(savedCustomer.getId()) && d.getCustomerTitle().equals(savedCustomer.getTitle()) ) ); }
+findAssetInfosByTenantIdAndAssetProfileId(TenantId tenantId, AssetProfileId assetProfileId, PageLink pageLink);
+[*] target: assertFalse(assetInfosWithCustomer.isEmpty())
+[-] pred: org. junit. Assert. assertFalse ( assetInfosWithCustomer. isEmpty ( ) )
+************************************
+************************************
+[+] input: testFindDefaultDeviceProfile() { DeviceProfile foundDefaultDeviceProfile = deviceProfileService.findDefaultDeviceProfile(tenantId); Assert."<AssertPlaceHolder>"; Assert.assertNotNull(foundDefaultDeviceProfile.getId()); Assert.assertNotNull(foundDefaultDeviceProfile.getName()); }
+findDefaultDeviceProfile(TenantId tenantId);
+[*] target: assertNotNull(foundDefaultDeviceProfile)
+[-] pred: org. junit. Assert. assertNotNull ( foundDefaultDeviceProfile )
+************************************
+************************************
+[+] input: testFindDefaultDeviceProfileInfo() { DeviceProfileInfo foundDefaultDeviceProfileInfo = deviceProfileService.findDefaultDeviceProfileInfo(tenantId); Assert."<AssertPlaceHolder>"; Assert.assertNotNull(foundDefaultDeviceProfileInfo.getId()); Assert.assertNotNull(foundDefaultDeviceProfileInfo.getName()); Assert.assertNotNull(foundDefaultDeviceProfileInfo.getType()); }
+findDefaultDeviceProfileInfo(TenantId tenantId);
+[*] target: assertNotNull(foundDefaultDeviceProfileInfo)
+[-] pred: org. junit. Assert. assertNotNull ( foundDefaultDeviceProfileInfo )
+************************************
+************************************
+[+] input: testShouldRollbackValidatedDeviceIfDeviceCredentialsValidationFailed() { Mockito.reset(validator); Mockito.doThrow(new DataValidationException("mock message")) .when(validator).validate(any(), any());  Device device = new Device(); device.setTenantId(tenantId); device.setName(StringUtils.randomAlphabetic(10)); device.setType("default");  assertThatThrownBy(() -> deviceService.saveDevice(device)) .isInstanceOf(DataValidationException.class) .hasMessageContaining("mock message");  Device deviceByName = deviceService.findDeviceByTenantIdAndName(tenantId, device.getName()); Assertions."<AssertPlaceHolder>"; }
+findDeviceByTenantIdAndName(TenantId tenantId, String name);
+[*] target: assertNull(deviceByName)
+[-] pred: org. junit. Assert. assertNull ( deviceByName )
+************************************
+************************************
+[+] input: testCreateNewTemplate() { OAuth2ClientRegistrationTemplate clientRegistrationTemplate = validClientRegistrationTemplate(UUID.randomUUID().toString()); OAuth2ClientRegistrationTemplate savedClientRegistrationTemplate = oAuth2ConfigTemplateService.saveClientRegistrationTemplate(clientRegistrationTemplate);  Assert."<AssertPlaceHolder>"; Assert.assertNotNull(savedClientRegistrationTemplate.getId()); clientRegistrationTemplate.setId(savedClientRegistrationTemplate.getId()); clientRegistrationTemplate.setCreatedTime(savedClientRegistrationTemplate.getCreatedTime()); Assert.assertEquals(clientRegistrationTemplate, savedClientRegistrationTemplate); }
+saveClientRegistrationTemplate(OAuth2ClientRegistrationTemplate clientRegistrationTemplate);
+[*] target: assertNotNull(savedClientRegistrationTemplate)
+[-] pred: org. junit. Assert. assertNotNull ( savedClientRegistrationTemplate )
+************************************
+************************************
+[+] input: testCreateAndFindParams() { OAuth2Info oAuth2Info = createDefaultOAuth2Info(); oAuth2Service.saveOAuth2Info(oAuth2Info); OAuth2Info foundOAuth2Info = oAuth2Service.findOAuth2Info(); Assert."<AssertPlaceHolder>"; // TODO ask if it's safe to check equality on AdditionalProperties Assert.assertEquals(oAuth2Info, foundOAuth2Info); }
+findOAuth2Info();
+[*] target: assertNotNull(foundOAuth2Info)
+[-] pred: org. junit. Assert. assertNotNull ( foundOAuth2Info )
+************************************
+************************************
+[+] input: testDeleteRuleChain() { RuleChain ruleChain = new RuleChain(); ruleChain.setTenantId(tenantId); ruleChain.setName("My RuleChain"); RuleChain savedRuleChain = ruleChainService.saveRuleChain(ruleChain); RuleChain foundRuleChain = ruleChainService.findRuleChainById(tenantId, savedRuleChain.getId()); Assert.assertNotNull(foundRuleChain); ruleChainService.deleteRuleChainById(tenantId, savedRuleChain.getId()); foundRuleChain = ruleChainService.findRuleChainById(tenantId, savedRuleChain.getId()); Assert."<AssertPlaceHolder>"; }
+findRuleChainById(TenantId tenantId, RuleChainId ruleChainId);
+[*] target: assertNull(foundRuleChain)
+[-] pred: org. junit. Assert. assertNull ( foundRuleChain )
+************************************
+************************************
+[+] input: testFindUserById() { User user = userService.findUserByEmail(SYSTEM_TENANT_ID, "sysadmin@thingsboard.org"); Assert.assertNotNull(user); User foundUser = userService.findUserById(SYSTEM_TENANT_ID, user.getId()); Assert."<AssertPlaceHolder>"; Assert.assertEquals(user, foundUser); }
+findUserById(TenantId tenantId, UserId userId);
+[*] target: assertNotNull(foundUser)
+[-] pred: org. junit. Assert. assertNotNull ( foundUser )
+************************************
+************************************
+[+] input: testFindUserCredentials() { User user = userService.findUserByEmail(SYSTEM_TENANT_ID,"sysadmin@thingsboard.org"); Assert.assertNotNull(user); UserCredentials userCredentials = userService.findUserCredentialsByUserId(SYSTEM_TENANT_ID, user.getId()); Assert."<AssertPlaceHolder>"; }
+findUserCredentialsByUserId(TenantId tenantId, UserId userId);
+[*] target: assertNotNull(userCredentials)
+[-] pred: org. junit. Assert. assertNotNull ( userCredentials )
+************************************
+************************************
+[+] input: testDeleteUser() { User tenantAdminUser = userService.findUserByEmail(tenantId, "tenant@thingsboard.org"); User user = new User(); user.setAuthority(Authority.TENANT_ADMIN); user.setTenantId(tenantAdminUser.getTenantId()); user.setEmail("tenant2@thingsboard.org"); User savedUser = userService.saveUser(TenantId.SYS_TENANT_ID, user); Assert.assertNotNull(savedUser); Assert.assertNotNull(savedUser.getId()); User foundUser = userService.findUserById(tenantId, savedUser.getId()); Assert.assertNotNull(foundUser); UserCredentials userCredentials = userService.findUserCredentialsByUserId(tenantId, foundUser.getId()); Assert.assertNotNull(userCredentials); userService.deleteUser(tenantId, foundUser); userCredentials = userService.findUserCredentialsByUserId(tenantId, foundUser.getId()); foundUser = userService.findUserById(tenantId, foundUser.getId()); Assert."<AssertPlaceHolder>"; Assert.assertNull(userCredentials); }
+findUserById(TenantId tenantId, UserId userId);
+[*] target: assertNull(foundUser)
+[-] pred: org. junit. Assert. assertNull ( foundUser )
+************************************
+************************************
+[+] input: testDeleteWidgetsBundle() { WidgetsBundle widgetsBundle = new WidgetsBundle(); widgetsBundle.setTenantId(tenantId); widgetsBundle.setTitle("My widgets bundle"); WidgetsBundle savedWidgetsBundle = widgetsBundleService.saveWidgetsBundle(widgetsBundle); WidgetsBundle foundWidgetsBundle = widgetsBundleService.findWidgetsBundleById(tenantId, savedWidgetsBundle.getId()); Assert.assertNotNull(foundWidgetsBundle); widgetsBundleService.deleteWidgetsBundle(tenantId, savedWidgetsBundle.getId()); foundWidgetsBundle = widgetsBundleService.findWidgetsBundleById(tenantId, savedWidgetsBundle.getId()); Assert."<AssertPlaceHolder>"; }
+findWidgetsBundleById(TenantId tenantId, WidgetsBundleId widgetsBundleId);
+[*] target: assertNull(foundWidgetsBundle)
+[-] pred: org. junit. Assert. assertNull ( foundWidgetsBundle )
+************************************
+************************************
+[+] input: testFindByDeviceId() { DeviceCredentials foundedDeviceCredentials = deviceCredentialsDao.findByDeviceId(SYSTEM_TENANT_ID, neededDeviceCredentials.getDeviceId().getId()); "<AssertPlaceHolder>"; assertEquals(neededDeviceCredentials.getId(), foundedDeviceCredentials.getId()); assertEquals(neededDeviceCredentials.getCredentialsId(), foundedDeviceCredentials.getCredentialsId()); }
+findByDeviceId(TenantId tenantId, UUID deviceId) { return DaoUtil.getData(deviceCredentialsRepository.findByDeviceId(deviceId)); }
+[*] target: assertNotNull(foundedDeviceCredentials)
+[-] pred: org. junit. Assert. assertNotNull ( foundedDeviceCredentials )
+************************************
+************************************
+[+] input: testFindByActivateToken() { UserCredentials foundedUserCredentials = userCredentialsDao.findByActivateToken(SYSTEM_TENANT_ID, ACTIVATE_TOKEN); "<AssertPlaceHolder>"; assertEquals(neededUserCredentials.getId(), foundedUserCredentials.getId()); }
+findByActivateToken(TenantId tenantId, String activateToken) { return DaoUtil.getData(userCredentialsRepository.findByActivateToken(activateToken)); }
+[*] target: assertNotNull(foundedUserCredentials)
+[-] pred: org. junit. Assert. assertNotNull ( foundedUserCredentials )
+************************************
+************************************
+[+] input: IOException { // prepare File src = temporaryFolder.newFolder("src"); File dest = temporaryFolder.newFolder("dest");  // act contributor.copyToDir(src, dest); log.debug("Destination folder {}: {}", dest, dest.list()); log.debug("Source folder {}: {}", src, src.list());  // check "<AssertPlaceHolder>"; assertTrue(src.exists()); }
+copyToDir(File src, File dest) throws IOException { LOGGER.debug( "Copying {} [{}] to directory [{}]", src.isFile() ? "file" : "directory", src.getAbsolutePath(), dest.getAbsolutePath() );  try { helper.copyToDir(src, dest); } catch (FilesHelperException e) { throw (IOException) e.getCause(); } }
+[*] target: assertTrue(dest.exists())
+[-] pred: org. junit. Assert. assertTrue ( dest. exists ( ) )
+************************************
+************************************
+[+] input: IOException { // prepare File src = new File(temporaryFolder.newFolder("src"), "test.dat"); src.createNewFile(); File dest = new File(temporaryFolder.newFolder("dest"), "renamed.dat");  // act contributor.copyToFile(src, dest); log.debug("Destination file {}: {}", dest, dest.exists() ? "exists" : "not exists"); log.debug("Source file {}: {}", src, src.exists() ? "exists" : "not exists");  // check "<AssertPlaceHolder>"; assertTrue(src.exists()); }
+copyToFile(File src, File dest) throws IOException { LOGGER.debug( "Copying {} [{}] to file [{}]", src.isFile() ? "file" : "directory", src.getAbsolutePath(), dest.getAbsolutePath() );  try { helper.copyToFile(src, dest); } catch (FilesHelperException e) { throw (IOException) e.getCause(); } }
+[*] target: assertTrue(dest.exists())
+[-] pred: org. junit. Assert. assertTrue ( dest. exists ( ) )
+************************************
+************************************
+[+] input: IOException { // prepare File src = new File(temporaryFolder.newFolder("src"), "test.dat"); src.createNewFile(); File dest = new File(temporaryFolder.getRoot(), "dest/renamed.dat");  // act contributor.copyToFile(src, dest); log.debug("Destination file {}: {}", dest, dest.exists() ? "exists" : "not exists"); log.debug("Source file {}: {}", src, src.exists() ? "exists" : "not exists");  // check "<AssertPlaceHolder>"; assertTrue(src.exists()); }
+copyToFile(File src, File dest) throws IOException { LOGGER.debug( "Copying {} [{}] to file [{}]", src.isFile() ? "file" : "directory", src.getAbsolutePath(), dest.getAbsolutePath() );  try { helper.copyToFile(src, dest); } catch (FilesHelperException e) { throw (IOException) e.getCause(); } }
+[*] target: assertTrue(dest.exists())
+[-] pred: org. junit. Assert. assertTrue ( dest. exists ( ) )
+************************************
+************************************
+[+] input: oneMemberProtobuf() { StructValue value = StructValue.of("a", PrimitiveValue.newUint32(1)); StructType type = value.getType();  ValueProtos.Value valuePb = value.toPb(); Assert.assertEquals(ValueProtos.Value.newBuilder() .addItems(ProtoValue.fromUint32(1)) .build(), valuePb);  Value<?> valueX = ProtoValue.fromPb(type, valuePb); Assert."<AssertPlaceHolder>"; }
+equals(Object o) { if (this == o) { return true; }  if (o == null || getClass() != o.getClass()) { return false; }  StructValue that = (StructValue) o; return Arrays.equals(members, that.members); }
+[*] target: assertTrue(value.equals(valueX))
+[-] pred: org. junit. Assert. assertTrue ( value. equals ( valueX ) )
+************************************
+************************************

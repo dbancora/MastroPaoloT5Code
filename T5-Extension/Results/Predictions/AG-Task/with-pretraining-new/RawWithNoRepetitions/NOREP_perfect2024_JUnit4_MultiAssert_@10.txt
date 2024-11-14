@@ -1,0 +1,18 @@
+[+] input: testInsertAndRemove() { // Crear un comparador de prioridades Comparator<Integer> comparator = new ComparadorNumeros<>();  // Crear un heap utilizando el árbol binario iterativo HeapUsingIterativeBinaryTree<Integer, String> heap = new HeapUsingIterativeBinaryTree<>(comparator);  // Prueba Insert y remove con elementos heap.Insert(10, "A"); heap.Insert(20, "B"); heap.Insert(15, "C");  assertEquals(3, heap.count());  assertEquals("A", heap.remove()); assertEquals(2, heap.count());  assertEquals("C", heap.remove()); assertEquals(1, heap.count());  assertEquals("B", heap.remove()); "<AssertPlaceHolder>"; }
+count() { return _count; }
+[*] target: assertEquals(0, heap.count())
+[-] pred: org. junit. Assert. assertEquals ( 0, heap. count() )
+************************************
+************************************
+[+] input: indexZero() { nonEmptyQueue.setIndex(0); assertEquals(0, nonEmptyQueue.getIndex());  doReturn(true).when(emptyQueue).isComplete(); emptyQueue.setIndex(0); assertEquals(0, emptyQueue.getIndex());  doReturn(false).when(emptyQueue).isComplete(); emptyQueue.setIndex(0); "<AssertPlaceHolder>"; }
+getIndex() { return queueIndex.get(); }
+[*] target: assertEquals(0, emptyQueue.getIndex())
+[-] pred: org. junit. Assert. assertEquals ( 0, emptyQueue. getIndex() )
+************************************
+************************************
+[+] input: select() { // 请求参数 Map<String, Object> requestParams = new HashMap<>(); requestParams.put("methodName", "apple"); // 服务列表 ServiceMetaInfo serviceMetaInfo1 = new ServiceMetaInfo(); serviceMetaInfo1.setServiceName("myService"); serviceMetaInfo1.setServiceVersion("1.0"); serviceMetaInfo1.setServiceHost("localhost"); serviceMetaInfo1.setServicePort(1234); ServiceMetaInfo serviceMetaInfo2 = new ServiceMetaInfo(); serviceMetaInfo2.setServiceName("myService"); serviceMetaInfo2.setServiceVersion("1.0"); serviceMetaInfo2.setServiceHost("yupi.icu"); serviceMetaInfo2.setServicePort(80); List<ServiceMetaInfo> serviceMetaInfoList = Arrays.asList(serviceMetaInfo1, serviceMetaInfo2); // 连续调用 3 次 ServiceMetaInfo serviceMetaInfo = loadBalancer.select(requestParams, serviceMetaInfoList); System.out.println(serviceMetaInfo); Assert.assertNotNull(serviceMetaInfo); serviceMetaInfo = loadBalancer.select(requestParams, serviceMetaInfoList); System.out.println(serviceMetaInfo); Assert.assertNotNull(serviceMetaInfo); serviceMetaInfo = loadBalancer.select(requestParams, serviceMetaInfoList); System.out.println(serviceMetaInfo); Assert."<AssertPlaceHolder>"; }
+select(Map<String, Object> requestParams, List<ServiceMetaInfo> serviceMetaInfoList);
+[*] target: assertNotNull(serviceMetaInfo)
+[-] pred: org. junit. Assert. assertNotNull ( serviceMetaInfo )
+************************************
+************************************
