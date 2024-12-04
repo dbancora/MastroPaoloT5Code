@@ -110,6 +110,21 @@ Nelle seguenti tabelle sono riportati i risultati ottenuti dal modello T5 nel co
 | All  | 127953               | 4 & 5          | 5         | 12         | 6,130                | 7844                                    |
 | All  | 127953               | 4 & 5          | 10        | 12         | 7,003                | 8960                                    |
 
+### Con singola asserzione
+| ANNO | NUMERO METODI TOTALI | VERSIONE JUNIT | BEAM SIZE | BATCH SIZE | % PERFECT PREDICTION | NUMERO DI PLACEHOLDER CORRETTI PREDETTI |
+|------|----------------------|----------------|-----------|------------|----------------------|-----------------------------------------|
+| All  | 62565                | 4 & 5          | 1         | 12         | 4,853                | 3036                                    |
+| All  | 62565                | 4 & 5          | 5         | 12         | 8,271                | 5175                                    |
+| All  | 62565                | 4 & 5          | 10        | 12         | 10,196               | 6379                                    |
+
+### Multi asserzione
+| ANNO | NUMERO METODI TOTALI | VERSIONE JUNIT | BEAM SIZE | BATCH SIZE | % PERFECT PREDICTION | NUMERO DI PLACEHOLDER CORRETTI PREDETTI |
+|------|----------------------|----------------|-----------|------------|----------------------|-----------------------------------------|
+| All  | 65388                | 4 & 5          | 1         | 12         | 1,797                | 1175                                    |
+| All  | 65388                | 4 & 5          | 5         | 12         | 6,012                | 3931                                    |
+| All  | 65388                | 4 & 5          | 10        | 12         | 6,853                | 4481                                    |
+
+
 ## Con distinzione versione JUnit
 | ANNO | NUMERO METODI TOTALI | VERSIONE JUNIT | BEAM SIZE | BATCH SIZE | % PERFECT PREDICTION | NUMERO DI PLACEHOLDER CORRETTI PREDETTI |
 |------|----------------------|----------------|-----------|------------|----------------------|-----------------------------------------|
