@@ -121,8 +121,8 @@ Nelle seguenti tabelle sono riportati i risultati ottenuti dal modello T5 nel co
 | ANNO | NUMERO METODI TOTALI | VERSIONE JUNIT | BEAM SIZE | BATCH SIZE | % PERFECT PREDICTION | NUMERO DI PLACEHOLDER CORRETTI PREDETTI |
 |------|----------------------|----------------|-----------|------------|----------------------|-----------------------------------------|
 | All  | 65388                | 4 & 5          | 1         | 12         | 1,797                | 1175                                    |
-| All  | 65388                | 4 & 5          | 5         | 12         | 6,012                | 3931                                    |
-| All  | 65388                | 4 & 5          | 10        | 12         | 6,853                | 4481                                    |
+| All  | 65388                | 4 & 5          | 5         | 12         | 4,082                | 2669                                    |
+| All  | 65388                | 4 & 5          | 10        | 12         | 4,967                | 3248                                    |
 
 
 ## Con distinzione versione JUnit
