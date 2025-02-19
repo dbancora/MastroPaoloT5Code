@@ -2,7 +2,7 @@
 
 The following repository contains the code needed to use MastroPaolo's T5 model outside the Google Colab environment.
 
-The model was developed by Antonio Mastropaolo and the official repository is available at the following link :
+The model was developed by Antonio Mastropaolo, Simone Scalabrino, Nathan Cooper, David Nader Palacio, Denys Poshyvanyk, Rocco Oliveto, Gabriele Bavota and the official repository is available at the following link :
 
 [TransferLearning4Code](https://github.com/antonio-mastropaolo/TransferLearning4Code)
 
