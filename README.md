@@ -1,56 +1,56 @@
 ﻿# MastroPaoloT5Code
 
-La seguente repository contiene il codice necessario per utilizzare il modello T5 di MastroPaolo al di fuori dell'ambiente Google Colab. 
+The following repository contains the code needed to use MastroPaolo's T5 model outside the Google Colab environment.
 
-Il modello è stato sviluppato da Antonio Mastropaolo e la repository ufficiale è disponibile al seguente link: 
+The model was developed by Antonio Mastropaolo and the official repository is available at the following link :
 
 [TransferLearning4Code](https://github.com/antonio-mastropaolo/TransferLearning4Code)
 
-## Istruzioni per il setup
+## Setup instructions
 
-### Download del modello Pytorch
+### Downloading the Pytorch model
 
-A causa delle limitazioni imposte da GitHub, non è stato possibile caricare il modello PyTorch utilizzato. 
-E' necessario quindi scaricarlo tramite il seguente link Google Drive: 
+Due to limitations imposed by GitHub, it was not possible to upload the PyTorch model used. 
+It is therefore necessary to download it via the following Google Drive link:
 
 [Modello PyTorch](https://drive.google.com/drive/folders/11nrc1rLbZZViK1TAoqrtmKaKEurVyXGn)
 
-Una volta scaricato, è necessario spostarlo all'interno del path del progetto :
+Once downloaded, you need to move it within the project path :
 
 ```Trainted-Models/with-pretraining-new/MT-Task-Balanced/Pytorch-Model```
 
-### Setup dell'ambiente 
+### Environment Setup
 
-Il seguente codice è stato sviluppato e testato utilizzando Python 3.10.9 
+The following code was developed and tested using Python 3.10.9 
 
-Inoltre si consiglia di creare un Virtual Enviroment per il download delle librerie necessarie: 
+In addition, it is recommended to create a Virtual Enviroment for downloading the necessary libraries: 
 
-- **nlp** in versione 0.4.0
-- **sentencepiece** in versione 0.1.96
-- **dill** in versione 0.3.3
-- **numpy** in versione 1.26.4
-- **torch** in versione 2.4.0
-- **transformers** in versione 4.44.2
+- **nlp** in version 0.4.0
+- **sentencepiece** in version 0.1.96
+- **dill** in version 0.3.3
+- **numpy** in version 1.26.4
+- **torch** in version 2.4.0
+- **transformers** in version 4.44.2
 
-Una volta installate tutte le librerie, è possibile importare i propri file in formato _.tsv_ affinchè vengano
-analizzati dal programma. 
+Once you have installed all the libraries, you can import your files in _.tsv_ format for them to be
+parsed by the program. 
 
-### Specifica del path per i file da analizzare
+### Specifying the path for the files to be analyzed
 
-Per garantire il corretto funzionamento del codice, è necessario specifiare il path del file _.tsv_ da analizzare 
-all'interno del file ```main.py``` (situato nella directory principale della repository) oltre che nel file 
-```assertion_dataset_script.py``` situato nella cartella _Miscellaneous_ della repository. 
+To ensure that the code works properly, it is necessary to specify the path to the _.tsv_ file to be parsed 
+within the file ```main.py``` (located in the root directory of the repository) as well as in the  
+```assertion_dataset_script.py``` located in the _Miscellaneous_ folder of the repository.
 
 ## Test
-Il seguente codice è stato testato sia in ambiente Windows che in ambiente Linux (Ubuntu). 
+The following code has been tested in both Windows and Linux (Ubuntu) environments.  
 
-In entrambi i casi, il modello ha terminato l'esecuzione e salvato i risultati nella directory _Result_. 
+In both cases, the model finished execution and saved the results in the _Result_ directory. 
 
-## Risultati
-Questo codice è stato utilizzato per valutare la bontà del modello T5 nel predire parti di codice mancante.
-Il modello utilizzato è in grado di sostituire parte del codice di test unitari che viene nascosto. 
+## Results
+This code was used to evaluate the goodness of the T5 model in predicting parts of missing code.
+The model used is able to replace part of the unit test code that is hidden.  
 
-I risultati ottenuti sono disponibili [qui](T5-Extension/Results/Predictions/AG-Task/with-pretraining-new/RawWithNoRepetitions/README.md).
+The results obtained are available [here](T5-Extension/Results/Predictions/AG-Task/with-pretraining-new/RawWithNoRepetitions/README.md).
 
 
 
