@@ -50,9 +50,6 @@ In entrambi i casi, il modello ha terminato l'esecuzione e salvato i risultati n
 Questo codice è stato utilizzato per valutare la bontà del modello T5 nel predire parti di codice mancante.
 Il modello utilizzato è in grado di sostituire parte del codice di test unitari che viene nascosto. 
 
-Per valutare il modello, è stato creato un dataset apposito [A BREVE DISPONIBILE]() composto da test unitari JUnit
-estratti dalle repository GitHub a partire da gennaio 2020. 
-
 I risultati ottenuti sono disponibili [qui](T5-Extension/Results/Predictions/AG-Task/with-pretraining-new/RawWithNoRepetitions/README.md).
 
 
