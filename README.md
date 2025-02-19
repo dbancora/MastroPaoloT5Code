@@ -13,7 +13,7 @@ The model was developed by Antonio Mastropaolo, Simone Scalabrino, Nathan Cooper
 Due to limitations imposed by GitHub, it was not possible to upload the PyTorch model used. 
 It is therefore necessary to download it via the following Google Drive link:
 
-[Modello PyTorch](https://drive.google.com/drive/folders/11nrc1rLbZZViK1TAoqrtmKaKEurVyXGn)
+[PyTorch model](https://drive.google.com/drive/folders/11nrc1rLbZZViK1TAoqrtmKaKEurVyXGn)
 
 Once downloaded, you need to move it within the project path :
 
